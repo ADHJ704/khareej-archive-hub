@@ -8,6 +8,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Category } from '@/data/categories';
 
 interface CategoryFilterProps {
@@ -31,16 +32,18 @@ const CategoryFilter = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 bg-white" align="end">
-          {categories.map((category) => (
-            <DropdownMenuCheckboxItem
-              key={category.id}
-              checked={selectedCategories.includes(category.id)}
-              onCheckedChange={() => onCategoryChange(category.id)}
-              className="text-right"
-            >
-              {category.name}
-            </DropdownMenuCheckboxItem>
-          ))}
+          <ScrollArea className="h-80">
+            {categories.map((category) => (
+              <DropdownMenuCheckboxItem
+                key={category.id}
+                checked={selectedCategories.includes(category.id)}
+                onCheckedChange={() => onCategoryChange(category.id)}
+                className="text-right"
+              >
+                {category.name}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </ScrollArea>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
