@@ -1,12 +1,30 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { categories } from '@/data/categories';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from 'lucide-react';
 
 const Categories = () => {
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate('/');
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-right">تصنيفات المشاريع</h1>
+      <div className="flex items-center justify-between mb-8">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          onClick={handleGoBack}
+          className="rtl:ml-auto"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="text-3xl font-bold text-right">تصنيفات المشاريع</h1>
+      </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {categories.map((category) => (
