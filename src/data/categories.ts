@@ -1,4 +1,3 @@
-
 export interface Category {
   id: string;
   name: string;
@@ -45,5 +44,30 @@ export const categories: Category[] = [
     id: 'web',
     name: 'تطوير الويب',
     description: 'مشاريع تطوير مواقع وتطبيقات الويب'
+  },
+  {
+    id: 'tech_support',
+    name: 'دعم فني حاسب آلي',
+    description: 'مشاريع في مجال الدعم الفني وصيانة الحاسب'
+  },
+  {
+    id: 'networking_tech',
+    name: 'تقنية شبكات',
+    description: 'مشاريع في مجال تقنية الشبكات والاتصالات'
+  },
+  {
+    id: 'programming_tech',
+    name: 'برمجة تطبيقات',
+    description: 'مشاريع في مجال برمجة التطبيقات والأنظمة'
+  },
+  {
+    id: 'iot_tech',
+    name: 'إنترنت الأشياء',
+    description: 'مشاريع في مجال إنترنت الأشياء والأنظمة المدمجة'
+  },
+  {
+    id: 'tech_management',
+    name: 'إدارة تقنية',
+    description: 'مشاريع في مجال إدارة التقنية والمشاريع التقنية'
   }
 ];

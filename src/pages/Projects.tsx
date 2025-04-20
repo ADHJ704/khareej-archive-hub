@@ -1,11 +1,18 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Bot, X } from 'lucide-react';
 import Header from '@/components/Header';
 import ProjectGrid from '@/components/ProjectGrid';
 import CategoryFilter from '@/components/CategoryFilter';
 import SearchBar from '@/components/SearchBar';
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { projects, searchProjects, Project } from '@/data/projects';
 import { categories } from '@/data/categories';
 
@@ -16,8 +23,8 @@ const Projects = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSuggestionDialog, setShowSuggestionDialog] = useState(false);
 
-  // Extract search query from URL parameters
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const searchParam = params.get('search');
@@ -33,27 +40,23 @@ const Projects = () => {
     }
   }, [location.search]);
 
-  // Apply filters when selected categories change
   useEffect(() => {
     setLoading(true);
     
     let result = [...projects];
     
-    // Apply category filter
     if (selectedCategories.length > 0) {
       result = result.filter(project => 
         selectedCategories.includes(project.categoryId)
       );
     }
     
-    // Apply search filter
     if (searchQuery) {
       result = searchProjects(searchQuery).filter(project => 
         selectedCategories.length === 0 || selectedCategories.includes(project.categoryId)
       );
     }
     
-    // Simulate loading delay
     setTimeout(() => {
       setFilteredProjects(result);
       setLoading(false);
@@ -87,13 +90,22 @@ const Projects = () => {
       
       <main className="flex-grow bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container-custom">
-          <div className="mb-8">
-            <h1 className="text-3xl font-heading font-bold text-archive-primary mb-4">
-              مشاريع التخرج
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              استعرض مجموعة متنوعة من مشاريع التخرج المميزة في مختلف التخصصات
-            </p>
+          <div className="mb-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-heading font-bold text-archive-primary mb-4">
+                مشاريع التخرج
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                استعرض مجموعة متنوعة من مشاريع التخرج المميزة في مختلف التخصصات
+              </p>
+            </div>
+            <Button
+              onClick={() => setShowSuggestionDialog(true)}
+              className="bg-archive-primary hover:bg-archive-dark"
+            >
+              <Bot className="h-4 w-4 ml-2" />
+              اقتراح مشروع
+            </Button>
           </div>
           
           <div className="mb-8 flex flex-col md:flex-row gap-4">
@@ -153,6 +165,22 @@ const Projects = () => {
           </div>
         </div>
       </main>
+      
+      <Dialog open={showSuggestionDialog} onOpenChange={setShowSuggestionDialog}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>اقتراح مشروع تخرج</DialogTitle>
+            <DialogDescription>
+              أخبرنا عن اهتماماتك وتخصصك، وسنقترح عليك مشاريع مناسبة
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              قريباً: سيتم إضافة محادثة تفاعلية لاقتراح المشاريع المناسبة لك
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
       
       <footer className="bg-archive-dark text-white py-6">
         <div className="container-custom text-center">
