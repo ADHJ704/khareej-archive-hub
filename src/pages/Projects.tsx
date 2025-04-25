@@ -16,6 +16,8 @@ import {
 import { categories } from '@/data/categories';
 import { useProjects } from '@/hooks/useProjects';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from '@/integrations/supabase/client';
 
 const Projects = () => {
   const location = useLocation();
@@ -24,6 +26,9 @@ const Projects = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestionDialog, setShowSuggestionDialog] = useState(false);
+  const [suggestionMessage, setSuggestionMessage] = useState('');
+  const [suggestedProject, setSuggestedProject] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('');
 
   const { data: projects, isLoading, error } = useProjects(
     selectedCategories[0],
@@ -73,6 +78,32 @@ const Projects = () => {
     setSelectedCategories([]);
     setSearchQuery('');
     navigate('/projects');
+  };
+
+  const handleAISuggestion = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('project-suggestion', {
+        body: JSON.stringify({ 
+          message: suggestionMessage, 
+          department: departmentFilter 
+        })
+      });
+
+      if (error) throw error;
+
+      setSuggestedProject(data.suggestion);
+      toast({
+        title: "اقتراح مشروع",
+        description: "تم توليد اقتراح مشروع بنجاح",
+      });
+    } catch (error) {
+      console.error('Error getting AI suggestion:', error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء توليد الاقتراح",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -162,13 +193,43 @@ const Projects = () => {
           <DialogHeader>
             <DialogTitle>اقتراح مشروع تخرج</DialogTitle>
             <DialogDescription>
-              أخبرنا عن اهتماماتك وتخصصك، وسنقترح عليك مشاريع مناسبة
+              أخبرنا عن اهتماماتك وتخصصك، وسنقترح عليك مشروعًا مناسبًا
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              قريباً: سيتم إضافة محادثة تفاعلية لاقتراح المشاريع المناسبة لك
-            </p>
+          
+          <div className="space-y-4">
+            <select 
+              value={departmentFilter}
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">اختر التخصص</option>
+              <option value="علوم الحاسب">علوم الحاسب</option>
+              <option value="هندسة الحاسب">هندسة الحاسب</option>
+              <option value="نظم المعلومات">نظم المعلومات</option>
+              {/* Add more departments */}
+            </select>
+            
+            <Textarea 
+              placeholder="اكتب بعض التفاصيل عن اهتماماتك أو المجال الذي ترغب في العمل فيه (اختياري)"
+              value={suggestionMessage}
+              onChange={(e) => setSuggestionMessage(e.target.value)}
+              className="w-full min-h-[100px]"
+            />
+            
+            <Button 
+              onClick={handleAISuggestion}
+              className="w-full bg-archive-primary hover:bg-archive-dark"
+            >
+              اقتراح مشروع
+            </Button>
+            
+            {suggestedProject && (
+              <div className="mt-4 p-4 bg-gray-100 rounded">
+                <h3 className="font-bold mb-2">المشروع المقترح:</h3>
+                <p>{suggestedProject}</p>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

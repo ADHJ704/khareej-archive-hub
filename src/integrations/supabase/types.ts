@@ -30,6 +30,33 @@ export type Database = {
         }
         Relationships: []
       }
+      project_suggestions: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          id: string
+          message: string
+          response: string
+          user_id: string | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          response: string
+          user_id?: string | null
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          response?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           abstract: string | null
