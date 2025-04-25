@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Book, Search } from 'lucide-react';
+import { Book, LogIn } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -30,7 +30,11 @@ const Header = () => {
             <Link to="/categories" className="text-white/90 hover:text-white transition">التصنيفات</Link>
           </nav>
           
-          <Button variant="outline" className="hidden md:block border-white/20 text-white hover:bg-white/10">
+          <Button 
+            variant="outline" 
+            className="hidden md:flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+          >
+            <LogIn className="h-4 w-4" />
             تسجيل الدخول
           </Button>
         </div>
@@ -40,3 +44,4 @@ const Header = () => {
 };
 
 export default Header;
+
