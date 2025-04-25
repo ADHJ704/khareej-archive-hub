@@ -25,7 +25,21 @@ export const useProjects = (categoryId?: string, searchQuery?: string) => {
         throw error;
       }
 
-      return data as Project[];
+      // Map the database fields (snake_case) to our interface fields (camelCase)
+      return data.map(item => ({
+        id: item.id,
+        title: item.title,
+        author: item.author,
+        department: item.department,
+        year: item.year,
+        abstract: item.abstract || '',
+        description: item.description || '',
+        tags: item.tags || [],
+        supervisor: item.supervisor,
+        categoryId: item.category_id, // Map category_id to categoryId
+        downloadUrl: item.download_url,
+        pdfUrl: item.pdf_url
+      })) as Project[];
     }
   });
 };
