@@ -39,8 +39,12 @@ const Index = () => {
                 منصة رقمية تجمع مشاريع التخرج السابقة لتكون مرجعاً للباحثين والطلاب
               </p>
               
-              <div className="max-w-xl mx-auto">
-                <SearchBar onSearch={handleSearch} className="mb-8" />
+              <div className="max-w-2xl mx-auto">
+                <SearchBar 
+                  onSearch={handleSearch} 
+                  className="mb-8" 
+                  placeholder="ابحث عن مشاريع التخرج..."
+                />
               </div>
               
               <div className="flex flex-col sm:flex-row justify-center gap-4">

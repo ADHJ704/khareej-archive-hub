@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 interface SearchBarProps {
   onSearch: (query: string) => void;
   className?: string;
+  placeholder?: string;
 }
 
-const SearchBar = ({ onSearch, className = '' }: SearchBarProps) => {
+const SearchBar = ({ onSearch, className = '', placeholder = "ابحث عن مشاريع التخرج..." }: SearchBarProps) => {
   const [query, setQuery] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,19 +26,19 @@ const SearchBar = ({ onSearch, className = '' }: SearchBarProps) => {
 
   return (
     <form onSubmit={handleSubmit} className={`relative ${className}`}>
-      <div className="flex">
+      <div className="flex shadow-md rounded-md overflow-hidden">
         <Input
           type="text"
           value={query}
           onChange={handleInputChange}
-          placeholder="ابحث عن مشاريع التخرج..."
-          className="rounded-l-none pr-4 text-right bg-white dark:bg-background text-foreground"
+          placeholder={placeholder}
+          className="rounded-l-none pr-4 text-right bg-white dark:bg-background text-foreground h-12 border-archive-primary/20 focus-visible:ring-archive-primary"
           aria-label="البحث"
           dir="rtl"
         />
         <Button 
           type="submit" 
-          className="rounded-r-none bg-archive-primary hover:bg-archive-dark"
+          className="rounded-r-none bg-archive-primary hover:bg-archive-dark h-12 px-5"
         >
           <Search className="h-4 w-4 ml-2" />
           <span>بحث</span>
