@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bot } from 'lucide-react';
@@ -41,14 +40,14 @@ const Projects = () => {
   const [showSuggestionDialog, setShowSuggestionDialog] = useState(false);
   const [suggestionMessage, setSuggestionMessage] = useState('');
   const [suggestedProject, setSuggestedProject] = useState('');
-  const [departmentFilter, setDepartmentFilter] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [suggestionError, setSuggestionError] = useState<string | null>(null);
 
   const { data: projects, isLoading: projectsLoading, error } = useProjects(
     selectedCategories[0],
     searchQuery,
-    departmentFilter
+    departmentFilter === 'all' ? '' : departmentFilter
   );
 
   React.useEffect(() => {
@@ -93,7 +92,7 @@ const Projects = () => {
   const clearFilters = () => {
     setSelectedCategories([]);
     setSearchQuery('');
-    setDepartmentFilter('');
+    setDepartmentFilter('all');
     navigate('/projects');
   };
 
@@ -180,7 +179,7 @@ const Projects = () => {
     setSuggestionError(null);
     setSuggestedProject('');
     setSuggestionMessage('');
-    setDepartmentFilter('');
+    setDepartmentFilter('all');
   };
 
   return (
@@ -240,7 +239,7 @@ const Projects = () => {
                       <SelectValue placeholder="اختر التخصص" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">الكل</SelectItem>
+                      <SelectItem value="all">الكل</SelectItem>
                       {departments.map((dept) => (
                         <SelectItem key={dept} value={dept}>
                           {dept}
@@ -250,7 +249,7 @@ const Projects = () => {
                   </Select>
                 </div>
                 
-                {(selectedCategories.length > 0 || searchQuery || departmentFilter) && (
+                {(selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all') && (
                   <Button 
                     variant="outline" 
                     className="w-full" 
