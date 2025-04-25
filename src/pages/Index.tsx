@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, BookOpen, Search, Library, File } from 'lucide-react';
+import { ArrowRight, BookOpen, Library, File } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
@@ -106,7 +106,7 @@ const Index = () => {
               {categories.slice(0, 8).map((category) => (
                 <div 
                   key={category.id} 
-                  className="p-6 archive-card hover:border-archive-accent hover:border transition-all"
+                  className="p-6 archive-card hover:border-archive-accent hover:border transition-all cursor-pointer"
                   onClick={() => navigate(`/projects?category=${category.id}`)}
                 >
                   <h3 className="text-xl font-semibold text-archive-primary mb-2">

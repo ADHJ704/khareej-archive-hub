@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Book, Search, UserCog, GraduationCap, List, LogIn, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import SearchBar from '@/components/SearchBar';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -24,10 +24,9 @@ const Header = () => {
     navigate('/');
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/projects?search=${encodeURIComponent(searchQuery.trim())}`);
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      navigate(`/projects?search=${encodeURIComponent(query.trim())}`);
     }
   };
 
@@ -41,26 +40,16 @@ const Header = () => {
         
         {showMobileSearch ? (
           <div className="flex items-center w-full">
-            <form onSubmit={handleSearch} className="flex-1 flex">
-              <Input 
-                type="text" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="البحث عن مشروع..." 
-                className="pr-4 bg-white/10 border-white/20 placeholder:text-white/60 text-white w-full rounded-l-none"
-                autoFocus
-              />
-              <Button 
-                type="submit" 
-                className="rounded-r-none bg-white/20 hover:bg-white/30 border-r border-white/20"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-            </form>
+            <SearchBar 
+              onSearch={handleSearch} 
+              className="flex-1" 
+              placeholder="البحث عن مشروع..."
+            />
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setShowMobileSearch(false)}
+              className="ml-2"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -77,21 +66,10 @@ const Header = () => {
             </Button>
             
             <div className="relative hidden md:block w-64 lg:w-80">
-              <form onSubmit={handleSearch} className="flex">
-                <Input 
-                  type="text" 
-                  placeholder="البحث عن مشروع..." 
-                  className="pr-10 bg-white/10 border-white/20 placeholder:text-white/60 text-white w-full rounded-l-none"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Button 
-                  type="submit" 
-                  className="rounded-r-none bg-white/20 hover:bg-white/30"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </form>
+              <SearchBar 
+                onSearch={handleSearch} 
+                placeholder="البحث عن مشروع..." 
+              />
             </div>
             
             <nav className="hidden md:flex items-center space-x-4 space-x-reverse">
