@@ -17,6 +17,10 @@ serve(async (req) => {
     const { message, department } = await req.json();
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
 
+    if (!openaiApiKey) {
+      throw new Error('OpenAI API key is not configured');
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -48,7 +52,19 @@ serve(async (req) => {
       }),
     });
 
+    // Check if response is successful
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`OpenAI API error: ${JSON.stringify(errorData)}`);
+    }
+
     const data = await response.json();
+    
+    // Check if the expected data structure exists
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error(`Unexpected API response structure: ${JSON.stringify(data)}`);
+    }
+    
     const suggestion = data.choices[0].message.content;
 
     // Initialize Supabase client

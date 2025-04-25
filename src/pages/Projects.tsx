@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bot } from 'lucide-react';
@@ -18,6 +19,15 @@ import { useProjects } from '@/hooks/useProjects';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from '@/integrations/supabase/client';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Projects = () => {
   const location = useLocation();
@@ -29,8 +39,9 @@ const Projects = () => {
   const [suggestionMessage, setSuggestionMessage] = useState('');
   const [suggestedProject, setSuggestedProject] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data: projects, isLoading, error } = useProjects(
+  const { data: projects, isLoading: projectsLoading, error } = useProjects(
     selectedCategories[0],
     searchQuery
   );
@@ -81,6 +92,16 @@ const Projects = () => {
   };
 
   const handleAISuggestion = async () => {
+    if (!departmentFilter) {
+      toast({
+        title: "اختر التخصص",
+        description: "يرجى اختيار التخصص قبل طلب الاقتراح",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('project-suggestion', {
         body: JSON.stringify({ 
@@ -91,20 +112,45 @@ const Projects = () => {
 
       if (error) throw error;
 
-      setSuggestedProject(data.suggestion);
-      toast({
-        title: "اقتراح مشروع",
-        description: "تم توليد اقتراح مشروع بنجاح",
-      });
+      if (data?.suggestion) {
+        setSuggestedProject(data.suggestion);
+        toast({
+          title: "اقتراح مشروع",
+          description: "تم توليد اقتراح مشروع بنجاح",
+        });
+      } else if (data?.error) {
+        throw new Error(data.error);
+      } else {
+        throw new Error("لم يتم استلام اقتراح من الخدمة");
+      }
     } catch (error) {
       console.error('Error getting AI suggestion:', error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء توليد الاقتراح",
+        description: error instanceof Error ? error.message : "حدث خطأ أثناء توليد الاقتراح",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // Get all unique departments from categories
+  const departments = [
+    "علوم الحاسب",
+    "نظم المعلومات",
+    "هندسة الحاسب",
+    "الذكاء الاصطناعي",
+    "أمن المعلومات",
+    "شبكات الحاسب",
+    "تطبيقات الجوال",
+    "تطوير الويب",
+    "دعم فني حاسب آلي",
+    "تقنية شبكات",
+    "برمجة تطبيقات",
+    "إنترنت الأشياء",
+    "إدارة تقنية"
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -181,7 +227,7 @@ const Projects = () => {
               
               <ProjectGrid 
                 projects={projects || []} 
-                loading={isLoading} 
+                loading={projectsLoading} 
               />
             </div>
           </div>
@@ -198,17 +244,25 @@ const Projects = () => {
           </DialogHeader>
           
           <div className="space-y-4">
-            <select 
+            <Select
               value={departmentFilter}
-              onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="w-full p-2 border rounded"
+              onValueChange={(value) => setDepartmentFilter(value)}
             >
-              <option value="">اختر التخصص</option>
-              <option value="علوم الحاسب">علوم الحاسب</option>
-              <option value="هندسة الحاسب">هندسة الحاسب</option>
-              <option value="نظم المعلومات">نظم المعلومات</option>
-              {/* Add more departments */}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="اختر التخصص" />
+              </SelectTrigger>
+              <SelectContent>
+                <ScrollArea className="h-60">
+                  <SelectGroup>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </ScrollArea>
+              </SelectContent>
+            </Select>
             
             <Textarea 
               placeholder="اكتب بعض التفاصيل عن اهتماماتك أو المجال الذي ترغب في العمل فيه (اختياري)"
@@ -220,14 +274,15 @@ const Projects = () => {
             <Button 
               onClick={handleAISuggestion}
               className="w-full bg-archive-primary hover:bg-archive-dark"
+              disabled={isLoading}
             >
-              اقتراح مشروع
+              {isLoading ? 'جاري التوليد...' : 'اقتراح مشروع'}
             </Button>
             
             {suggestedProject && (
               <div className="mt-4 p-4 bg-gray-100 rounded">
                 <h3 className="font-bold mb-2">المشروع المقترح:</h3>
-                <p>{suggestedProject}</p>
+                <p className="whitespace-pre-line">{suggestedProject}</p>
               </div>
             )}
           </div>
