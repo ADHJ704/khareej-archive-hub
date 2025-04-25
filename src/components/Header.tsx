@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Book, LogIn } from 'lucide-react';
+import { Book, LogIn, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -44,4 +44,3 @@ const Header = () => {
 };
 
 export default Header;
-
