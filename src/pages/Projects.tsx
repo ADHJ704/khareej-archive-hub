@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Bot, X } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import Header from '@/components/Header';
 import ProjectGrid from '@/components/ProjectGrid';
 import CategoryFilter from '@/components/CategoryFilter';
@@ -13,26 +13,30 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { projects, searchProjects, Project } from '@/data/projects';
 import { categories } from '@/data/categories';
+import { useProjects } from '@/hooks/useProjects';
+import { useToast } from '@/hooks/use-toast';
 
 const Projects = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>(projects);
+  const { toast } = useToast();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(false);
   const [showSuggestionDialog, setShowSuggestionDialog] = useState(false);
 
-  useEffect(() => {
+  const { data: projects, isLoading, error } = useProjects(
+    selectedCategories[0],
+    searchQuery
+  );
+
+  React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     const searchParam = params.get('search');
     const categoryParam = params.get('category');
     
     if (searchParam) {
       setSearchQuery(searchParam);
-      setFilteredProjects(searchProjects(searchParam));
     }
     
     if (categoryParam) {
@@ -40,28 +44,15 @@ const Projects = () => {
     }
   }, [location.search]);
 
-  useEffect(() => {
-    setLoading(true);
-    
-    let result = [...projects];
-    
-    if (selectedCategories.length > 0) {
-      result = result.filter(project => 
-        selectedCategories.includes(project.categoryId)
-      );
+  React.useEffect(() => {
+    if (error) {
+      toast({
+        title: "خطأ في تحميل المشاريع",
+        description: "حدث خطأ أثناء تحميل المشاريع، يرجى المحاولة مرة أخرى",
+        variant: "destructive"
+      });
     }
-    
-    if (searchQuery) {
-      result = searchProjects(searchQuery).filter(project => 
-        selectedCategories.length === 0 || selectedCategories.includes(project.categoryId)
-      );
-    }
-    
-    setTimeout(() => {
-      setFilteredProjects(result);
-      setLoading(false);
-    }, 500);
-  }, [selectedCategories, searchQuery]);
+  }, [error, toast]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategories(prev => {
@@ -146,7 +137,7 @@ const Projects = () => {
                 <div className="flex justify-between items-center">
                   <div>
                     <h3 className="font-medium">
-                      {filteredProjects.length} مشروع
+                      {projects?.length || 0} مشروع
                       {searchQuery && 
                         <span className="text-gray-600 dark:text-gray-400 mr-2">
                           لنتائج البحث: "{searchQuery}"
@@ -158,8 +149,8 @@ const Projects = () => {
               </div>
               
               <ProjectGrid 
-                projects={filteredProjects} 
-                loading={loading} 
+                projects={projects || []} 
+                loading={isLoading} 
               />
             </div>
           </div>

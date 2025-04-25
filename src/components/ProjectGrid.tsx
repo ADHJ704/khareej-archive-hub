@@ -1,6 +1,7 @@
 
 import React from 'react';
 import ProjectCard from './ProjectCard';
+import ProjectCardSkeleton from './ProjectCardSkeleton';
 import { Project } from '@/data/projects';
 
 interface ProjectGridProps {
@@ -13,7 +14,7 @@ const ProjectGrid = ({ projects, loading = false }: ProjectGridProps) => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="h-80 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse"></div>
+          <ProjectCardSkeleton key={index} />
         ))}
       </div>
     );
