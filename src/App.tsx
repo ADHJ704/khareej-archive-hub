@@ -11,6 +11,7 @@ import Categories from "./pages/Categories";
 import NotFound from "./pages/NotFound";
 import TraineeLogin from "./pages/TraineeLogin";
 import SupervisorLogin from "./pages/SupervisorLogin";
+import SupervisorDashboard from "./pages/SupervisorDashboard";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/categories" element={<Categories />} />
           <Route path="/trainee-login" element={<TraineeLogin />} />
           <Route path="/supervisor-login" element={<SupervisorLogin />} />
+          <Route path="/supervisor-dashboard" element={<SupervisorDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

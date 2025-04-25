@@ -1,11 +1,13 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Book, LogIn, Search, UserCog, GraduationCap } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Book, Search, UserCog, GraduationCap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <header className="bg-archive-primary text-white py-4 shadow-md sticky top-0 z-50">
       <div className="container-custom flex flex-col md:flex-row items-center justify-between">
@@ -34,6 +36,7 @@ const Header = () => {
             <Button 
               variant="outline" 
               className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+              onClick={() => navigate('/trainee-login')}
             >
               <GraduationCap className="h-4 w-4" />
               تسجيل دخول متدرب
@@ -42,6 +45,7 @@ const Header = () => {
             <Button 
               variant="outline" 
               className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+              onClick={() => navigate('/supervisor-login')}
             >
               <UserCog className="h-4 w-4" />
               تسجيل دخول مشرف
