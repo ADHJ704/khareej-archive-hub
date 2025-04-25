@@ -31,8 +31,9 @@ const SearchBar = ({ onSearch, className = '' }: SearchBarProps) => {
           value={query}
           onChange={handleInputChange}
           placeholder="ابحث عن مشاريع التخرج..."
-          className="rounded-l-none pr-4"
+          className="rounded-l-none pr-4 text-right bg-white dark:bg-background text-foreground"
           aria-label="البحث"
+          dir="rtl"
         />
         <Button 
           type="submit" 

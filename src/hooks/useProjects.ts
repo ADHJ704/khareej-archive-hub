@@ -70,12 +70,6 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             );
           }
           
-          if (departmentFilter) {
-            combinedProjects = combinedProjects.filter(
-              project => project.department === departmentFilter
-            );
-          }
-          
           console.log('Search results:', searchQuery, combinedProjects.length);
           return combinedProjects;
         }
