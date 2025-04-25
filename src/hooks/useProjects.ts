@@ -2,44 +2,97 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Project } from '@/data/projects';
+import { additionalProjects } from '@/data/more-projects';
+import { projects as demoProjects } from '@/data/projects';
 
 export const useProjects = (categoryId?: string, searchQuery?: string) => {
   return useQuery({
     queryKey: ['projects', categoryId, searchQuery],
     queryFn: async () => {
-      let query = supabase
-        .from('projects')
-        .select('*');
+      try {
+        let query = supabase
+          .from('projects')
+          .select('*');
 
-      if (categoryId) {
-        query = query.eq('category_id', categoryId);
+        if (categoryId) {
+          query = query.eq('category_id', categoryId);
+        }
+
+        if (searchQuery) {
+          query = query.or(`title.ilike.%${searchQuery}%,abstract.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+          console.error("Supabase query error:", error);
+          throw error;
+        }
+
+        // إذا وجدت بيانات من Supabase، استخدمها
+        if (data && data.length > 0) {
+          return data.map(item => ({
+            id: item.id,
+            title: item.title,
+            author: item.author,
+            department: item.department,
+            year: item.year,
+            abstract: item.abstract || '',
+            description: item.description || '',
+            tags: item.tags || [],
+            supervisor: item.supervisor,
+            categoryId: item.category_id,
+            downloadUrl: item.download_url,
+            pdfUrl: item.pdf_url
+          })) as Project[];
+        } else {
+          // إذا لم يتم العثور على بيانات، استخدم البيانات الافتراضية المحلية
+          let combinedProjects = [...demoProjects, ...additionalProjects];
+          
+          if (categoryId) {
+            combinedProjects = combinedProjects.filter(
+              project => project.categoryId === categoryId
+            );
+          }
+          
+          if (searchQuery) {
+            const lowercaseQuery = searchQuery.toLowerCase();
+            combinedProjects = combinedProjects.filter(
+              project => 
+                project.title.toLowerCase().includes(lowercaseQuery) ||
+                project.abstract.toLowerCase().includes(lowercaseQuery) ||
+                project.author.toLowerCase().includes(lowercaseQuery) ||
+                project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+            );
+          }
+          
+          return combinedProjects;
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        
+        // في حالة الخطأ، استخدم البيانات المحلية
+        let combinedProjects = [...demoProjects, ...additionalProjects];
+        
+        if (categoryId) {
+          combinedProjects = combinedProjects.filter(
+            project => project.categoryId === categoryId
+          );
+        }
+        
+        if (searchQuery) {
+          const lowercaseQuery = searchQuery.toLowerCase();
+          combinedProjects = combinedProjects.filter(
+            project => 
+              project.title.toLowerCase().includes(lowercaseQuery) ||
+              project.abstract.toLowerCase().includes(lowercaseQuery) ||
+              project.author.toLowerCase().includes(lowercaseQuery) ||
+              project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+          );
+        }
+        
+        return combinedProjects;
       }
-
-      if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,abstract.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      // Map the database fields (snake_case) to our interface fields (camelCase)
-      return data.map(item => ({
-        id: item.id,
-        title: item.title,
-        author: item.author,
-        department: item.department,
-        year: item.year,
-        abstract: item.abstract || '',
-        description: item.description || '',
-        tags: item.tags || [],
-        supervisor: item.supervisor,
-        categoryId: item.category_id, // Map category_id to categoryId
-        downloadUrl: item.download_url,
-        pdfUrl: item.pdf_url
-      })) as Project[];
     }
   });
 };

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bot } from 'lucide-react';
@@ -29,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 const Projects = () => {
   const location = useLocation();
@@ -279,15 +280,13 @@ const Projects = () => {
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="اختر التخصص" />
               </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
+              <SelectContent className="max-h-[300px] overflow-y-auto">
                 <SelectGroup>
-                  <ScrollArea className="h-[200px] w-full">
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
+                  {departments.map((dept) => (
+                    <SelectItem key={dept} value={dept}>
+                      {dept}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -304,7 +303,12 @@ const Projects = () => {
               className="w-full bg-archive-primary hover:bg-archive-dark"
               disabled={isLoading}
             >
-              {isLoading ? 'جاري التوليد...' : 'اقتراح مشروع'}
+              {isLoading ? (
+                <span className="flex items-center">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  جاري التوليد...
+                </span>
+              ) : 'اقتراح مشروع'}
             </Button>
             
             {suggestedProject && (

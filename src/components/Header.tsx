@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Book, Search, UserCog, GraduationCap, List } from 'lucide-react';
+import { Book, Search, UserCog, GraduationCap, List, LogIn } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from '@/contexts/AuthContext';
@@ -70,7 +71,7 @@ const Header = () => {
                 className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
                 onClick={() => navigate('/supervisor-login')}
               >
-                <UserCog className="h-4 w-4" />
+                <LogIn className="h-4 w-4" />
                 تسجيل دخول مشرف
               </Button>
             </div>
