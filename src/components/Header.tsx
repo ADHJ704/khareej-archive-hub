@@ -59,20 +59,20 @@ const Header = () => {
             <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
-                className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+                className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2 min-w-24"
                 onClick={() => navigate('/trainee-login')}
               >
                 <GraduationCap className="h-4 w-4" />
-                تسجيل دخول متدرب
+                <span>تسجيل متدرب</span>
               </Button>
               
               <Button 
                 variant="outline" 
-                className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+                className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2 min-w-24"
                 onClick={() => navigate('/supervisor-login')}
               >
                 <LogIn className="h-4 w-4" />
-                تسجيل دخول مشرف
+                <span>تسجيل مشرف</span>
               </Button>
             </div>
           )}

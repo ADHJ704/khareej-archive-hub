@@ -47,7 +47,8 @@ const Projects = () => {
 
   const { data: projects, isLoading: projectsLoading, error } = useProjects(
     selectedCategories[0],
-    searchQuery
+    searchQuery,
+    departmentFilter
   );
 
   React.useEffect(() => {
@@ -92,6 +93,7 @@ const Projects = () => {
   const clearFilters = () => {
     setSelectedCategories([]);
     setSearchQuery('');
+    setDepartmentFilter('');
     navigate('/projects');
   };
 
@@ -139,11 +141,19 @@ const Projects = () => {
       }
     } catch (error) {
       console.error('Error getting AI suggestion:', error);
-      toast({
-        title: "خطأ",
-        description: error instanceof Error ? error.message : "حدث خطأ أثناء توليد الاقتراح",
-        variant: "destructive"
-      });
+      if (error instanceof Error) {
+        toast({
+          title: "خطأ",
+          description: error.message || "حدث خطأ أثناء توليد الاقتراح",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "خطأ",
+          description: "حدث خطأ غير معروف أثناء توليد الاقتراح",
+          variant: "destructive"
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -218,7 +228,29 @@ const Projects = () => {
                   />
                 </div>
                 
-                {(selectedCategories.length > 0 || searchQuery) && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    التخصص
+                  </h4>
+                  <Select
+                    value={departmentFilter}
+                    onValueChange={(value) => setDepartmentFilter(value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="اختر التخصص" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">الكل</SelectItem>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept} value={dept}>
+                          {dept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {(selectedCategories.length > 0 || searchQuery || departmentFilter) && (
                   <Button 
                     variant="outline" 
                     className="w-full" 
@@ -239,6 +271,11 @@ const Projects = () => {
                       {searchQuery && 
                         <span className="text-gray-600 dark:text-gray-400 mr-2">
                           لنتائج البحث: "{searchQuery}"
+                        </span>
+                      }
+                      {departmentFilter && 
+                        <span className="text-gray-600 dark:text-gray-400 mr-2">
+                          في تخصص: "{departmentFilter}"
                         </span>
                       }
                     </h3>
@@ -280,14 +317,16 @@ const Projects = () => {
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="اختر التخصص" />
               </SelectTrigger>
-              <SelectContent className="max-h-[300px] overflow-y-auto">
-                <SelectGroup>
-                  {departments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
+              <SelectContent className="max-h-[300px]">
+                <ScrollArea className="h-[180px] w-full">
+                  <SelectGroup>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </ScrollArea>
               </SelectContent>
             </Select>
             

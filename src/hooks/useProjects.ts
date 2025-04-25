@@ -5,9 +5,9 @@ import type { Project } from '@/data/projects';
 import { additionalProjects } from '@/data/more-projects';
 import { projects as demoProjects } from '@/data/projects';
 
-export const useProjects = (categoryId?: string, searchQuery?: string) => {
+export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string) => {
   return useQuery({
-    queryKey: ['projects', categoryId, searchQuery],
+    queryKey: ['projects', categoryId, searchQuery, departmentFilter],
     queryFn: async () => {
       try {
         let query = supabase
@@ -20,6 +20,10 @@ export const useProjects = (categoryId?: string, searchQuery?: string) => {
 
         if (searchQuery) {
           query = query.or(`title.ilike.%${searchQuery}%,abstract.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`);
+        }
+        
+        if (departmentFilter) {
+          query = query.eq('department', departmentFilter);
         }
 
         const { data, error } = await query;
@@ -66,6 +70,12 @@ export const useProjects = (categoryId?: string, searchQuery?: string) => {
             );
           }
           
+          if (departmentFilter) {
+            combinedProjects = combinedProjects.filter(
+              project => project.department === departmentFilter
+            );
+          }
+          
           return combinedProjects;
         }
       } catch (error) {
@@ -88,6 +98,12 @@ export const useProjects = (categoryId?: string, searchQuery?: string) => {
               project.abstract.toLowerCase().includes(lowercaseQuery) ||
               project.author.toLowerCase().includes(lowercaseQuery) ||
               project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+          );
+        }
+        
+        if (departmentFilter) {
+          combinedProjects = combinedProjects.filter(
+            project => project.department === departmentFilter
           );
         }
         

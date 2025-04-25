@@ -78,7 +78,7 @@ serve(async (req) => {
         const errorData = await response.json();
         console.error('OpenAI API error:', JSON.stringify(errorData));
         
-        // اضافة المزيد من التفاصيل حول الخطأ
+        // Add more detailed error information
         let errorMessage = 'خطأ في الاتصال بـ OpenAI';
         if (errorData.error?.message) {
           if (errorData.error?.message.includes('API key')) {
@@ -118,8 +118,8 @@ serve(async (req) => {
       try {
         // Initialize Supabase client
         const supabase = createClient(
-          Deno.env.get('SUPABASE_URL')!,
-          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+          Deno.env.get('SUPABASE_URL') || '',
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
         );
   
         // Save the suggestion to the database
