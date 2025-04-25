@@ -1,12 +1,25 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Book, Search, UserCog, GraduationCap } from 'lucide-react';
+import { Book, Search, UserCog, GraduationCap, LogOut } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Header = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "تم تسجيل الخروج",
+      description: "تم تسجيل خروجك بنجاح"
+    });
+    navigate('/');
+  };
 
   return (
     <header className="bg-archive-primary text-white py-4 shadow-md sticky top-0 z-50">
@@ -32,25 +45,36 @@ const Header = () => {
             <Link to="/categories" className="text-white/90 hover:text-white transition">التصنيفات</Link>
           </nav>
           
-          <div className="hidden md:flex items-center gap-2">
+          {user ? (
             <Button 
               variant="outline" 
               className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
-              onClick={() => navigate('/trainee-login')}
+              onClick={handleLogout}
             >
-              <GraduationCap className="h-4 w-4" />
-              تسجيل دخول متدرب
+              <LogOut className="h-4 w-4" />
+              تسجيل الخروج
             </Button>
-            
-            <Button 
-              variant="outline" 
-              className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
-              onClick={() => navigate('/supervisor-login')}
-            >
-              <UserCog className="h-4 w-4" />
-              تسجيل دخول مشرف
-            </Button>
-          </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+                onClick={() => navigate('/trainee-login')}
+              >
+                <GraduationCap className="h-4 w-4" />
+                تسجيل دخول متدرب
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+                onClick={() => navigate('/supervisor-login')}
+              >
+                <UserCog className="h-4 w-4" />
+                تسجيل دخول مشرف
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>
