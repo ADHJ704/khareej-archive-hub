@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bot } from 'lucide-react';
@@ -13,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { categories } from '@/data/categories';
 import { useProjects } from '@/hooks/useProjects';
@@ -28,6 +28,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 const Projects = () => {
   const location = useLocation();
@@ -40,6 +42,7 @@ const Projects = () => {
   const [suggestedProject, setSuggestedProject] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestionError, setSuggestionError] = useState<string | null>(null);
 
   const { data: projects, isLoading: projectsLoading, error } = useProjects(
     selectedCategories[0],
@@ -92,6 +95,8 @@ const Projects = () => {
   };
 
   const handleAISuggestion = async () => {
+    setSuggestionError(null);
+    
     if (!departmentFilter) {
       toast({
         title: "اختر التخصص",
@@ -110,7 +115,17 @@ const Projects = () => {
         })
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        setSuggestionError("خطأ في الاتصال بالخدمة. يرجى المحاولة لاحقًا.");
+        throw error;
+      }
+
+      if (data?.error) {
+        console.error('API returned error:', data.error);
+        setSuggestionError(data.error);
+        throw new Error(data.error);
+      }
 
       if (data?.suggestion) {
         setSuggestedProject(data.suggestion);
@@ -118,8 +133,6 @@ const Projects = () => {
           title: "اقتراح مشروع",
           description: "تم توليد اقتراح مشروع بنجاح",
         });
-      } else if (data?.error) {
-        throw new Error(data.error);
       } else {
         throw new Error("لم يتم استلام اقتراح من الخدمة");
       }
@@ -135,7 +148,6 @@ const Projects = () => {
     }
   };
 
-  // Get all unique departments from categories
   const departments = [
     "علوم الحاسب",
     "نظم المعلومات",
@@ -151,6 +163,14 @@ const Projects = () => {
     "إنترنت الأشياء",
     "إدارة تقنية"
   ];
+
+  const closeDialog = () => {
+    setShowSuggestionDialog(false);
+    setSuggestionError(null);
+    setSuggestedProject('');
+    setSuggestionMessage('');
+    setDepartmentFilter('');
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -234,7 +254,7 @@ const Projects = () => {
         </div>
       </main>
       
-      <Dialog open={showSuggestionDialog} onOpenChange={setShowSuggestionDialog}>
+      <Dialog open={showSuggestionDialog} onOpenChange={closeDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>اقتراح مشروع تخرج</DialogTitle>
@@ -244,6 +264,14 @@ const Projects = () => {
           </DialogHeader>
           
           <div className="space-y-4">
+            {suggestionError && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>خطأ</AlertTitle>
+                <AlertDescription>{suggestionError}</AlertDescription>
+              </Alert>
+            )}
+            
             <Select
               value={departmentFilter}
               onValueChange={(value) => setDepartmentFilter(value)}
@@ -251,16 +279,16 @@ const Projects = () => {
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="اختر التخصص" />
               </SelectTrigger>
-              <SelectContent>
-                <ScrollArea className="h-60">
-                  <SelectGroup>
+              <SelectContent className="max-h-[300px]">
+                <SelectGroup>
+                  <ScrollArea className="h-[200px] w-full">
                     {departments.map((dept) => (
                       <SelectItem key={dept} value={dept}>
                         {dept}
                       </SelectItem>
                     ))}
-                  </SelectGroup>
-                </ScrollArea>
+                  </ScrollArea>
+                </SelectGroup>
               </SelectContent>
             </Select>
             
@@ -286,6 +314,15 @@ const Projects = () => {
               </div>
             )}
           </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline"
+              onClick={closeDialog}
+            >
+              إغلاق
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
       
