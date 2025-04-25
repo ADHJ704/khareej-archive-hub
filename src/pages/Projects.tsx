@@ -30,6 +30,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Loader2 } from "lucide-react";
+import { useRepeatedActionConfirmation } from '@/lib/repeated-action-helper';
 
 const Projects = () => {
   const location = useLocation();
@@ -43,6 +44,7 @@ const Projects = () => {
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [suggestionError, setSuggestionError] = useState<string | null>(null);
+  const { needsConfirmation, trackAction, resetAction } = useRepeatedActionConfirmation(2);
 
   const { data: projects, isLoading: projectsLoading, error } = useProjects(
     selectedCategories[0],
@@ -97,6 +99,10 @@ const Projects = () => {
   };
 
   const handleAISuggestion = async () => {
+    if (!trackAction()) {
+      return;
+    }
+
     setSuggestionError(null);
     
     if (!departmentFilter) {
@@ -367,6 +373,25 @@ const Projects = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      {needsConfirmation && (
+        <AlertDialog open={true} onOpenChange={resetAction}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
+              <AlertDialogDescription>
+                لقد حاولت توليد اقتراح مشروع مرتين متتاليتين. هل تريد المتابعة؟
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>إلغاء</AlertDialogCancel>
+              <AlertDialogAction onClick={handleAISuggestion}>
+                نعم، المتابعة
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
       
       <footer className="bg-archive-dark text-white py-6">
         <div className="container-custom text-center">
