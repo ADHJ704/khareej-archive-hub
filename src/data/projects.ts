@@ -1,4 +1,3 @@
-
 export interface Project {
   id: string;
   title: string;
@@ -149,7 +148,11 @@ export const projects: Project[] = [
   }
 ];
 
-export const additionalProjects: Project[] = [];  // This will be populated from the category-specific files
+// Import additionalProjects from the projects directory
+import { additionalProjects } from './projects/index';
+
+// Make it available for export 
+export { additionalProjects };
 
 export const getProjectsByCategory = (categoryId: string) => {
   return projects.filter(project => project.categoryId === categoryId);

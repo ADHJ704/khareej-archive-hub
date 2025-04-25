@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Project } from '@/data/projects';
-import { additionalProjects } from '@/data/more-projects';
+import { additionalProjects } from '@/data/projects/index'; // Import directly from the source
 import { projects as demoProjects } from '@/data/projects';
 
 export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string) => {
