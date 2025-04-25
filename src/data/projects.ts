@@ -1,3 +1,4 @@
+
 export interface Project {
   id: string;
   title: string;
@@ -147,6 +148,8 @@ export const projects: Project[] = [
     categoryId: 'networking_tech'
   }
 ];
+
+export const additionalProjects: Project[] = [];  // This will be populated from the category-specific files
 
 export const getProjectsByCategory = (categoryId: string) => {
   return projects.filter(project => project.categoryId === categoryId);
