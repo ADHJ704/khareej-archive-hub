@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { categories } from '@/data/categories';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Folder } from 'lucide-react';
 
 const Categories = () => {
   const navigate = useNavigate();
