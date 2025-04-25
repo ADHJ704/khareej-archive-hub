@@ -76,6 +76,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             );
           }
           
+          console.log('Search results:', searchQuery, combinedProjects.length);
           return combinedProjects;
         }
       } catch (error) {
@@ -99,6 +100,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
               project.author.toLowerCase().includes(lowercaseQuery) ||
               project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
           );
+          console.log('Error search results:', searchQuery, combinedProjects.length);
         }
         
         if (departmentFilter) {

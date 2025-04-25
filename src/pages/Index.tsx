@@ -13,7 +13,9 @@ const Index = () => {
   const navigate = useNavigate();
 
   const handleSearch = (query: string) => {
-    navigate(`/projects?search=${encodeURIComponent(query)}`);
+    if (query && query.trim()) {
+      navigate(`/projects?search=${encodeURIComponent(query.trim())}`);
+    }
   };
 
   // Get the most recent projects

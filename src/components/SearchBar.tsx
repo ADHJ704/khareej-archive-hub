@@ -15,8 +15,12 @@ const SearchBar = ({ onSearch, className = '' }: SearchBarProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      onSearch(query);
+      onSearch(query.trim());
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
   };
 
   return (
@@ -25,9 +29,10 @@ const SearchBar = ({ onSearch, className = '' }: SearchBarProps) => {
         <Input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleInputChange}
           placeholder="ابحث عن مشاريع التخرج..."
           className="rounded-l-none pr-4"
+          aria-label="البحث"
         />
         <Button 
           type="submit" 
