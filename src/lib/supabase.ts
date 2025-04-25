@@ -1,19 +1,18 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Default values for development (these should be replaced with your actual values)
+const DEFAULT_SUPABASE_URL = 'https://your-supabase-project-id.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'your-supabase-anon-key';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables. Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.');
-}
+// Try to get from environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(
-  supabaseUrl || '',
-  supabaseAnonKey || ''
-);
+// Create Supabase client
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// مساعد للتحقق من وجود مستخدم مسجل
+// Helper for checking if a user is logged in
 export const getCurrentUser = async () => {
   const { data, error } = await supabase.auth.getSession();
   
@@ -24,7 +23,7 @@ export const getCurrentUser = async () => {
   return data.session.user;
 };
 
-// مساعد للتحقق من دور المستخدم
+// Helper for checking user role
 export const getUserRole = async (userId: string) => {
   const { data, error } = await supabase
     .from('profiles')
