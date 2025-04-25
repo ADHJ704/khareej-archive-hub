@@ -14,5 +14,16 @@ export const webProjects: Project[] = [
     supervisor: 'د. سارة المطيري',
     categoryId: 'web'
   },
-  // ... Add other Web Development projects
+  {
+    id: '48',
+    title: 'نظام إدارة المحتوى للمؤسسات التعليمية',
+    author: 'عبدالرحمن محمد الدوسري',
+    department: 'تطوير الويب',
+    year: '2023',
+    abstract: 'تطوير نظام متكامل لإدارة المحتوى التعليمي',
+    description: 'طور الطالب نظاماً شاملاً لإدارة المحتوى التعليمي يدعم مختلف أنواع الوسائط والتفاعل.',
+    tags: ['إدارة محتوى', 'تعليم', 'ويب'],
+    supervisor: 'د. فيصل العنزي',
+    categoryId: 'web'
+  }
 ];

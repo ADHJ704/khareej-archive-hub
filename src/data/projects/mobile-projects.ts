@@ -14,5 +14,16 @@ export const mobileProjects: Project[] = [
     supervisor: 'د. عبدالله العمري',
     categoryId: 'mobile'
   },
-  // ... Add other Mobile Development projects
+  {
+    id: '50',
+    title: 'تطبيق لتتبع الوجبات والتغذية',
+    author: 'لمى سعد القحطاني',
+    department: 'تطبيقات الجوال',
+    year: '2023',
+    abstract: 'تطوير تطبيق لتتبع الوجبات اليومية والتغذية الصحية',
+    description: 'طورت الطالبة تطبيقاً يساعد المستخدمين على تتبع وجباتهم وتحليل قيمتها الغذائية.',
+    tags: ['تغذية', 'صحة', 'تطبيقات جوال'],
+    supervisor: 'د. ريم الشهري',
+    categoryId: 'mobile'
+  }
 ];
