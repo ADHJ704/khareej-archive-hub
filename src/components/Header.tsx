@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Book, LogIn, Search } from 'lucide-react';
+import { Book, LogIn, Search, UserCog, GraduationCap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -30,13 +30,23 @@ const Header = () => {
             <Link to="/categories" className="text-white/90 hover:text-white transition">التصنيفات</Link>
           </nav>
           
-          <Button 
-            variant="outline" 
-            className="hidden md:flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
-          >
-            <LogIn className="h-4 w-4" />
-            تسجيل الدخول
-          </Button>
+          <div className="hidden md:flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+            >
+              <GraduationCap className="h-4 w-4" />
+              تسجيل دخول متدرب
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+            >
+              <UserCog className="h-4 w-4" />
+              تسجيل دخول مشرف
+            </Button>
+          </div>
         </div>
       </div>
     </header>
