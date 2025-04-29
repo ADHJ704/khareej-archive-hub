@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Tool } from 'lucide-react';
 import { useProjects } from '@/hooks/useProjects';
 import { Button } from '@/components/ui/button';
 import { Separator } from "@/components/ui/separator";
@@ -139,11 +139,17 @@ const ProjectFullDetail = () => {
               
               <div>
                 <h3 className="text-xl font-semibold mb-3">الأدوات المستخدمة</h3>
-                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
-                  {project.tags.map((tag, index) => (
-                    <li key={index}>{tag}</li>
-                  ))}
-                </ul>
+                {project.tags && project.tags.length > 0 ? (
+                  <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+                    {project.tags.map((tool, index) => (
+                      <li key={index}>{tool}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400 italic">
+                    لم يتم تحديد الأدوات المستخدمة في هذا المشروع
+                  </p>
+                )}
               </div>
               
               <div>
