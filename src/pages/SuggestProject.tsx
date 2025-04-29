@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
-import { RequireAuth } from '@/components/RequireAuth';
+import RequireAuth from '@/components/RequireAuth';
 import { categories } from '@/data/categories';
 
 // Define form validation schema
@@ -77,8 +77,8 @@ const SuggestProject = () => {
         description: "سيتم مراجعة اقتراحك في أقرب وقت ممكن",
       });
 
-      // Navigate back to dashboard
-      navigate('/trainee-dashboard');
+      // Navigate back to homepage
+      navigate('/');
     } catch (error) {
       console.error('Error submitting suggestion:', error);
       toast({
@@ -101,10 +101,10 @@ const SuggestProject = () => {
             <Button
               variant="outline"
               className="mb-6"
-              onClick={() => navigate('/trainee-dashboard')}
+              onClick={() => navigate('/')}
             >
               <ArrowLeft className="ml-2 h-4 w-4" />
-              العودة للوحة التحكم
+              العودة للصفحة الرئيسية
             </Button>
 
             <Card className="border-archive-primary/20">
