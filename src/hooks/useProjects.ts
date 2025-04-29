@@ -37,7 +37,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         if (data && data.length > 0) {
           console.log('Data from Supabase:', data);
           
-          // تحديث تعيين الروابط لضمان أن كل المشاريع تحتوي على روابط حقيقية تعمل
+          // تعيين روابط مختلفة وفعّالة للمشاريع من Supabase
           const mappedData = data.map(item => ({
             id: item.id,
             title: item.title,
@@ -49,11 +49,11 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             tags: item.tags || [],
             supervisor: item.supervisor,
             categoryId: item.category_id,
-            downloadUrl: item.download_url || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
-            pdfUrl: item.pdf_url || 'https://www.africau.edu/images/default/sample.pdf'
+            downloadUrl: item.download_url || getRandomDownloadUrl(),
+            pdfUrl: item.pdf_url || getRandomPdfUrl()
           })) as Project[];
           
-          // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
+          // فلترة المشاريع التي تحتوي على روابط فقط إذا كان الخيار مفعل
           const filteredProjects = showOnlyWithLinks 
             ? mappedData.filter(project => !!project.pdfUrl && !!project.downloadUrl)
             : mappedData;
@@ -61,17 +61,32 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           console.log('Mapped data:', filteredProjects);
           return filteredProjects;
         } else {
-          // إذا لم يتم العثور على بيانات، استخدم البيانات الافتراضية المحلية
+          // استخدام البيانات المحلية مع روابط موثوقة
           let combinedProjects = [...demoProjects, ...additionalProjects];
           
-          // أضف مشروع الاختبار دائمًا
-          combinedProjects = [testProject, ...combinedProjects];
+          // إضافة مشروع اختبار جديد مختلف
+          const newTestProject: Project = {
+            id: 'new-test-project-' + Date.now(),
+            title: 'مشروع نموذجي جديد مع روابط فعّالة',
+            author: 'فريق التطوير',
+            department: 'قسم ضمان الجودة',
+            year: '2025',
+            abstract: 'هذا مشروع نموذجي جديد للاختبار، يحتوي على روابط PDF وتحميل فعالة ومختلفة.',
+            description: 'مشروع نموذجي جديد لاختبار الروابط وتأكيد فعاليتها بشكل كامل.',
+            tags: ['اختبار', 'تجربة', 'روابط فعالة', 'ملفات'],
+            supervisor: 'د. مشرف الجودة',
+            categoryId: 'tech_support',
+            pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+            downloadUrl: 'https://filesamples.com/samples/archive/zip/sample1.zip'
+          };
           
-          // تأكد من أن كل المشاريع تحتوي على روابط حقيقية وفعالة
+          combinedProjects = [testProject, newTestProject, ...combinedProjects];
+          
+          // تعيين روابط فعّالة ومختلفة للمشاريع المحلية
           combinedProjects = combinedProjects.map(project => ({
             ...project,
-            downloadUrl: project.downloadUrl || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
-            pdfUrl: project.pdfUrl || 'https://www.africau.edu/images/default/sample.pdf'
+            downloadUrl: project.downloadUrl || getRandomDownloadUrl(),
+            pdfUrl: project.pdfUrl || getRandomPdfUrl()
           }));
           
           if (categoryId) {
@@ -97,7 +112,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             );
           }
           
-          // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
+          // تصفية المشاريع التي تحتوي على روابط فقط إذا كان مطلوبًا
           const filteredProjects = showOnlyWithLinks
             ? combinedProjects.filter(project => !!project.pdfUrl && !!project.downloadUrl)
             : combinedProjects;
@@ -108,17 +123,17 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
       } catch (error) {
         console.error("Error fetching projects:", error);
         
-        // في حالة الخطأ، استخدم البيانات المحلية
+        // في حالة الخطأ، استخدم البيانات المحلية مع روابط فعّالة
         let combinedProjects = [...demoProjects, ...additionalProjects];
         
         // أضف مشروع الاختبار دائمًا في حالة الخطأ أيضًا
         combinedProjects = [testProject, ...combinedProjects];
         
-        // تأكد من أن كل المشاريع تحتوي على روابط حقيقية وفعالة
+        // تأكد من تعيين روابط فعّالة لجميع المشاريع
         combinedProjects = combinedProjects.map(project => ({
           ...project,
-          downloadUrl: project.downloadUrl || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
-          pdfUrl: project.pdfUrl || 'https://www.africau.edu/images/default/sample.pdf'
+          downloadUrl: project.downloadUrl || getRandomDownloadUrl(),
+          pdfUrl: project.pdfUrl || getRandomPdfUrl()
         }));
         
         if (categoryId) {
@@ -144,7 +159,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           );
         }
         
-        // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
+        // تصفية المشاريع التي تحتوي على روابط فقط إذا كان مطلوبًا
         const filteredProjects = showOnlyWithLinks
           ? combinedProjects.filter(project => !!project.pdfUrl && !!project.downloadUrl)
           : combinedProjects;
@@ -155,3 +170,26 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
     }
   });
 };
+
+// دوال مساعدة لإنشاء روابط عشوائية فعّالة
+function getRandomPdfUrl(): string {
+  const pdfUrls = [
+    'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    'https://africau.edu/images/default/sample.pdf',
+    'https://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf',
+    'https://www.orimi.com/pdf-test.pdf',
+    'https://www.clickdimensions.com/links/TestPDFfile.pdf'
+  ];
+  return pdfUrls[Math.floor(Math.random() * pdfUrls.length)];
+}
+
+function getRandomDownloadUrl(): string {
+  const downloadUrls = [
+    'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip',
+    'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
+    'https://filesamples.com/samples/archive/zip/sample1.zip',
+    'https://filesamples.com/samples/document/zip/sample2.zip',
+    'https://filesamples.com/samples/document/zip/sample3.zip'
+  ];
+  return downloadUrls[Math.floor(Math.random() * downloadUrls.length)];
+}

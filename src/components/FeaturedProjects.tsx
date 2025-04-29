@@ -11,12 +11,13 @@ interface FeaturedProjectsProps {
 }
 
 const FeaturedProjects = ({ projects }: FeaturedProjectsProps) => {
-  // فلترة المشاريع للتأكد من أنها تحتوي على روابط PDF وتحميل
+  // تأكد من أن المشاريع تحتوي على روابط PDF وتحميل فعّالة
   const filteredProjects = projects.filter(project => 
-    !!project.pdfUrl && !!project.downloadUrl
+    !!project.pdfUrl && !!project.downloadUrl &&
+    validateUrl(project.pdfUrl) && validateUrl(project.downloadUrl)
   );
   
-  // Take only up to 3 projects for the featured section
+  // أخذ أحدث 3 مشاريع فقط للعرض المميز
   const featuredProjects = filteredProjects.slice(0, 3);
 
   return (
@@ -34,14 +35,30 @@ const FeaturedProjects = ({ projects }: FeaturedProjectsProps) => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} featured />
-          ))}
-        </div>
+        {featuredProjects.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} featured />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 bg-white rounded-lg shadow-sm">
+            <p className="text-gray-500">لا توجد مشاريع كاملة متاحة حالياً</p>
+          </div>
+        )}
       </div>
     </section>
   );
 };
+
+// دالة للتحقق من صحة الروابط
+function validateUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 export default FeaturedProjects;
