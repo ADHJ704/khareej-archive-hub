@@ -8,40 +8,22 @@ import { projects as demoProjects } from '@/data/projects';
 // Function to validate a URL actually exists and is reachable
 function isValidUrl(url: string): boolean {
   try {
+    if (!url) return false;
+    
     new URL(url);
     // Make sure we're only using URLs from our verified lists
-    const reliablePdfUrls = [
-      'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      'https://africau.edu/images/default/sample.pdf',
-      'https://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf',
-      'https://www.orimi.com/pdf-test.pdf',
-      'https://www.clickdimensions.com/links/TestPDFfile.pdf'
-    ];
-    
     const reliableDownloadUrls = [
       'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip',
       'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
       'https://filesamples.com/samples/archive/zip/sample1.zip',
       'https://filesamples.com/samples/document/zip/sample2.zip',
-      'https://filesamples.com/samples/document/zip/sample3.zip'
+      'https://filesamples.com/samples/archive/zip/sample3.zip'
     ];
     
-    return reliablePdfUrls.includes(url) || reliableDownloadUrls.includes(url);
+    return reliableDownloadUrls.includes(url);
   } catch (e) {
     return false;
   }
-}
-
-// Function to get a verified working PDF URL
-function getVerifiedPdfUrl(): string {
-  const reliablePdfUrls = [
-    'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    'https://africau.edu/images/default/sample.pdf',
-    'https://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf',
-    'https://www.orimi.com/pdf-test.pdf',
-    'https://www.clickdimensions.com/links/TestPDFfile.pdf'
-  ];
-  return reliablePdfUrls[Math.floor(Math.random() * reliablePdfUrls.length)];
 }
 
 // Function to get a verified working download URL
@@ -51,14 +33,27 @@ function getVerifiedDownloadUrl(): string {
     'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
     'https://filesamples.com/samples/archive/zip/sample1.zip',
     'https://filesamples.com/samples/document/zip/sample2.zip',
-    'https://filesamples.com/samples/document/zip/sample3.zip'
+    'https://filesamples.com/samples/archive/zip/sample3.zip'
   ];
   return reliableDownloadUrls[Math.floor(Math.random() * reliableDownloadUrls.length)];
 }
 
-export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string, showOnlyWithLinks: boolean = true) => {
+// Function to generate sample project content
+function generateProjectContent(project: Project): string {
+  return `هذا محتوى تفصيلي لمشروع "${project.title}" الذي قام به الباحث ${project.author} تحت إشراف ${project.supervisor}. 
+  
+يتناول المشروع ${project.abstract}
+
+${project.description}
+
+تم إجراء هذا المشروع في عام ${project.year} في قسم ${project.department}، ويتميز بتركيزه على مجالات ${project.tags.join('، ')}.
+
+يتضمن هذا المشروع عدة فصول تشرح بالتفصيل منهجية البحث، والنتائج التي تم التوصل إليها، والتوصيات المستقبلية للباحثين في هذا المجال.`;
+}
+
+export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string, showOnlyWithContent: boolean = true) => {
   return useQuery({
-    queryKey: ['projects', categoryId, searchQuery, departmentFilter, showOnlyWithLinks],
+    queryKey: ['projects', categoryId, searchQuery, departmentFilter, showOnlyWithContent],
     queryFn: async () => {
       try {
         let query = supabase
@@ -88,7 +83,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         if (data && data.length > 0) {
           console.log('Data from Supabase:', data);
           
-          // Ensure all projects have valid links
+          // Map database field names to our model field names and add content
           const mappedData = data.map(item => ({
             id: item.id,
             title: item.title,
@@ -97,59 +92,85 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             year: item.year,
             abstract: item.abstract || '',
             description: item.description || '',
+            project_content: item.project_content || generateProjectContent({
+              id: item.id,
+              title: item.title,
+              author: item.author,
+              department: item.department,
+              year: item.year,
+              abstract: item.abstract || '',
+              description: item.description || '',
+              tags: item.tags || [],
+              supervisor: item.supervisor,
+              categoryId: item.category_id
+            }),
             tags: item.tags || [],
             supervisor: item.supervisor,
             categoryId: item.category_id,
-            downloadUrl: isValidUrl(item.download_url) ? item.download_url : getVerifiedDownloadUrl(),
-            pdfUrl: isValidUrl(item.pdf_url) ? item.pdf_url : getVerifiedPdfUrl()
+            downloadUrl: isValidUrl(item.download_url) ? item.download_url : getVerifiedDownloadUrl()
           })) as Project[];
           
-          // Filter projects that have both PDF and download links if required
-          const filteredProjects = showOnlyWithLinks 
-            ? mappedData.filter(project => !!project.pdfUrl && !!project.downloadUrl && 
-                isValidUrl(project.pdfUrl) && isValidUrl(project.downloadUrl))
+          // Filter projects that have content or download links if required
+          const filteredProjects = showOnlyWithContent 
+            ? mappedData.filter(project => !!project.project_content || (!!project.downloadUrl && isValidUrl(project.downloadUrl)))
             : mappedData;
           
-          console.log('Mapped data with verified links:', filteredProjects);
+          console.log('Mapped data with project content:', filteredProjects);
           return filteredProjects;
         } else {
-          // Use local data with verified working links
-          let verifiedProjects = [...demoProjects, ...additionalProjects];
+          // Use local data with project content
+          let localProjects = [...demoProjects, ...additionalProjects];
           
-          // Ensure all projects have working PDF and download links
-          verifiedProjects = verifiedProjects.map(project => ({
+          // Ensure all projects have project content and download links
+          localProjects = localProjects.map(project => ({
             ...project,
             downloadUrl: isValidUrl(project.downloadUrl) ? project.downloadUrl : getVerifiedDownloadUrl(),
-            pdfUrl: isValidUrl(project.pdfUrl) ? project.pdfUrl : getVerifiedPdfUrl()
+            project_content: project.project_content || generateProjectContent(project)
           }));
           
           // Add a verified test project
           const verifiedTestProject: Project = {
             id: 'verified-test-project-' + Date.now(),
-            title: 'مشروع نموذجي موثق مع روابط فعّالة',
+            title: 'مشروع نموذجي مع محتوى كامل',
             author: 'فريق ضمان الجودة',
             department: 'قسم المشاريع النموذجية',
             year: '2025',
-            abstract: 'هذا مشروع نموذجي للتحقق من عمل الروابط، يحتوي على ملف PDF وملف للتحميل فعّالين بالكامل.',
-            description: 'تم إنشاء هذا المشروع خصيصاً للتأكد من عمل الروابط بشكل صحيح وتقديم تجربة مستخدم أفضل. يتضمن ملفات حقيقية قابلة للتنزيل والعرض.',
-            tags: ['اختبار موثق', 'روابط فعّالة', 'ملفات حقيقية', 'نموذج'],
+            abstract: 'هذا مشروع نموذجي يحتوي على محتوى مشروع كامل ومفصل بدون الحاجة لروابط خارجية.',
+            description: 'تم إنشاء هذا المشروع خصيصاً لتوضيح آلية عرض محتوى المشروع الكامل مباشرة في الصفحة.',
+            project_content: `هذا المحتوى الكامل للمشروع النموذجي الذي يعرض بتفصيل منهجية البحث والنتائج والتوصيات.
+
+الفصل الأول: مقدمة ومنهجية البحث
+تتناول هذه الدراسة تطوير نظام متكامل لعرض المشاريع الأكاديمية بطريقة مباشرة وسهلة الاستخدام. تم استخدام منهجية البحث التطبيقي مع التركيز على تجربة المستخدم وسهولة الوصول للمعلومات.
+
+الفصل الثاني: الإطار النظري والدراسات السابقة
+استعرضت الدراسة العديد من الأنظمة المشابهة واستخلصت أفضل الممارسات في عرض المحتوى الأكاديمي الرقمي. كما تم تحليل احتياجات المستخدمين من خلال استبيانات موجهة لأكثر من 200 باحث وطالب.
+
+الفصل الثالث: تصميم وتنفيذ النظام
+تم تطوير النظام باستخدام تقنيات الويب الحديثة مع التركيز على سرعة التحميل وتجربة المستخدم. تضمن النظام واجهة عربية سلسة ونظام بحث متقدم يتيح الوصول للمحتوى بسهولة.
+
+الفصل الرابع: نتائج التطبيق والتقييم
+أظهرت نتائج تقييم النظام بعد تطبيقه تحسناً كبيراً في سرعة وسهولة الوصول للمحتوى الأكاديمي مقارنة بالأنظمة التقليدية التي تعتمد على روابط خارجية. كما أشارت نتائج استبيانات رضا المستخدمين إلى تفضيل واضح لعرض المحتوى مباشرة داخل النظام.
+
+الفصل الخامس: الخلاصة والتوصيات
+أوصت الدراسة بتوسيع نطاق النظام ليشمل آليات تفاعلية إضافية مثل التعليقات والمناقشات حول المشاريع. كما اقترحت الدراسة تطوير نظام ذكاء اصطناعي للتوصية بمشاريع مشابهة بناءً على اهتمامات المستخدم.
+`,
+            tags: ['نظام عرض', 'محتوى مدمج', 'تجربة مستخدم', 'مشروع نموذجي'],
             supervisor: 'د. مشرف ضمان الجودة',
             categoryId: categoryId || 'tech_support',
-            pdfUrl: getVerifiedPdfUrl(),
             downloadUrl: getVerifiedDownloadUrl()
           };
           
-          verifiedProjects.unshift(verifiedTestProject);
+          localProjects.unshift(verifiedTestProject);
           
           if (categoryId) {
-            verifiedProjects = verifiedProjects.filter(
+            localProjects = localProjects.filter(
               project => project.categoryId === categoryId
             );
           }
           
           if (searchQuery) {
             const lowercaseQuery = searchQuery.toLowerCase();
-            verifiedProjects = verifiedProjects.filter(
+            localProjects = localProjects.filter(
               project => 
                 project.title.toLowerCase().includes(lowercaseQuery) ||
                 project.abstract.toLowerCase().includes(lowercaseQuery) ||
@@ -159,43 +180,42 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           }
           
           if (departmentFilter) {
-            verifiedProjects = verifiedProjects.filter(
+            localProjects = localProjects.filter(
               project => project.department === departmentFilter
             );
           }
           
-          // Filter projects with working links if required
-          const filteredProjects = showOnlyWithLinks
-            ? verifiedProjects.filter(project => 
-                !!project.pdfUrl && !!project.downloadUrl && 
-                isValidUrl(project.pdfUrl) && isValidUrl(project.downloadUrl))
-            : verifiedProjects;
+          // Filter projects with content or download links if required
+          const filteredProjects = showOnlyWithContent
+            ? localProjects.filter(project => 
+                !!project.project_content || (!!project.downloadUrl && isValidUrl(project.downloadUrl)))
+            : localProjects;
           
-          console.log('Using local data with verified links. Total projects:', filteredProjects.length);
+          console.log('Using local data with project content. Total projects:', filteredProjects.length);
           return filteredProjects;
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
         
-        // In case of error, use local data with verified links
-        let verifiedProjects = [...demoProjects, ...additionalProjects];
+        // In case of error, use local data with project content
+        let localProjects = [...demoProjects, ...additionalProjects];
         
-        // Ensure all projects have working links
-        verifiedProjects = verifiedProjects.map(project => ({
+        // Ensure all projects have project content and download links
+        localProjects = localProjects.map(project => ({
           ...project,
           downloadUrl: isValidUrl(project.downloadUrl) ? project.downloadUrl : getVerifiedDownloadUrl(),
-          pdfUrl: isValidUrl(project.pdfUrl) ? project.pdfUrl : getVerifiedPdfUrl()
+          project_content: project.project_content || generateProjectContent(project)
         }));
         
         if (categoryId) {
-          verifiedProjects = verifiedProjects.filter(
+          localProjects = localProjects.filter(
             project => project.categoryId === categoryId
           );
         }
         
         if (searchQuery) {
           const lowercaseQuery = searchQuery.toLowerCase();
-          verifiedProjects = verifiedProjects.filter(
+          localProjects = localProjects.filter(
             project => 
               project.title.toLowerCase().includes(lowercaseQuery) ||
               project.abstract.toLowerCase().includes(lowercaseQuery) ||
@@ -205,19 +225,18 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         }
         
         if (departmentFilter) {
-          verifiedProjects = verifiedProjects.filter(
+          localProjects = localProjects.filter(
             project => project.department === departmentFilter
           );
         }
         
-        // Filter projects with working links if required
-        const filteredProjects = showOnlyWithLinks
-          ? verifiedProjects.filter(project => 
-              !!project.pdfUrl && !!project.downloadUrl &&
-              isValidUrl(project.pdfUrl) && isValidUrl(project.downloadUrl))
-          : verifiedProjects;
+        // Filter projects with content or download links if required
+        const filteredProjects = showOnlyWithContent
+          ? localProjects.filter(project => 
+              !!project.project_content || (!!project.downloadUrl && isValidUrl(project.downloadUrl)))
+          : localProjects;
         
-        console.log('Error occurred, using local data with verified links. Total projects:', filteredProjects.length);
+        console.log('Error occurred, using local data with project content. Total projects:', filteredProjects.length);
         return filteredProjects;
       }
     }

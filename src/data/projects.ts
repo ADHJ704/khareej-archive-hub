@@ -1,3 +1,4 @@
+
 export interface Project {
   id: string;
   title: string;
@@ -6,6 +7,7 @@ export interface Project {
   year: string;
   abstract: string;
   description: string;
+  project_content?: string;
   tags: string[];
   supervisor: string;
   categoryId: string;
@@ -245,16 +247,16 @@ export { additionalProjects };
 // إضافة مشروع جديد للاختبار بروابط فعّالة
 export const testProject: Project = {
   id: 'test-project-with-links',
-  title: 'مشروع نموذجي للاختبار مع روابط PDF وتحميل فعالة',
+  title: 'مشروع نموذجي للاختبار مع محتوى كامل',
   author: 'فريق الاختبار',
   department: 'قسم ضمان الجودة',
   year: '2025',
-  abstract: 'هذا مشروع مخصص للاختبار، يحتوي على روابط PDF وتحميل فعالة للتأكد من أن الأزرار تعمل بشكل صحيح.',
-  description: 'مشروع نموذجي لاختبار وظائف الروابط في النظام. يتضمن روابط PDF وتحميل فعالة للتحقق من صحة عمل الأزرار في واجهة المستخدم.',
-  tags: ['اختبار', 'تجربة', 'روابط', 'ملفات'],
+  abstract: 'هذا مشروع مخصص للاختبار، يحتوي على محتوى كامل للمشروع بدلاً من روابط PDF خارجية.',
+  description: 'مشروع نموذجي لاختبار العرض المباشر لمحتوى المشروع في النظام بدون الاعتماد على روابط خارجية.',
+  project_content: 'هذا المحتوى التفصيلي للمشروع النموذجي الذي يتضمن كافة المعلومات والتفاصيل التي كانت موجودة سابقًا في ملف PDF. يتضمن المحتوى شرحًا مفصلاً لأهداف المشروع ومنهجيته ونتائجه والتوصيات المقترحة. تم تصميم هذا المشروع كنموذج لاختبار آلية العرض المباشر للمحتوى بدلاً من الاعتماد على روابط خارجية لملفات PDF.\n\nيشمل المشروع عدة أقسام تفصيلية تتناول الخلفية النظرية والدراسات السابقة وتفاصيل التنفيذ والنتائج والمناقشة. تم إعداد هذا المحتوى ليكون نموذجًا يحاكي محتوى المشاريع الأكاديمية الحقيقية من حيث الشكل والمضمون.',
+  tags: ['اختبار', 'تجربة', 'عرض مباشر', 'بدون PDF'],
   supervisor: 'د. مشرف الاختبار',
   categoryId: 'tech_support',
-  pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
   downloadUrl: 'https://filesamples.com/samples/archive/zip/sample1.zip'
 };
 

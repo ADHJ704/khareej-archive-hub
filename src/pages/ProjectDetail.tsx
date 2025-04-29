@@ -27,8 +27,8 @@ const ProjectDetail = () => {
     if (project) {
       console.log('Project details:', {
         title: project.title,
-        pdfUrl: project.pdfUrl,
-        downloadUrl: project.downloadUrl
+        downloadUrl: project.downloadUrl,
+        project_content: project.project_content ? project.project_content.substring(0, 50) + '...' : 'Not available'
       });
     }
   }, [project]);
@@ -92,12 +92,12 @@ const ProjectDetail = () => {
   
   const category = categories.find(c => c.id === project.categoryId);
   
-  // Get related projects from the same category (that have PDF or download links)
+  // Get related projects from the same category (that have project content or download links)
   const relatedProjects = projects
-    .filter(p => p.categoryId === project.categoryId && p.id !== project.id && (!!p.pdfUrl || !!p.downloadUrl))
+    .filter(p => p.categoryId === project.categoryId && p.id !== project.id && (!!p.project_content || !!p.downloadUrl))
     .slice(0, 3);
 
-  // معالجي الأحداث للأزرار
+  // معالج الأحداث لزر التحميل
   const handleDownloadClick = () => {
     if (!project.downloadUrl) {
       toast({
@@ -118,29 +118,9 @@ const ProjectDetail = () => {
     });
   };
 
-  const handleViewPdfClick = () => {
-    if (!project.pdfUrl) {
-      toast({
-        title: "ملف PDF غير متوفر",
-        description: "عذراً، ملف PDF للمشروع غير متوفر حالياً",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // فتح ملف PDF في نافذة جديدة
-    window.open(project.pdfUrl, '_blank');
-    
-    // إضافة رسالة تأكيد فتح الملف
-    toast({
-      title: "فتح ملف PDF",
-      description: "تم فتح ملف PDF في نافذة جديدة",
-    });
-  };
-
   // تنسيق خاص للأزرار لتوضيح حالة الروابط المتوفرة وغير المتوفرة
   const isDownloadAvailable = !!project.downloadUrl;
-  const isPdfAvailable = !!project.pdfUrl;
+  const hasProjectContent = !!project.project_content;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -216,12 +196,26 @@ const ProjectDetail = () => {
                   </p>
                 </div>
                 
-                <div>
+                <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-3">وصف المشروع</h3>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     {project.description}
                   </p>
                 </div>
+                
+                {/* New section for project content that replaces the PDF */}
+                {hasProjectContent && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3">محتوى المشروع الكامل</h3>
+                    <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+                      <ScrollArea className="h-[400px] rounded-md pr-4">
+                        <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                          {project.project_content}
+                        </div>
+                      </ScrollArea>
+                    </div>
+                  </div>
+                )}
               </div>
               
               {/* Related projects */}
@@ -242,10 +236,10 @@ const ProjectDetail = () => {
                           
                           {/* إضافة شارات لإظهار توفر الملفات في المشاريع ذات الصلة */}
                           <div className="flex gap-2 mt-2">
-                            {related.pdfUrl && (
+                            {related.project_content && (
                               <Badge variant="outline" className="bg-green-100 text-green-700 border-green-500">
                                 <FileText className="h-3 w-3 ml-1" />
-                                PDF متاح
+                                محتوى متاح
                               </Badge>
                             )}
                             {related.downloadUrl && (
@@ -293,31 +287,19 @@ const ProjectDetail = () => {
                     {isDownloadAvailable ? 'تنزيل المشروع' : 'التحميل غير متاح'}
                   </Button>
                   
-                  <Button 
-                    variant={isPdfAvailable ? "outline" : "secondary"} 
-                    className={`w-full ${isPdfAvailable 
-                      ? 'border-archive-primary text-archive-primary hover:bg-archive-muted' 
-                      : 'opacity-70 cursor-not-allowed'}`}
-                    disabled={!isPdfAvailable}
-                    onClick={handleViewPdfClick}
-                  >
-                    <FileText className="h-4 w-4 ml-2" />
-                    {isPdfAvailable ? 'عرض PDF' : 'PDF غير متاح'}
-                  </Button>
-                  
                   {/* مربع توضيحي لحالة توفر الملفات */}
-                  <div className={`mt-4 p-3 rounded-md ${(!isPdfAvailable && !isDownloadAvailable) 
+                  <div className={`mt-4 p-3 rounded-md ${(!hasProjectContent && !isDownloadAvailable) 
                     ? 'bg-amber-50 border border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' 
                     : 'bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800'}`}>
                     <p className="text-sm font-medium mb-2 text-center">
-                      {(!isPdfAvailable && !isDownloadAvailable) 
+                      {(!hasProjectContent && !isDownloadAvailable) 
                         ? 'ملفات المشروع غير متوفرة' 
-                        : 'ملفات المشروع المتوفرة'}
+                        : 'محتوى المشروع المتوفر'}
                     </p>
                     <ul className="space-y-1 text-sm">
-                      <li className={`flex items-center ${isPdfAvailable ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isPdfAvailable ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                        ملف PDF: {isPdfAvailable ? 'متاح' : 'غير متاح'}
+                      <li className={`flex items-center ${hasProjectContent ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${hasProjectContent ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                        المحتوى الكامل: {hasProjectContent ? 'متاح' : 'غير متاح'}
                       </li>
                       <li className={`flex items-center ${isDownloadAvailable ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                         <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isDownloadAvailable ? 'bg-green-500' : 'bg-gray-400'}`}></span>

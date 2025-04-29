@@ -11,21 +11,13 @@ interface FeaturedProjectsProps {
 }
 
 const FeaturedProjects = ({ projects }: FeaturedProjectsProps) => {
-  // Reliable PDF and download URLs that are known to work
-  const reliablePdfUrls = [
-    'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    'https://africau.edu/images/default/sample.pdf',
-    'https://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf',
-    'https://www.orimi.com/pdf-test.pdf',
-    'https://www.clickdimensions.com/links/TestPDFfile.pdf'
-  ];
-  
+  // Reliable download URLs that are known to work
   const reliableDownloadUrls = [
     'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip',
     'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
     'https://filesamples.com/samples/archive/zip/sample1.zip',
     'https://filesamples.com/samples/document/zip/sample2.zip',
-    'https://filesamples.com/samples/document/zip/sample3.zip'
+    'https://filesamples.com/samples/archive/zip/sample3.zip'
   ];
   
   // Function to validate URL is one of our known working URLs
@@ -33,19 +25,18 @@ const FeaturedProjects = ({ projects }: FeaturedProjectsProps) => {
     if (!url) return false;
     try {
       new URL(url);
-      return reliablePdfUrls.includes(url) || reliableDownloadUrls.includes(url);
+      return reliableDownloadUrls.includes(url);
     } catch (e) {
       return false;
     }
   };
   
-  // Filter to only show projects with verified working links
+  // Filter to only show projects with project content or verified working download links
   const filteredProjects = projects.filter(project => 
-    !!project.pdfUrl && !!project.downloadUrl &&
-    isValidUrl(project.pdfUrl) && isValidUrl(project.downloadUrl)
+    (!!project.project_content || (!!project.downloadUrl && isValidUrl(project.downloadUrl)))
   );
   
-  // Take latest 3 projects with verified links
+  // Take latest 3 projects with verified content
   const featuredProjects = filteredProjects.slice(0, 3);
 
   return (
