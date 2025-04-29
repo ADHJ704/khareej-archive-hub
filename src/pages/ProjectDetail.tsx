@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useProjects } from '@/hooks/useProjects';
 import { categories } from '@/data/categories';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -101,9 +102,9 @@ const ProjectDetail = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main content */}
+            {/* Main content - Ensuring content is scrollable */}
             <div className="lg:col-span-2">
-              <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-8">
+              <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-8 overflow-y-auto max-h-full">
                 <h1 className="text-2xl md:text-3xl font-heading font-bold text-archive-primary mb-4">
                   {project.title}
                 </h1>
@@ -190,7 +191,7 @@ const ProjectDetail = () => {
               )}
             </div>
             
-            {/* Sidebar */}
+            {/* Sidebar with improved sticky behavior */}
             <div className="lg:col-span-1">
               <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-6 sticky top-24">
                 <div className="flex justify-center mb-8">
