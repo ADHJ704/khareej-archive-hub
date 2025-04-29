@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserRound } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,31 +13,37 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Header from '@/components/Header';
 
-const loginFormSchema = z.object({
+const signupFormSchema = z.object({
   email: z.string().email({ message: 'يرجى إدخال بريد إلكتروني صحيح' }),
   password: z.string().min(6, { message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' }),
+  confirmPassword: z.string().min(6, { message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'كلمات المرور غير متطابقة',
+  path: ['confirmPassword'],
 });
 
-type LoginFormValues = z.infer<typeof loginFormSchema>;
+type SignupFormValues = z.infer<typeof signupFormSchema>;
 
-const TraineeLogin = () => {
+const TraineeSignup = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<SignupFormValues>({
+    resolver: zodResolver(signupFormSchema),
     defaultValues: {
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
-  const onSubmit = async (values: LoginFormValues) => {
+  const onSubmit = async (values: SignupFormValues) => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Register the user
+      const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
       });
@@ -47,41 +53,28 @@ const TraineeLogin = () => {
       }
 
       if (data?.user) {
-        // Check if user is a trainee
-        const { data: profileData, error: profileError } = await supabase
+        // Set the role to trainee in profiles table
+        const { error: profileError } = await supabase
           .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
+          .update({ role: 'trainee' })
+          .eq('id', data.user.id);
 
         if (profileError) {
-          throw profileError;
-        }
-
-        if (profileData.role !== 'trainee') {
-          // Sign out if not a trainee
-          await supabase.auth.signOut();
-          toast({
-            title: 'خطأ في تسجيل الدخول',
-            description: 'هذا الحساب ليس متدرباً',
-            variant: 'destructive',
-          });
-          setIsLoading(false);
-          return;
+          console.error('Error updating profile:', profileError);
         }
 
         toast({
-          title: 'تم تسجيل الدخول بنجاح',
-          description: 'مرحباً بك في منصة أرشيف المشاريع',
+          title: 'تم إنشاء الحساب بنجاح',
+          description: 'يمكنك الآن تسجيل الدخول إلى منصة أرشيف المشاريع',
         });
         
-        // Redirect to home page
+        // Redirect to home page after successful signup
         navigate('/');
       }
     } catch (error: any) {
       toast({
-        title: 'خطأ في تسجيل الدخول',
-        description: error?.message || 'حدث خطأ أثناء محاولة تسجيل الدخول',
+        title: 'خطأ في إنشاء الحساب',
+        description: error?.message || 'حدث خطأ أثناء محاولة إنشاء الحساب',
         variant: 'destructive',
       });
     } finally {
@@ -99,14 +92,14 @@ const TraineeLogin = () => {
             <CardHeader className="pb-4">
               <div className="flex justify-center mb-4">
                 <div className="bg-archive-secondary/10 p-3 rounded-full">
-                  <UserRound className="h-10 w-10 text-archive-secondary" />
+                  <UserPlus className="h-10 w-10 text-archive-secondary" />
                 </div>
               </div>
               <CardTitle className="text-center text-2xl text-archive-dark dark:text-white">
-                تسجيل دخول المتدرب
+                تسجيل حساب متدرب جديد
               </CardTitle>
               <CardDescription className="text-center">
-                أدخل بياناتك لتسجيل الدخول إلى منصة المتدربين
+                أدخل بياناتك لإنشاء حساب جديد في منصة المتدربين
               </CardDescription>
             </CardHeader>
 
@@ -153,24 +146,44 @@ const TraineeLogin = () => {
                     )}
                   />
 
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-right block">تأكيد كلمة المرور</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل كلمة المرور مرة أخرى"
+                            className="text-right"
+                            dir="rtl"
+                            type="password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-right" />
+                      </FormItem>
+                    )}
+                  />
+
                   <div className="pt-2">
                     <Button
                       type="submit"
                       className="w-full bg-archive-secondary hover:bg-archive-secondary/80"
                       disabled={isLoading}
                     >
-                      {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+                      {isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء حساب'}
                     </Button>
+                  </div>
+
+                  <div className="text-center mt-2 text-sm">
+                    <span>لديك حساب بالفعل؟</span>{" "}
+                    <Link to="/trainee-login" className="text-archive-secondary hover:underline font-medium">
+                      سجل دخول
+                    </Link>
                   </div>
                 </form>
               </Form>
-
-              <div className="text-center mt-4 text-sm">
-                <span>ما عندك حساب؟</span>{" "}
-                <Link to="/trainee-signup" className="text-archive-secondary hover:underline font-medium">
-                  سجّل الآن
-                </Link>
-              </div>
             </CardContent>
           </Card>
         </div>
@@ -179,4 +192,4 @@ const TraineeLogin = () => {
   );
 };
 
-export default TraineeLogin;
+export default TraineeSignup;

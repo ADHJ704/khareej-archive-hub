@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import SuggestProject from "./pages/SuggestProject";
 import AIHelper from "./pages/AIHelper";
 import TraineeLogin from "./pages/TraineeLogin";
+import TraineeSignup from "./pages/TraineeSignup";
 import SupervisorLogin from "./pages/SupervisorLogin";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/suggest-project" element={<SuggestProject />} />
             <Route path="/ai-helper" element={<AIHelper />} />
             <Route path="/trainee-login" element={<TraineeLogin />} />
+            <Route path="/trainee-signup" element={<TraineeSignup />} />
             <Route path="/supervisor-login" element={<SupervisorLogin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
