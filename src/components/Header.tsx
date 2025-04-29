@@ -216,7 +216,8 @@ const Header = () => {
                   onClick={() => navigate('/trainee-login')}
                 >
                   <GraduationCap className="h-4 w-4" />
-                  <span>تسجيل متدرب</span>
+                  <spanc className="hidden lg:inline">تسجيل متدرب</span>
+                  <span className="lg:hidden">متدرب</span>
                 </Button>
                 
                 <Button 
@@ -225,7 +226,8 @@ const Header = () => {
                   onClick={() => navigate('/supervisor-login')}
                 >
                   <LogIn className="h-4 w-4" />
-                  <span>تسجيل مشرف</span>
+                 <span className="hidden lg:inline">تسجيل مشرف</span>
+                 <span className="lg:hidden">مشرف</span>
                 </Button>
               </div>
             )}
