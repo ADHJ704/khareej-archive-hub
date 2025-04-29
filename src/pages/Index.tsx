@@ -108,7 +108,7 @@ const Index = () => {
         {/* Featured projects section */}
         <FeaturedProjects projects={recentProjects} />
         
-        {/* CTA section - Without login buttons */}
+        {/* CTA section - Without buttons */}
         <section className="py-16 bg-archive-primary text-white">
           <div className="container-custom text-center">
             <h2 className="text-2xl md:text-3xl font-heading font-bold mb-4">
@@ -117,24 +117,7 @@ const Index = () => {
             <p className="text-lg mb-8 max-w-2xl mx-auto text-white/90">
               استفد من مكتبة المشاريع الرقمية واستلهم أفكاراً لمشروع تخرجك
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button 
-                size="lg" 
-                className="bg-white text-archive-primary hover:bg-archive-light"
-                onClick={() => navigate('/projects')}
-              >
-                <BookOpen className="ml-2 h-5 w-5" />
-                استعرض المشاريع
-              </Button>
-              <Button 
-                size="lg" 
-                className="bg-white text-archive-primary hover:bg-archive-light"
-                onClick={() => navigate('/categories')}
-              >
-                <Compass className="ml-2 h-5 w-5" />
-                استعرض التخصصات
-              </Button>
-            </div>
+            {/* تم إزالة الأزرار المكررة من هنا */}
           </div>
         </section>
       </main>
