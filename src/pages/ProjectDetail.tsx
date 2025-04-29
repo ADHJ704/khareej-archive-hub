@@ -1,6 +1,7 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Download, BookOpen, ArrowRight, Calendar, User, BookOpenCheck } from 'lucide-react';
+import { Download, BookOpen, ArrowRight, Calendar, User, BookOpenCheck, FileText } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import Header from '@/components/Header';
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,8 @@ const ProjectDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Use the useProjects hook to fetch all projects
-  const { data: projects = [], isLoading, isError } = useProjects();
+  // Use the useProjects hook to fetch all projects - include those without links for the detail view
+  const { data: projects = [], isLoading, isError } = useProjects(undefined, undefined, undefined, false);
   
   // Find the current project by ID
   const project = projects.find(p => p.id === id);
@@ -91,9 +92,9 @@ const ProjectDetail = () => {
   
   const category = categories.find(c => c.id === project.categoryId);
   
-  // Get related projects from the same category
+  // Get related projects from the same category (that have PDF or download links)
   const relatedProjects = projects
-    .filter(p => p.categoryId === project.categoryId && p.id !== project.id)
+    .filter(p => p.categoryId === project.categoryId && p.id !== project.id && (!!p.pdfUrl || !!p.downloadUrl))
     .slice(0, 3);
 
   // معالجي الأحداث للأزرار
@@ -238,6 +239,22 @@ const ProjectDetail = () => {
                           <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                             {related.abstract}
                           </p>
+                          
+                          {/* إضافة شارات لإظهار توفر الملفات في المشاريع ذات الصلة */}
+                          <div className="flex gap-2 mt-2">
+                            {related.pdfUrl && (
+                              <Badge variant="outline" className="bg-green-100 text-green-700 border-green-500">
+                                <FileText className="h-3 w-3 ml-1" />
+                                PDF متاح
+                              </Badge>
+                            )}
+                            {related.downloadUrl && (
+                              <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-500">
+                                <Download className="h-3 w-3 ml-1" />
+                                تحميل متاح
+                              </Badge>
+                            )}
+                          </div>
                         </Link>
                       </div>
                     ))}
@@ -266,7 +283,9 @@ const ProjectDetail = () => {
                 
                 <div className="space-y-4">
                   <Button 
-                    className={`w-full ${isDownloadAvailable ? 'bg-archive-primary hover:bg-archive-dark' : 'bg-gray-400'}`}
+                    className={`w-full ${isDownloadAvailable 
+                      ? 'bg-archive-primary hover:bg-archive-dark' 
+                      : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed'}`}
                     disabled={!isDownloadAvailable}
                     onClick={handleDownloadClick}
                   >
@@ -276,23 +295,33 @@ const ProjectDetail = () => {
                   
                   <Button 
                     variant={isPdfAvailable ? "outline" : "secondary"} 
-                    className={`w-full ${isPdfAvailable ? '' : 'opacity-70'}`}
+                    className={`w-full ${isPdfAvailable 
+                      ? 'border-archive-primary text-archive-primary hover:bg-archive-muted' 
+                      : 'opacity-70 cursor-not-allowed'}`}
                     disabled={!isPdfAvailable}
                     onClick={handleViewPdfClick}
                   >
-                    <BookOpen className="h-4 w-4 ml-2" />
+                    <FileText className="h-4 w-4 ml-2" />
                     {isPdfAvailable ? 'عرض PDF' : 'PDF غير متاح'}
                   </Button>
                   
-                  {/* عرض حالة الروابط للتشخيص */}
-                  <div className="mt-4 text-sm text-gray-500 text-center">
-                    <p>حالة الروابط:</p>
-                    <ul className="mt-2">
-                      <li className={isPdfAvailable ? 'text-green-600' : 'text-red-600'}>
-                        PDF: {isPdfAvailable ? 'متاح ✓' : 'غير متاح ✗'}
+                  {/* مربع توضيحي لحالة توفر الملفات */}
+                  <div className={`mt-4 p-3 rounded-md ${(!isPdfAvailable && !isDownloadAvailable) 
+                    ? 'bg-amber-50 border border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' 
+                    : 'bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800'}`}>
+                    <p className="text-sm font-medium mb-2 text-center">
+                      {(!isPdfAvailable && !isDownloadAvailable) 
+                        ? 'ملفات المشروع غير متوفرة' 
+                        : 'ملفات المشروع المتوفرة'}
+                    </p>
+                    <ul className="space-y-1 text-sm">
+                      <li className={`flex items-center ${isPdfAvailable ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isPdfAvailable ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                        ملف PDF: {isPdfAvailable ? 'متاح' : 'غير متاح'}
                       </li>
-                      <li className={isDownloadAvailable ? 'text-green-600' : 'text-red-600'}>
-                        التحميل: {isDownloadAvailable ? 'متاح ✓' : 'غير متاح ✗'}
+                      <li className={`flex items-center ${isDownloadAvailable ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isDownloadAvailable ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                        ملف للتحميل: {isDownloadAvailable ? 'متاح' : 'غير متاح'}
                       </li>
                     </ul>
                   </div>

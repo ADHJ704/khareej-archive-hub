@@ -5,9 +5,9 @@ import type { Project } from '@/data/projects';
 import { additionalProjects, testProject } from '@/data/projects'; // استيراد مشروع الاختبار
 import { projects as demoProjects } from '@/data/projects';
 
-export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string) => {
+export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string, showOnlyWithLinks: boolean = true) => {
   return useQuery({
-    queryKey: ['projects', categoryId, searchQuery, departmentFilter],
+    queryKey: ['projects', categoryId, searchQuery, departmentFilter, showOnlyWithLinks],
     queryFn: async () => {
       try {
         let query = supabase
@@ -52,8 +52,13 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             pdfUrl: item.pdf_url
           })) as Project[];
           
-          console.log('Mapped data:', mappedData);
-          return mappedData;
+          // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
+          const filteredProjects = showOnlyWithLinks 
+            ? mappedData.filter(project => !!project.pdfUrl || !!project.downloadUrl)
+            : mappedData;
+          
+          console.log('Mapped data:', filteredProjects);
+          return filteredProjects;
         } else {
           // إذا لم يتم العثور على بيانات، استخدم البيانات الافتراضية المحلية
           let combinedProjects = [...demoProjects, ...additionalProjects];
@@ -84,8 +89,13 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             );
           }
           
-          console.log('Using local data with test project. Total projects:', combinedProjects.length);
-          return combinedProjects;
+          // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
+          const filteredProjects = showOnlyWithLinks
+            ? combinedProjects.filter(project => !!project.pdfUrl || !!project.downloadUrl)
+            : combinedProjects;
+          
+          console.log('Using local data with test project. Total projects:', filteredProjects.length);
+          return filteredProjects;
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -119,8 +129,13 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           );
         }
         
-        console.log('Error occurred, using local data with test project. Total projects:', combinedProjects.length);
-        return combinedProjects;
+        // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
+        const filteredProjects = showOnlyWithLinks
+          ? combinedProjects.filter(project => !!project.pdfUrl || !!project.downloadUrl)
+          : combinedProjects;
+        
+        console.log('Error occurred, using local data with test project. Total projects:', filteredProjects.length);
+        return filteredProjects;
       }
     }
   });

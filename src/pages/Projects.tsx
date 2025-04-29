@@ -59,11 +59,13 @@ const Projects = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestionError, setSuggestionError] = useState<string | null>(null);
   const { needsConfirmation, trackAction, resetAction } = useRepeatedActionConfirmation(2);
+  const [showOnlyWithLinks, setShowOnlyWithLinks] = useState(true); // إضافة حالة لعرض المشاريع التي تحتوي على روابط فقط
 
   const { data: projects, isLoading: projectsLoading, error } = useProjects(
     selectedCategories[0],
     searchQuery,
-    departmentFilter === 'all' ? '' : departmentFilter
+    departmentFilter === 'all' ? '' : departmentFilter,
+    showOnlyWithLinks // تمرير الخيار الجديد للحصول على المشاريع التي تحتوي على روابط فقط
   );
 
   React.useEffect(() => {
@@ -202,6 +204,17 @@ const Projects = () => {
     setDepartmentFilter('all');
   };
 
+  // توجيه لتبديل خاصية عرض المشاريع التي تحتوي على روابط فقط
+  const toggleShowOnlyWithLinks = () => {
+    setShowOnlyWithLinks(!showOnlyWithLinks);
+    toast({
+      title: showOnlyWithLinks ? "تم تفعيل عرض جميع المشاريع" : "تم تفعيل عرض المشاريع الكاملة فقط",
+      description: showOnlyWithLinks 
+        ? "يتم الآن عرض جميع المشاريع بما في ذلك المشاريع بدون روابط" 
+        : "يتم الآن عرض المشاريع التي تحتوي على روابط PDF أو تحميل فقط",
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -269,6 +282,22 @@ const Projects = () => {
                   </Select>
                 </div>
                 
+                {/* إضافة خيار لعرض المشاريع التي تحتوي على روابط فقط */}
+                <div className="mb-6">
+                  <Button 
+                    variant={showOnlyWithLinks ? "default" : "outline"}
+                    className="w-full"
+                    onClick={toggleShowOnlyWithLinks}
+                  >
+                    {showOnlyWithLinks ? "عرض المشاريع الكاملة فقط" : "عرض جميع المشاريع"}
+                  </Button>
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    {showOnlyWithLinks 
+                      ? "يتم عرض المشاريع التي تحتوي على روابط PDF أو تحميل فقط" 
+                      : "يتم عرض جميع المشاريع بما في ذلك المشاريع بدون روابط"}
+                  </p>
+                </div>
+                
                 {(selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all') && (
                   <Button 
                     variant="outline" 
@@ -292,9 +321,14 @@ const Projects = () => {
                           لنتائج البحث: "{searchQuery}"
                         </span>
                       }
-                      {departmentFilter && 
+                      {departmentFilter !== 'all' && 
                         <span className="text-gray-600 dark:text-gray-400 mr-2">
                           في تخصص: "{departmentFilter}"
+                        </span>
+                      }
+                      {showOnlyWithLinks && 
+                        <span className="text-green-600 dark:text-green-400 mr-2">
+                          (مشاريع كاملة فقط)
                         </span>
                       }
                     </h3>

@@ -11,15 +11,18 @@ interface FeaturedProjectsProps {
 }
 
 const FeaturedProjects = ({ projects }: FeaturedProjectsProps) => {
+  // فلترة المشاريع للتأكد من أنها تحتوي على روابط PDF أو تحميل
+  const filteredProjects = projects.filter(project => !!project.pdfUrl || !!project.downloadUrl);
+  
   // Take only up to 3 projects for the featured section
-  const featuredProjects = projects.slice(0, 3);
+  const featuredProjects = filteredProjects.slice(0, 3);
 
   return (
     <section className="py-10 bg-archive-muted">
       <div className="container-custom">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-archive-primary">
-            أحدث المشاريع
+            أحدث المشاريع الكاملة
           </h2>
           <Link to="/projects">
             <Button variant="link" className="text-archive-secondary flex items-center gap-1 hover:text-archive-primary transition-colors">

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { File, BookOpen, Download, FileText } from 'lucide-react';
+import { FileText, BookOpen, Download, File } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Project } from '@/data/projects';
@@ -24,18 +24,18 @@ const ProjectCard = ({ project, featured = false }: ProjectCardProps) => {
           {project.year}
         </Badge>
         
-        {/* إضافة مؤشرات للملفات المتاحة مع تحسين العرض */}
+        {/* عرض شارات توفر الملفات بطريقة أكثر وضوحًا */}
         <div className="absolute bottom-3 left-3 flex gap-2">
           {hasPdf && (
-            <Badge variant="outline" className="bg-white text-archive-primary border-archive-primary">
+            <Badge variant="outline" className="bg-green-100 text-green-700 border-green-500">
               <FileText className="h-3 w-3 ml-1" />
-              PDF
+              PDF متاح
             </Badge>
           )}
           {hasDownload && (
-            <Badge variant="outline" className="bg-white text-archive-primary border-archive-primary">
+            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-500">
               <Download className="h-3 w-3 ml-1" />
-              للتحميل
+              تحميل متاح
             </Badge>
           )}
         </div>
