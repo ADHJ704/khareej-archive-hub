@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, BookOpen, Library, File } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
@@ -7,14 +7,39 @@ import FeaturedProjects from '@/components/FeaturedProjects';
 import { projects } from '@/data/projects';
 import { categories } from '@/data/categories';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [projectsCount, setProjectsCount] = useState(0);
+  const [categoriesCount, setCategorizesCount] = useState(0);
 
   // Get the most recent projects
   const recentProjects = [...projects].sort((a, b) => 
     parseInt(b.year) - parseInt(a.year)
   ).slice(0, 3);
+
+  // Fetch actual counts from database
+  useEffect(() => {
+    const fetchCounts = async () => {
+      // Get projects count
+      const { count: projectCount, error: projectError } = await supabase
+        .from('projects')
+        .select('*', { count: 'exact', head: true });
+
+      if (!projectError && projectCount !== null) {
+        setProjectsCount(projectCount);
+      } else {
+        console.error('Error fetching project count:', projectError);
+        setProjectsCount(projects.length); // Fallback to local data
+      }
+
+      // Get categories count
+      setCategorizesCount(categories.length);
+    };
+
+    fetchCounts();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -48,7 +73,7 @@ const Index = () => {
                   onClick={() => navigate('/categories')}
                 >
                   <Library className="ml-2 h-5 w-5" />
-                  استعراض التصنيفات
+                  استعراض التخصصات
                 </Button>
               </div>
             </div>
@@ -62,12 +87,12 @@ const Index = () => {
           <div className="container-custom">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6 bg-archive-muted rounded-lg">
-                <div className="text-4xl font-bold text-archive-primary mb-2">{projects.length}+</div>
+                <div className="text-4xl font-bold text-archive-primary mb-2">{projectsCount}+</div>
                 <div className="text-archive-secondary font-medium">مشروع متاح</div>
               </div>
               <div className="text-center p-6 bg-archive-muted rounded-lg">
-                <div className="text-4xl font-bold text-archive-primary mb-2">{categories.length}</div>
-                <div className="text-archive-secondary font-medium">تصنيف مختلف</div>
+                <div className="text-4xl font-bold text-archive-primary mb-2">{categoriesCount}</div>
+                <div className="text-archive-secondary font-medium">تخصص مختلف</div>
               </div>
               <div className="text-center p-6 bg-archive-muted rounded-lg">
                 <div className="text-4xl font-bold text-archive-primary mb-2">5+</div>
@@ -84,7 +109,7 @@ const Index = () => {
         <section className="py-12 bg-white dark:bg-card">
           <div className="container-custom">
             <h2 className="text-2xl md:text-3xl font-heading font-bold text-archive-primary mb-8 text-center">
-              تصنيفات المشاريع
+              التخصصات
             </h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

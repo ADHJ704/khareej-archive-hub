@@ -118,7 +118,7 @@ const Header = () => {
                               className="block py-2 hover:bg-white/10 px-2 rounded transition"
                               onClick={() => setIsOpen(false)}
                             >
-                              التصنيفات
+                              التخصصات
                             </Link>
                           </li>
                         </ul>
@@ -203,7 +203,7 @@ const Header = () => {
             <nav className="hidden md:flex items-center space-x-4 space-x-reverse">
               <Link to="/" className="text-white/90 hover:text-white transition">الرئيسية</Link>
               <Link to="/projects" className="text-white/90 hover:text-white transition">المشاريع</Link>
-              <Link to="/categories" className="text-white/90 hover:text-white transition">التصنيفات</Link>
+              <Link to="/categories" className="text-white/90 hover:text-white transition">التخصصات</Link>
             </nav>
             
             {user ? (
