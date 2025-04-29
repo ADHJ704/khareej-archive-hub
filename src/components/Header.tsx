@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Book, Search, X, Menu, LogIn, UserCircle } from 'lucide-react';
+import { Book, Search, X, Menu } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,32 +16,16 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const Header = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast({
-      title: "تم تسجيل الخروج",
-      description: "تم تسجيل خروجك بنجاح"
-    });
-    navigate('/');
-  };
 
   const handleSearch = (query: string) => {
     if (query.trim()) {
       navigate(`/projects?search=${encodeURIComponent(query.trim())}`);
       setShowMobileSearch(false);
     }
-  };
-
-  // معالجة التنقل والإغلاق
-  const handleNavigate = (path: string) => {
-    navigate(path);
-    setIsOpen(false);
   };
 
   return (
@@ -112,50 +96,8 @@ const Header = () => {
                               المشاريع
                             </Link>
                           </li>
-                          <li>
-                            <Link 
-                              to="/trainee-login" 
-                              className="block py-2 hover:bg-white/10 px-2 rounded transition"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              <LogIn className="inline-block ml-2 h-4 w-4" />
-                              تسجيل دخول متدرب
-                            </Link>
-                          </li>
-                          <li>
-                            <Link 
-                              to="/supervisor-login" 
-                              className="block py-2 hover:bg-white/10 px-2 rounded transition"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              <LogIn className="inline-block ml-2 h-4 w-4" />
-                              تسجيل دخول مشرف
-                            </Link>
-                          </li>
                         </ul>
                       </nav>
-                      
-                      <div className="p-4 border-t border-white/10">
-                        {user ? (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2 mb-3">
-                              <UserCircle className="h-6 w-6" />
-                              <span className="font-medium">{user.email}</span>
-                            </div>
-                            <Button 
-                              variant="outline" 
-                              className="w-full border-white/20 text-white hover:bg-white/10"
-                              onClick={() => {
-                                handleLogout();
-                                setIsOpen(false);
-                              }}
-                            >
-                              <LogIn className="ml-2 h-4 w-4" />
-                              تسجيل الخروج
-                            </Button>
-                          </div>
-                        ) : null}
-                      </div>
                     </div>
                   </SheetContent>
                 </Sheet>
@@ -194,35 +136,7 @@ const Header = () => {
             <nav className="hidden md:flex items-center space-x-4 space-x-reverse">
               <Link to="/" className="text-white/90 hover:text-white transition">الرئيسية</Link>
               <Link to="/projects" className="text-white/90 hover:text-white transition">المشاريع</Link>
-              
-              <div className="flex items-center space-x-3 space-x-reverse border-r border-white/20 pr-4 mr-2">
-                <Link to="/trainee-login" className="text-white/90 hover:text-white transition flex items-center">
-                  <LogIn className="ml-1 h-4 w-4" />
-                  دخول متدرب
-                </Link>
-                <Link to="/supervisor-login" className="text-white/90 hover:text-white transition flex items-center">
-                  <LogIn className="ml-1 h-4 w-4" />
-                  دخول مشرف
-                </Link>
-              </div>
             </nav>
-            
-            {user ? (
-              <div className="hidden md:flex items-center gap-3">
-                <div className="text-sm text-white/80 pl-3 border-l border-white/20">
-                  <UserCircle className="inline-block ml-1 h-4 w-4" />
-                  {user.email}
-                </div>
-                <Button 
-                  variant="outline" 
-                  className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
-                  onClick={handleLogout}
-                >
-                  <LogIn className="h-4 w-4" />
-                  تسجيل الخروج
-                </Button>
-              </div>
-            ) : null}
           </div>
         )}
       </div>
