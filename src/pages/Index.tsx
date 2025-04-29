@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { BookOpen, File } from 'lucide-react';
+import { BookOpen, File, UserRound } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
 import FeaturedProjects from '@/components/FeaturedProjects';
@@ -8,9 +8,11 @@ import { projects } from '@/data/projects';
 import { categories } from '@/data/categories';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [projectsCount, setProjectsCount] = useState(0);
   const [categoriesCount, setCategorizesCount] = useState(0);
 
@@ -67,6 +69,30 @@ const Index = () => {
                   تصفح المشاريع
                 </Button>
               </div>
+              
+              {!user && (
+                <div className="mt-10 bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                  <h2 className="text-xl font-bold mb-4">تسجيل الدخول للوصول إلى كامل المميزات</h2>
+                  <div className="flex flex-col sm:flex-row justify-center gap-4">
+                    <Button 
+                      size="lg" 
+                      className="bg-white text-archive-primary hover:bg-archive-light"
+                      onClick={() => navigate('/trainee-login')}
+                    >
+                      <UserRound className="ml-2 h-5 w-5" />
+                      تسجيل دخول متدرب
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      className="bg-archive-secondary hover:bg-archive-secondary/80"
+                      onClick={() => navigate('/supervisor-login')}
+                    >
+                      <UserRound className="ml-2 h-5 w-5" />
+                      تسجيل دخول مشرف
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           

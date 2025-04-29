@@ -1,13 +1,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Default values for development (these should be replaced with your actual values)
-const DEFAULT_SUPABASE_URL = 'https://your-supabase-project-id.supabase.co';
-const DEFAULT_SUPABASE_ANON_KEY = 'your-supabase-anon-key';
-
-// Try to get from environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
+// Use the environment variables or get from the supabase client file
+const supabaseUrl = "https://kyuzpbomewcbkwyyfuds.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dXpwYm9tZXdjYmt3eXlmdWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1ODc5ODksImV4cCI6MjA2MTE2Mzk4OX0.dB86VqJD3Ih8e0Uc2DL6PyVs73ChH4p3FTzCR1pLUXc";
 
 // Create Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -36,4 +32,47 @@ export const getUserRole = async (userId: string) => {
   }
   
   return data.role;
+};
+
+// Function to sign up a new user
+export const signUpUser = async (
+  email: string, 
+  password: string, 
+  role: 'trainee' | 'supervisor'
+) => {
+  // 1. Sign up the user with Supabase Auth
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (authError) {
+    throw authError;
+  }
+
+  if (authData?.user) {
+    // 2. Update the user's role in the profiles table
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ role })
+      .eq('id', authData.user.id);
+
+    if (profileError) {
+      throw profileError;
+    }
+  }
+
+  return authData;
+};
+
+// Check if the user is a trainee
+export const isTrainee = async (userId: string) => {
+  const role = await getUserRole(userId);
+  return role === 'trainee';
+};
+
+// Check if the user is a supervisor
+export const isSupervisor = async (userId: string) => {
+  const role = await getUserRole(userId);
+  return role === 'supervisor';
 };

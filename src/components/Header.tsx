@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Book, Search, X, Menu } from 'lucide-react';
+import { Book, Search, X, Menu, UserRound } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,12 +20,21 @@ const Header = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { user } = useAuth();
 
   const handleSearch = (query: string) => {
     if (query.trim()) {
       navigate(`/projects?search=${encodeURIComponent(query.trim())}`);
       setShowMobileSearch(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "تم تسجيل الخروج بنجاح",
+    });
+    navigate('/');
   };
 
   return (
@@ -96,6 +105,51 @@ const Header = () => {
                               المشاريع
                             </Link>
                           </li>
+                          {user ? (
+                            <>
+                              <li>
+                                <Link 
+                                  to="/suggest-project" 
+                                  className="block py-2 hover:bg-white/10 px-2 rounded transition"
+                                  onClick={() => setIsOpen(false)}
+                                >
+                                  اقتراح مشروع
+                                </Link>
+                              </li>
+                              <li>
+                                <button 
+                                  className="block py-2 hover:bg-white/10 px-2 rounded transition w-full text-right"
+                                  onClick={() => {
+                                    handleLogout();
+                                    setIsOpen(false);
+                                  }}
+                                >
+                                  تسجيل الخروج
+                                </button>
+                              </li>
+                            </>
+                          ) : (
+                            <>
+                              <li>
+                                <Link 
+                                  to="/trainee-login" 
+                                  className="block py-2 bg-white/20 hover:bg-white/30 px-2 rounded transition text-center font-medium"
+                                  onClick={() => setIsOpen(false)}
+                                >
+                                  تسجيل دخول متدرب
+                                </Link>
+                              </li>
+                              <li className="mt-2">
+                                <Link 
+                                  to="/supervisor-login" 
+                                  className="block py-2 bg-archive-secondary hover:bg-archive-secondary/80 px-2 rounded transition text-center font-medium"
+                                  onClick={() => setIsOpen(false)}
+                                >
+                                  تسجيل دخول مشرف
+                                </Link>
+                              </li>
+                            </>
+                          )}
                         </ul>
                       </nav>
                     </div>
@@ -136,6 +190,39 @@ const Header = () => {
             <nav className="hidden md:flex items-center space-x-4 space-x-reverse">
               <Link to="/" className="text-white/90 hover:text-white transition">الرئيسية</Link>
               <Link to="/projects" className="text-white/90 hover:text-white transition">المشاريع</Link>
+              
+              {user ? (
+                <>
+                  <Link to="/suggest-project" className="text-white/90 hover:text-white transition">اقتراح مشروع</Link>
+                  <Button 
+                    variant="ghost"
+                    className="text-white hover:bg-white/20"
+                    onClick={handleLogout}
+                  >
+                    تسجيل الخروج
+                  </Button>
+                </>
+              ) : (
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Link to="/trainee-login">
+                    <Button 
+                      variant="outline" 
+                      className="border-white text-white hover:bg-white hover:text-archive-primary"
+                    >
+                      <UserRound className="ml-1 h-4 w-4" />
+                      تسجيل دخول متدرب
+                    </Button>
+                  </Link>
+                  <Link to="/supervisor-login">
+                    <Button 
+                      className="bg-archive-secondary hover:bg-archive-secondary/80"
+                    >
+                      <UserRound className="ml-1 h-4 w-4" />
+                      تسجيل دخول مشرف
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
         )}
