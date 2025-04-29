@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GraduationCap } from 'lucide-react';
@@ -128,9 +128,9 @@ const TraineeLogin = () => {
           <CardFooter className="flex justify-center pt-0">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               ليس لديك حساب؟{' '}
-              <a href="#" className="text-archive-primary hover:underline">
-                تواصل مع المشرف للتسجيل
-              </a>
+              <Link to="/trainee-register" className="text-archive-primary hover:underline">
+                إنشاء حساب جديد
+              </Link>
             </p>
           </CardFooter>
         </Card>
