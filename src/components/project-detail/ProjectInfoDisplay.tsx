@@ -75,16 +75,22 @@ const ProjectInfoDisplay = ({ project }: ProjectInfoDisplayProps) => {
       </div>
       
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">الأدوات المستخدمة</h3>
+        <h3 className="text-lg font-semibold mb-3 flex items-center">
+          <Wrench className="h-5 w-5 ml-2 text-archive-secondary" />
+          الأدوات المستخدمة
+        </h3>
         {project.tags && project.tags.length > 0 ? (
-          <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 leading-relaxed">
+          <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300 leading-relaxed">
             {project.tags.map((tool, index) => (
-              <li key={index}>{tool}</li>
+              <li key={index} className="flex items-center">
+                <span className="mr-2">•</span>
+                <span>{tool}</span>
+              </li>
             ))}
           </ul>
         ) : (
           <p className="text-gray-500 dark:text-gray-400 italic">
-            لم يتم تحديد الأدوات المستخدمة في هذا المشروع
+            لا توجد أدوات مذكورة لهذا المشروع
           </p>
         )}
       </div>
