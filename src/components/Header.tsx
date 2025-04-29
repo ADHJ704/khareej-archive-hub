@@ -112,6 +112,26 @@ const Header = () => {
                               المشاريع
                             </Link>
                           </li>
+                          <li>
+                            <Link 
+                              to="/trainee-login" 
+                              className="block py-2 hover:bg-white/10 px-2 rounded transition"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <LogIn className="inline-block ml-2 h-4 w-4" />
+                              تسجيل دخول متدرب
+                            </Link>
+                          </li>
+                          <li>
+                            <Link 
+                              to="/supervisor-login" 
+                              className="block py-2 hover:bg-white/10 px-2 rounded transition"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <LogIn className="inline-block ml-2 h-4 w-4" />
+                              تسجيل دخول مشرف
+                            </Link>
+                          </li>
                         </ul>
                       </nav>
                       
@@ -174,6 +194,17 @@ const Header = () => {
             <nav className="hidden md:flex items-center space-x-4 space-x-reverse">
               <Link to="/" className="text-white/90 hover:text-white transition">الرئيسية</Link>
               <Link to="/projects" className="text-white/90 hover:text-white transition">المشاريع</Link>
+              
+              <div className="flex items-center space-x-3 space-x-reverse border-r border-white/20 pr-4 mr-2">
+                <Link to="/trainee-login" className="text-white/90 hover:text-white transition flex items-center">
+                  <LogIn className="ml-1 h-4 w-4" />
+                  دخول متدرب
+                </Link>
+                <Link to="/supervisor-login" className="text-white/90 hover:text-white transition flex items-center">
+                  <LogIn className="ml-1 h-4 w-4" />
+                  دخول مشرف
+                </Link>
+              </div>
             </nav>
             
             {user ? (

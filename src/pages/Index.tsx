@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, Library, File } from 'lucide-react';
+import { ArrowRight, BookOpen, Library, File, LogIn } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
 import FeaturedProjects from '@/components/FeaturedProjects';
@@ -65,6 +65,27 @@ const Index = () => {
                 >
                   <File className="ml-2 h-5 w-5" />
                   تصفح المشاريع
+                </Button>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="border-white text-white hover:bg-white/10"
+                  onClick={() => navigate('/trainee-login')}
+                >
+                  <LogIn className="ml-2 h-4 w-4" />
+                  تسجيل دخول متدرب
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="border-white text-white hover:bg-white/10"
+                  onClick={() => navigate('/supervisor-login')}
+                >
+                  <LogIn className="ml-2 h-4 w-4" />
+                  تسجيل دخول مشرف
                 </Button>
               </div>
             </div>
