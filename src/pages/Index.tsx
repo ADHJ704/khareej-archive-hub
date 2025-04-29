@@ -3,7 +3,6 @@ import React from 'react';
 import { ArrowRight, BookOpen, Library, File } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
-import SearchBar from '@/components/SearchBar';
 import FeaturedProjects from '@/components/FeaturedProjects';
 import { projects } from '@/data/projects';
 import { categories } from '@/data/categories';
@@ -11,12 +10,6 @@ import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const navigate = useNavigate();
-
-  const handleSearch = (query: string) => {
-    if (query && query.trim()) {
-      navigate(`/projects?search=${encodeURIComponent(query.trim())}`);
-    }
-  };
 
   // Get the most recent projects
   const recentProjects = [...projects].sort((a, b) => 
@@ -39,15 +32,7 @@ const Index = () => {
                 منصة رقمية تجمع مشاريع التخرج السابقة لتكون مرجعاً للباحثين والطلاب
               </p>
               
-              <div className="max-w-2xl mx-auto">
-                <SearchBar 
-                  onSearch={handleSearch} 
-                  className="mb-8" 
-                  placeholder="ابحث عن مشاريع التخرج..."
-                />
-              </div>
-              
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
                 <Button 
                   size="lg" 
                   className="bg-white text-archive-primary hover:bg-archive-light"

@@ -72,44 +72,46 @@ const SupervisorLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background">
       <Header />
       
-      <main className="flex-grow flex items-center justify-center p-4">
+      <main className="flex-grow flex items-center justify-center p-4 py-12">
         <Card className="w-full max-w-md shadow-lg border-archive-primary/20">
           <CardHeader className="pb-2 text-center">
             <div className="mx-auto bg-archive-primary/10 p-3 rounded-full mb-3">
               <UserCog className="w-12 h-12 text-archive-primary" />
             </div>
-            <h1 className="text-2xl font-bold text-archive-dark">تسجيل دخول المشرف</h1>
-            <p className="text-gray-600 mt-2">أدخل بيانات الدخول للوصول إلى لوحة تحكم المشرف</p>
+            <h1 className="text-2xl font-bold text-archive-dark dark:text-white">تسجيل دخول المشرف</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">أدخل بيانات الدخول للوصول إلى لوحة تحكم المشرف</p>
           </CardHeader>
           
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium text-right">البريد الإلكتروني</label>
+                <label htmlFor="email" className="block text-sm font-medium text-right text-gray-700 dark:text-gray-300">البريد الإلكتروني</label>
                 <Input 
                   id="email" 
                   type="email" 
                   placeholder="أدخل بريدك الإلكتروني" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white"
                   required 
+                  dir="rtl"
+                  className="bg-white dark:bg-card border-archive-primary/20 text-right"
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-medium text-right">كلمة المرور</label>
+                <label htmlFor="password" className="block text-sm font-medium text-right text-gray-700 dark:text-gray-300">كلمة المرور</label>
                 <Input 
                   id="password" 
                   type="password" 
                   placeholder="أدخل كلمة المرور" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white"
-                  required 
+                  required
+                  dir="rtl"
+                  className="bg-white dark:bg-card border-archive-primary/20 text-right"
                 />
               </div>
               
@@ -124,7 +126,7 @@ const SupervisorLogin = () => {
           </CardContent>
           
           <CardFooter className="flex justify-center pt-0">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               ليس لديك حساب؟{' '}
               <a href="#" className="text-archive-primary hover:underline">
                 تواصل مع الإدارة للتسجيل
