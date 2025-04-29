@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Book, Search, X, GraduationCap, Menu, LogIn } from 'lucide-react';
+import { Book, Search, X, GraduationCap, Menu, LogIn, UserCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -36,6 +36,12 @@ const Header = () => {
       navigate(`/projects?search=${encodeURIComponent(query.trim())}`);
       setShowMobileSearch(false);
     }
+  };
+
+  // معالجة التنقل والإغلاق
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsOpen(false);
   };
 
   return (
@@ -120,25 +126,29 @@ const Header = () => {
                       
                       <div className="p-4 border-t border-white/10">
                         {user ? (
-                          <Button 
-                            variant="outline" 
-                            className="w-full border-white/20 text-white hover:bg-white/10"
-                            onClick={() => {
-                              handleLogout();
-                              setIsOpen(false);
-                            }}
-                          >
-                            تسجيل الخروج
-                          </Button>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 mb-3">
+                              <UserCircle className="h-6 w-6" />
+                              <span className="font-medium">{user.email}</span>
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              className="w-full border-white/20 text-white hover:bg-white/10"
+                              onClick={() => {
+                                handleLogout();
+                                setIsOpen(false);
+                              }}
+                            >
+                              <LogIn className="ml-2 h-4 w-4" />
+                              تسجيل الخروج
+                            </Button>
+                          </div>
                         ) : (
                           <div className="flex flex-col gap-2">
                             <Button 
                               variant="outline" 
                               className="w-full border-white/20 text-white hover:bg-white/10"
-                              onClick={() => {
-                                navigate('/trainee-login');
-                                setIsOpen(false);
-                              }}
+                              onClick={() => handleNavigate('/trainee-login')}
                             >
                               <GraduationCap className="ml-2 h-4 w-4" />
                               تسجيل متدرب
@@ -147,10 +157,7 @@ const Header = () => {
                             <Button 
                               variant="outline" 
                               className="w-full border-white/20 text-white hover:bg-white/10"
-                              onClick={() => {
-                                navigate('/supervisor-login');
-                                setIsOpen(false);
-                              }}
+                              onClick={() => handleNavigate('/supervisor-login')}
                             >
                               <LogIn className="ml-2 h-4 w-4" />
                               تسجيل مشرف
@@ -200,14 +207,20 @@ const Header = () => {
             </nav>
             
             {user ? (
-              <Button 
-                variant="outline" 
-                className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
-                onClick={handleLogout}
-              >
-                <LogIn className="h-4 w-4" />
-                تسجيل الخروج
-              </Button>
+              <div className="hidden md:flex items-center gap-3">
+                <div className="text-sm text-white/80 pl-3 border-l border-white/20">
+                  <UserCircle className="inline-block ml-1 h-4 w-4" />
+                  {user.email}
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2"
+                  onClick={handleLogout}
+                >
+                  <LogIn className="h-4 w-4" />
+                  تسجيل الخروج
+                </Button>
+              </div>
             ) : (
               <div className="hidden md:flex items-center gap-2">
                 <Button 
