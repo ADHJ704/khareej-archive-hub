@@ -59,7 +59,7 @@ const TraineeLogin = () => {
         description: "مرحباً بك في منصة المشاريع"
       });
       
-      navigate('/projects');
+      navigate('/trainee-dashboard');
     } catch (error) {
       toast({
         title: "خطأ في النظام",
