@@ -1,19 +1,22 @@
 
 import React, { useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Download, BookOpen, ArrowRight, Calendar, User, BookOpenCheck, FileText } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
 import Header from '@/components/Header';
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useProjects } from '@/hooks/useProjects';
-import { categories } from '@/data/categories';
-import { ScrollArea } from "@/components/ui/scroll-area";
+
+// Import our new components
+import ProjectHeader from '@/components/project-detail/ProjectHeader';
+import ProjectInfoDisplay from '@/components/project-detail/ProjectInfoDisplay';
+import ProjectSidebar from '@/components/project-detail/ProjectSidebar';
+import RelatedProjects from '@/components/project-detail/RelatedProjects';
+import ProjectDetailSkeleton from '@/components/project-detail/ProjectDetailSkeleton';
+import ProjectDetailErrorState from '@/components/project-detail/ProjectDetailErrorState';
+import ProjectDetailNotFound from '@/components/project-detail/ProjectDetailNotFound';
+import ProjectFooter from '@/components/project-detail/ProjectFooter';
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { toast } = useToast();
   
   // Use the useProjects hook to fetch all projects - include those without links for the detail view
@@ -38,12 +41,7 @@ const ProjectDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">جاري التحميل...</h2>
-            <p className="mb-6">يرجى الانتظار قليلاً</p>
-          </div>
-        </main>
+        <ProjectDetailSkeleton />
       </div>
     );
   }
@@ -59,15 +57,8 @@ const ProjectDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">حدث خطأ</h2>
-            <p className="mb-6">لم نتمكن من تحميل بيانات المشروع، يرجى المحاولة مرة أخرى</p>
-            <Button onClick={() => navigate('/projects')}>
-              العودة إلى المشاريع
-            </Button>
-          </div>
-        </main>
+        <ProjectDetailErrorState />
+        <ProjectFooter />
       </div>
     );
   }
@@ -77,50 +68,16 @@ const ProjectDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">المشروع غير موجود</h2>
-            <p className="mb-6">عذراً، لم يتم العثور على المشروع المطلوب</p>
-            <Button onClick={() => navigate('/projects')}>
-              العودة إلى المشاريع
-            </Button>
-          </div>
-        </main>
+        <ProjectDetailNotFound />
+        <ProjectFooter />
       </div>
     );
   }
-  
-  const category = categories.find(c => c.id === project.categoryId);
   
   // Get related projects from the same category (that have project content or download links)
   const relatedProjects = projects
     .filter(p => p.categoryId === project.categoryId && p.id !== project.id && (!!p.project_content || !!p.downloadUrl))
     .slice(0, 3);
-
-  // معالج الأحداث لزر التحميل
-  const handleDownloadClick = () => {
-    if (!project.downloadUrl) {
-      toast({
-        title: "الرابط غير متوفر",
-        description: "عذراً، رابط تحميل المشروع غير متوفر حالياً",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // فتح الرابط في نافذة جديدة أو بدء التحميل
-    window.open(project.downloadUrl, '_blank');
-    
-    // إضافة رسالة تأكيد بدء التحميل
-    toast({
-      title: "بدء التحميل",
-      description: "تم بدء تحميل المشروع",
-    });
-  };
-
-  // تنسيق خاص للأزرار لتوضيح حالة الروابط المتوفرة وغير المتوفرة
-  const isDownloadAvailable = !!project.downloadUrl;
-  const hasProjectContent = !!project.project_content;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -128,197 +85,26 @@ const ProjectDetail = () => {
       
       <main className="flex-grow bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container-custom">
-          {/* Breadcrumb */}
-          <div className="mb-6 flex items-center text-sm">
-            <Link to="/" className="text-gray-500 hover:text-archive-primary">الرئيسية</Link>
-            <ArrowRight className="h-3 w-3 mx-2 text-gray-400" />
-            <Link to="/projects" className="text-gray-500 hover:text-archive-primary">المشاريع</Link>
-            <ArrowRight className="h-3 w-3 mx-2 text-gray-400" />
-            <span className="text-archive-primary">{project.title}</span>
-          </div>
+          <ProjectHeader project={project} />
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main content - Ensuring content is scrollable */}
+            {/* Main content */}
             <div className="lg:col-span-2">
-              <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-8 overflow-y-auto max-h-full">
-                <h1 className="text-2xl md:text-3xl font-heading font-bold text-archive-primary mb-4">
-                  {project.title}
-                </h1>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline" className="bg-archive-muted text-archive-primary">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div className="flex items-center">
-                    <User className="h-5 w-5 ml-2 text-archive-secondary" />
-                    <div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">الباحث</div>
-                      <div className="font-medium">{project.author}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <BookOpenCheck className="h-5 w-5 ml-2 text-archive-secondary" />
-                    <div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">المشرف</div>
-                      <div className="font-medium">{project.supervisor}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <Calendar className="h-5 w-5 ml-2 text-archive-secondary" />
-                    <div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">سنة المشروع</div>
-                      <div className="font-medium">{project.year}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <BookOpen className="h-5 w-5 ml-2 text-archive-secondary" />
-                    <div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">القسم</div>
-                      <div className="font-medium">{project.department}</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <Separator className="my-6" />
-                
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-3">ملخص المشروع</h3>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {project.abstract}
-                  </p>
-                </div>
-                
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-3">وصف المشروع</h3>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {project.description}
-                  </p>
-                </div>
-                
-                {/* New section for project content that replaces the PDF */}
-                {hasProjectContent && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">محتوى المشروع الكامل</h3>
-                    <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
-                      <ScrollArea className="h-[400px] rounded-md pr-4">
-                        <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                          {project.project_content}
-                        </div>
-                      </ScrollArea>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <ProjectInfoDisplay project={project} />
               
               {/* Related projects */}
-              {relatedProjects.length > 0 && (
-                <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6">
-                  <h3 className="text-xl font-semibold mb-4">مشاريع ذات صلة</h3>
-                  
-                  <div className="space-y-4">
-                    {relatedProjects.map(related => (
-                      <div key={related.id} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-archive-secondary transition-colors">
-                        <Link to={`/project/${related.id}`} className="block">
-                          <h4 className="font-medium text-archive-primary hover:text-archive-secondary mb-2">
-                            {related.title}
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                            {related.abstract}
-                          </p>
-                          
-                          {/* إضافة شارات لإظهار توفر الملفات في المشاريع ذات الصلة */}
-                          <div className="flex gap-2 mt-2">
-                            {related.project_content && (
-                              <Badge variant="outline" className="bg-green-100 text-green-700 border-green-500">
-                                <FileText className="h-3 w-3 ml-1" />
-                                محتوى متاح
-                              </Badge>
-                            )}
-                            {related.downloadUrl && (
-                              <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-500">
-                                <Download className="h-3 w-3 ml-1" />
-                                تحميل متاح
-                              </Badge>
-                            )}
-                          </div>
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <RelatedProjects projects={relatedProjects} />
             </div>
             
-            {/* Sidebar with improved sticky behavior */}
+            {/* Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-6 sticky top-24">
-                <div className="flex justify-center mb-8">
-                  <div className="w-24 h-24 bg-gradient-to-b from-archive-primary to-archive-secondary rounded-full flex items-center justify-center">
-                    <BookOpen className="h-12 w-12 text-white" />
-                  </div>
-                </div>
-                
-                <div className="mb-6 text-center">
-                  <h3 className="font-medium mb-2">التصنيف</h3>
-                  <Badge className="bg-archive-accent text-white px-3 py-1">
-                    {category?.name || 'غير مصنف'}
-                  </Badge>
-                </div>
-                
-                <Separator className="my-6" />
-                
-                <div className="space-y-4">
-                  <Button 
-                    className={`w-full ${isDownloadAvailable 
-                      ? 'bg-archive-primary hover:bg-archive-dark' 
-                      : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed'}`}
-                    disabled={!isDownloadAvailable}
-                    onClick={handleDownloadClick}
-                  >
-                    <Download className="h-4 w-4 ml-2" />
-                    {isDownloadAvailable ? 'تنزيل المشروع' : 'التحميل غير متاح'}
-                  </Button>
-                  
-                  {/* مربع توضيحي لحالة توفر الملفات */}
-                  <div className={`mt-4 p-3 rounded-md ${(!hasProjectContent && !isDownloadAvailable) 
-                    ? 'bg-amber-50 border border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' 
-                    : 'bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800'}`}>
-                    <p className="text-sm font-medium mb-2 text-center">
-                      {(!hasProjectContent && !isDownloadAvailable) 
-                        ? 'ملفات المشروع غير متوفرة' 
-                        : 'محتوى المشروع المتوفر'}
-                    </p>
-                    <ul className="space-y-1 text-sm">
-                      <li className={`flex items-center ${hasProjectContent ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${hasProjectContent ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                        المحتوى الكامل: {hasProjectContent ? 'متاح' : 'غير متاح'}
-                      </li>
-                      <li className={`flex items-center ${isDownloadAvailable ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isDownloadAvailable ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                        ملف للتحميل: {isDownloadAvailable ? 'متاح' : 'غير متاح'}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <ProjectSidebar project={project} />
             </div>
           </div>
         </div>
       </main>
       
-      <footer className="bg-archive-dark text-white py-6">
-        <div className="container-custom text-center">
-          <p>أرشيف المشاريع الجامعية &copy; {new Date().getFullYear()}</p>
-        </div>
-      </footer>
+      <ProjectFooter />
     </div>
   );
 };

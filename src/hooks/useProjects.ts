@@ -84,15 +84,9 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           console.log('Data from Supabase:', data);
           
           // Map database field names to our model field names and add content
-          const mappedData = data.map(item => ({
-            id: item.id,
-            title: item.title,
-            author: item.author,
-            department: item.department,
-            year: item.year,
-            abstract: item.abstract || '',
-            description: item.description || '',
-            project_content: item.project_content || generateProjectContent({
+          const mappedData = data.map(item => {
+            // First create a partial project with guaranteed fields
+            const projectBase = {
               id: item.id,
               title: item.title,
               author: item.author,
@@ -102,13 +96,16 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
               description: item.description || '',
               tags: item.tags || [],
               supervisor: item.supervisor,
-              categoryId: item.category_id
-            }),
-            tags: item.tags || [],
-            supervisor: item.supervisor,
-            categoryId: item.category_id,
-            downloadUrl: isValidUrl(item.download_url) ? item.download_url : getVerifiedDownloadUrl()
-          })) as Project[];
+              categoryId: item.category_id,
+            };
+            
+            // Generate content and add optional fields
+            return {
+              ...projectBase,
+              project_content: item.project_content || generateProjectContent(projectBase as Project),
+              downloadUrl: isValidUrl(item.download_url) ? item.download_url : getVerifiedDownloadUrl()
+            } as Project;
+          });
           
           // Filter projects that have content or download links if required
           const filteredProjects = showOnlyWithContent 
