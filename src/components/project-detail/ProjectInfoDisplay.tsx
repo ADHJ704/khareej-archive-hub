@@ -3,7 +3,6 @@ import React from 'react';
 import { User, BookOpenCheck, Calendar, BookOpen } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Project } from '@/data/projects';
 
 interface ProjectInfoDisplayProps {
@@ -11,8 +10,6 @@ interface ProjectInfoDisplayProps {
 }
 
 const ProjectInfoDisplay = ({ project }: ProjectInfoDisplayProps) => {
-  const hasProjectContent = !!project.project_content;
-
   return (
     <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-8 overflow-y-auto max-h-full">
       <h1 className="text-2xl md:text-3xl font-heading font-bold text-archive-primary mb-4">
@@ -76,20 +73,6 @@ const ProjectInfoDisplay = ({ project }: ProjectInfoDisplayProps) => {
           {project.description}
         </p>
       </div>
-      
-      {/* Project content section */}
-      {hasProjectContent && (
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">محتوى المشروع الكامل</h3>
-          <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
-            <ScrollArea className="h-[400px] rounded-md pr-4">
-              <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                {project.project_content}
-              </div>
-            </ScrollArea>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
+import ProjectFullDetail from "./pages/ProjectFullDetail";
 import Categories from "./pages/Categories";
 import NotFound from "./pages/NotFound";
 import TraineeLogin from "./pages/TraineeLogin";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
+            <Route path="/project-details/:id" element={<ProjectFullDetail />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/trainee-login" element={<TraineeLogin />} />
             <Route path="/trainee-register" element={<TraineeRegister />} />
@@ -48,4 +50,3 @@ const App = () => (
 );
 
 export default App;
-

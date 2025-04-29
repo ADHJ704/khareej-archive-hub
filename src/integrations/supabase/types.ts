@@ -66,8 +66,9 @@ export type Database = {
           department: string
           description: string | null
           download_url: string | null
+          full_content: string | null
           id: string
-          pdf_url: string | null
+          pdf_url_deprecated: string | null
           supervisor: string
           tags: string[] | null
           title: string
@@ -82,8 +83,9 @@ export type Database = {
           department: string
           description?: string | null
           download_url?: string | null
+          full_content?: string | null
           id?: string
-          pdf_url?: string | null
+          pdf_url_deprecated?: string | null
           supervisor: string
           tags?: string[] | null
           title: string
@@ -98,8 +100,9 @@ export type Database = {
           department?: string
           description?: string | null
           download_url?: string | null
+          full_content?: string | null
           id?: string
-          pdf_url?: string | null
+          pdf_url_deprecated?: string | null
           supervisor?: string
           tags?: string[] | null
           title?: string
