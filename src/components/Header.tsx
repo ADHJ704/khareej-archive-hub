@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sheet } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -9,10 +8,11 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 // استيراد المكونات الجديدة
 import Logo from '@/components/header/Logo';
-import MobileButtons from '@/components/header/MobileButtons';
 import MobileSearch from '@/components/header/MobileSearch';
 import MobileSidebar from '@/components/header/MobileSidebar';
 import DesktopNavigation from '@/components/header/DesktopNavigation';
+import { Menu, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -44,9 +44,35 @@ const Header = () => {
           <Logo />
           
           {!showMobileSearch && (
-            <MobileButtons
-              onSearchClick={() => setShowMobileSearch(true)}
-            />
+            <div className="flex items-center md:hidden gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowMobileSearch(true)}
+                className="text-white hover:bg-white/10"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+              
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="text-white hover:bg-white/10"
+                  >
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                
+                <MobileSidebar 
+                  user={user}
+                  onSearch={handleSearch}
+                  onLogout={handleLogout}
+                  onClose={() => setIsOpen(false)}
+                />
+              </Sheet>
+            </div>
           )}
         </div>
         
@@ -56,20 +82,11 @@ const Header = () => {
             onClose={() => setShowMobileSearch(false)}
           />
         ) : (
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <DesktopNavigation 
-              user={user}
-              onSearch={handleSearch}
-              onLogout={handleLogout}
-            />
-            
-            <MobileSidebar 
-              user={user}
-              onSearch={handleSearch}
-              onLogout={handleLogout}
-              onClose={() => setIsOpen(false)}
-            />
-          </Sheet>
+          <DesktopNavigation 
+            user={user}
+            onSearch={handleSearch}
+            onLogout={handleLogout}
+          />
         )}
       </div>
     </header>

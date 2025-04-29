@@ -20,15 +20,14 @@ const MobileButtons = ({ onSearchClick }: MobileButtonsProps) => {
         <Search className="h-5 w-5" />
       </Button>
       
-      <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="text-white hover:bg-white/10"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
-      </SheetTrigger>
+      {/* SheetTrigger should ONLY be used inside the Header component where the Sheet is defined */}
+      <Button 
+        variant="ghost" 
+        size="icon"
+        className="text-white hover:bg-white/10"
+      >
+        <Menu className="h-5 w-5" />
+      </Button>
     </div>
   );
 };
