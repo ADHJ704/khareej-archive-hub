@@ -16,7 +16,14 @@ import TraineeLogin from "./pages/TraineeLogin";
 import TraineeSignup from "./pages/TraineeSignup";
 import SupervisorLogin from "./pages/SupervisorLogin";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    }
+  }
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

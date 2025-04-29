@@ -7,7 +7,7 @@ import FeaturedProjects from '@/components/FeaturedProjects';
 import { projects } from '@/data/projects';
 import { categories } from '@/data/categories';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
@@ -16,15 +16,15 @@ const Index = () => {
   const [projectsCount, setProjectsCount] = useState(0);
   const [categoriesCount, setCategorizesCount] = useState(0);
 
-  // Get the most recent projects
+  // الحصول على أحدث المشاريع
   const recentProjects = [...projects].sort((a, b) => 
     parseInt(b.year) - parseInt(a.year)
   ).slice(0, 3);
 
-  // Fetch actual counts from database
+  // جلب الإحصائيات الفعلية من قاعدة البيانات
   useEffect(() => {
     const fetchCounts = async () => {
-      // Get projects count
+      // الحصول على عدد المشاريع
       const { count: projectCount, error: projectError } = await supabase
         .from('projects')
         .select('*', { count: 'exact', head: true });
@@ -33,10 +33,10 @@ const Index = () => {
         setProjectsCount(projectCount);
       } else {
         console.error('Error fetching project count:', projectError);
-        setProjectsCount(projects.length); // Fallback to local data
+        setProjectsCount(projects.length); // استخدام البيانات المحلية كبديل
       }
 
-      // Get categories count
+      // الحصول على عدد التخصصات
       setCategorizesCount(categories.length);
     };
 
@@ -48,7 +48,7 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero section */}
+        {/* قسم الترحيب */}
         <section className="relative bg-gradient-to-r from-archive-primary to-archive-secondary py-16 md:py-24">
           <div className="container-custom relative z-10">
             <div className="text-center max-w-3xl mx-auto text-white">
@@ -83,7 +83,7 @@ const Index = () => {
           <div className="absolute inset-0 bg-archive-dark/10 z-0"></div>
         </section>
         
-        {/* Stats section */}
+        {/* قسم الإحصائيات */}
         <section className="py-12 bg-white dark:bg-card">
           <div className="container-custom">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -103,8 +103,52 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Featured projects section */}
+        {/* قسم المشاريع المميزة */}
         <FeaturedProjects projects={recentProjects} />
+
+        {/* قسم عن المنصة */}
+        <section className="py-12 bg-slate-50 dark:bg-slate-900">
+          <div className="container-custom">
+            <div className="text-center max-w-3xl mx-auto mb-10">
+              <h2 className="text-2xl md:text-3xl font-bold text-archive-primary mb-4">
+                عن منصة أرشيف المشاريع
+              </h2>
+              <p className="text-lg text-archive-dark/80 dark:text-white/80">
+                منصة متكاملة لمساعدة المتدربين والمشرفين في الوصول إلى مشاريع التخرج السابقة والاستفادة منها في إعداد أبحاثهم ومشاريعهم الخاصة.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-white dark:bg-card p-6 rounded-lg text-center shadow-sm">
+                <div className="bg-archive-muted/50 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <BookOpen className="h-8 w-8 text-archive-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">سهولة الوصول</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  وصول سريع وسهل لمئات المشاريع في مختلف التخصصات
+                </p>
+              </div>
+              <div className="bg-white dark:bg-card p-6 rounded-lg text-center shadow-sm">
+                <div className="bg-archive-muted/50 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <File className="h-8 w-8 text-archive-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">محتوى متكامل</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  عرض المشاريع بتفاصيلها الكاملة مع إمكانية تصفحها مباشرة
+                </p>
+              </div>
+              <div className="bg-white dark:bg-card p-6 rounded-lg text-center shadow-sm">
+                <div className="bg-archive-muted/50 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <Compass className="h-8 w-8 text-archive-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">تصنيف منظم</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  تصنيف المشاريع حسب التخصصات والأقسام لتسهيل عملية البحث
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       
       <footer className="bg-archive-dark text-white py-8">

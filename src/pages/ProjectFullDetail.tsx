@@ -135,17 +135,17 @@ const ProjectFullDetail = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-xl font-semibold mb-3">فكرة المشروع</h3>
-                <p className="text-gray-700 dark:text-gray-300">{project.abstract}</p>
+                <p className="text-gray-700 dark:text-gray-300">{project.abstract || "غير متوفر"}</p>
               </div>
               
               <div>
                 <h3 className="text-xl font-semibold mb-3">أهداف المشروع</h3>
-                <p className="text-gray-700 dark:text-gray-300">{project.description}</p>
+                <p className="text-gray-700 dark:text-gray-300">{project.description || "غير متوفر"}</p>
               </div>
               
               <div>
                 <h3 className="text-xl font-semibold mb-3">القسم</h3>
-                <p className="text-gray-700 dark:text-gray-300">{project.department}</p>
+                <p className="text-gray-700 dark:text-gray-300">{project.department || "غير متوفر"}</p>
               </div>
             </div>
           </div>

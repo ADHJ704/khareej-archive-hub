@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,7 +47,7 @@ const SupervisorLogin = () => {
       }
 
       if (data?.user) {
-        // Check if user is a supervisor
+        // التحقق مما إذا كان المستخدم مشرف
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('role')
@@ -59,7 +59,7 @@ const SupervisorLogin = () => {
         }
 
         if (profileData.role !== 'supervisor') {
-          // Sign out if not a supervisor
+          // تسجيل الخروج إذا لم يكن مشرف
           await supabase.auth.signOut();
           toast({
             title: 'خطأ في تسجيل الدخول',
@@ -75,7 +75,7 @@ const SupervisorLogin = () => {
           description: 'مرحباً بك في منصة أرشيف المشاريع',
         });
         
-        // Redirect to home page
+        // التوجيه إلى الصفحة الرئيسية
         navigate('/');
       }
     } catch (error: any) {
@@ -156,7 +156,7 @@ const SupervisorLogin = () => {
                   <div className="pt-2">
                     <Button
                       type="submit"
-                      className="w-full bg-archive-secondary hover:bg-archive-dark"
+                      className="w-full bg-archive-secondary hover:bg-archive-secondary/80"
                       disabled={isLoading}
                     >
                       {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}

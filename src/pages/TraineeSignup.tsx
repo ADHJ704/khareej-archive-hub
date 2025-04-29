@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,10 +42,13 @@ const TraineeSignup = () => {
     setIsLoading(true);
 
     try {
-      // Register the user
+      // تسجيل المستخدم
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        }
       });
 
       if (error) {
@@ -53,7 +56,7 @@ const TraineeSignup = () => {
       }
 
       if (data?.user) {
-        // Set the role to trainee in profiles table
+        // تعيين الدور إلى متدرب في جدول الملفات الشخصية
         const { error: profileError } = await supabase
           .from('profiles')
           .update({ role: 'trainee' })
@@ -68,15 +71,23 @@ const TraineeSignup = () => {
           description: 'يمكنك الآن تسجيل الدخول إلى منصة أرشيف المشاريع',
         });
         
-        // Redirect to home page after successful signup
+        // التوجيه إلى الصفحة الرئيسية بعد التسجيل الناجح
         navigate('/');
       }
     } catch (error: any) {
-      toast({
-        title: 'خطأ في إنشاء الحساب',
-        description: error?.message || 'حدث خطأ أثناء محاولة إنشاء الحساب',
-        variant: 'destructive',
-      });
+      if (error.message.includes('already registered')) {
+        toast({
+          title: 'البريد الإلكتروني مستخدم بالفعل',
+          description: 'يرجى استخدام بريد إلكتروني آخر أو تسجيل الدخول',
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'خطأ في إنشاء الحساب',
+          description: error?.message || 'حدث خطأ أثناء محاولة إنشاء الحساب',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setIsLoading(false);
     }
