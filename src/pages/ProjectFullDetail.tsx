@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Wrench } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useProjects } from '@/hooks/useProjects';
 import { Button } from '@/components/ui/button';
 import { Separator } from "@/components/ui/separator";
@@ -135,27 +135,6 @@ const ProjectFullDetail = () => {
               <div>
                 <h3 className="text-xl font-semibold mb-3">أهداف المشروع</h3>
                 <p className="text-gray-700 dark:text-gray-300">{project.description}</p>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-semibold mb-3 flex items-center">
-                  <Wrench className="h-5 w-5 ml-2 text-archive-secondary" />
-                  الأدوات المستخدمة
-                </h3>
-                {project.tags && project.tags.length > 0 ? (
-                  <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
-                    {project.tags.map((tool, index) => (
-                      <li key={index} className="flex items-center">
-                        <span className="mr-2">•</span>
-                        <span>{tool}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400 italic">
-                    لا توجد أدوات مذكورة لهذا المشروع
-                  </p>
-                )}
               </div>
               
               <div>

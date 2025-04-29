@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, BookOpenCheck, Calendar, BookOpen, Wrench } from 'lucide-react';
+import { User, BookOpenCheck, Calendar, BookOpen } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Project } from '@/data/projects';
@@ -72,27 +72,6 @@ const ProjectInfoDisplay = ({ project }: ProjectInfoDisplayProps) => {
         <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
           {project.description}
         </p>
-      </div>
-      
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3 flex items-center">
-          <Wrench className="h-5 w-5 ml-2 text-archive-secondary" />
-          الأدوات المستخدمة
-        </h3>
-        {project.tags && project.tags.length > 0 ? (
-          <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300 leading-relaxed">
-            {project.tags.map((tool, index) => (
-              <li key={index} className="flex items-center">
-                <span className="mr-2">•</span>
-                <span>{tool}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400 italic">
-            لا توجد أدوات مذكورة لهذا المشروع
-          </p>
-        )}
       </div>
     </div>
   );
