@@ -1,5 +1,16 @@
 
 project_id = "kyuzpbomewcbkwyyfuds"
 
-[functions.project-suggestion]
-verify_jwt = true
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323

@@ -16,6 +16,7 @@ import TraineeDashboard from "./pages/TraineeDashboard";
 import SupervisorLogin from "./pages/SupervisorLogin";
 import SupervisorDashboard from "./pages/SupervisorDashboard";
 import SuggestProject from "./pages/SuggestProject";
+import AIHelper from "./pages/AIHelper";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/suggest-project" element={<SuggestProject />} />
             <Route path="/supervisor-login" element={<SupervisorLogin />} />
             <Route path="/supervisor-dashboard" element={<SupervisorDashboard />} />
+            <Route path="/ai-helper" element={<AIHelper />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
@@ -46,3 +48,4 @@ const App = () => (
 );
 
 export default App;
+
