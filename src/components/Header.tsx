@@ -239,20 +239,3 @@ const Header = () => {
 };
 
 export default Header;
-<Button 
-  variant="outline" 
-  className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2 whitespace-nowrap"
-  onClick={() => navigate('/trainee-login')}
->
-  <GraduationCap className="h-4 w-4" />
-  <span>تسجيل متدرب</span>
-</Button>
-
-<Button 
-  variant="outline" 
-  className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2 whitespace-nowrap"
-  onClick={() => navigate('/supervisor-login')}
->
-  <LogIn className="h-4 w-4" />
-  <span>تسجيل مشرف</span>
-</Button>
