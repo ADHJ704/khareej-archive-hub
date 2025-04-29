@@ -404,9 +404,11 @@ const Projects = () => {
             </Button>
             
             {suggestedProject && (
-              <div className="mt-4 p-4 bg-gray-100 rounded">
+              <div className="mt-4">
                 <h3 className="font-bold mb-2">المشروع المقترح:</h3>
-                <p className="whitespace-pre-line">{suggestedProject}</p>
+                <ScrollArea className="h-[200px] w-full rounded-md border p-4 bg-gray-100">
+                  <p className="whitespace-pre-line">{suggestedProject}</p>
+                </ScrollArea>
               </div>
             )}
           </div>
