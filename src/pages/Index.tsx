@@ -66,15 +66,6 @@ const Index = () => {
                   <File className="ml-2 h-5 w-5" />
                   تصفح المشاريع
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white/10"
-                  onClick={() => navigate('/categories')}
-                >
-                  <Library className="ml-2 h-5 w-5" />
-                  استعراض التخصصات
-                </Button>
               </div>
             </div>
           </div>
@@ -104,36 +95,6 @@ const Index = () => {
         
         {/* Featured projects section */}
         <FeaturedProjects projects={recentProjects} />
-        
-        {/* Categories section */}
-        <section className="py-12 bg-white dark:bg-card">
-          <div className="container-custom">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold text-archive-primary mb-8 text-center">
-              التخصصات
-            </h2>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {categories.slice(0, 8).map((category) => (
-                <div 
-                  key={category.id} 
-                  className="p-6 archive-card hover:border-archive-accent hover:border transition-all cursor-pointer"
-                  onClick={() => navigate(`/projects?category=${category.id}`)}
-                >
-                  <h3 className="text-xl font-semibold text-archive-primary mb-2">
-                    {category.name}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
-                    {category.description}
-                  </p>
-                  <Button variant="link" className="p-0 text-archive-secondary">
-                    <span>عرض المشاريع</span>
-                    <ArrowRight className="mr-2 h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
         
         {/* CTA section */}
         <section className="py-16 bg-archive-primary text-white">

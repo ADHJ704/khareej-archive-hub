@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Book, Search, X, GraduationCap, Menu, LogIn, UserCircle } from 'lucide-react';
+import { Book, Search, X, Menu, LogIn, UserCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -112,15 +112,6 @@ const Header = () => {
                               المشاريع
                             </Link>
                           </li>
-                          <li>
-                            <Link 
-                              to="/categories" 
-                              className="block py-2 hover:bg-white/10 px-2 rounded transition"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              التخصصات
-                            </Link>
-                          </li>
                         </ul>
                       </nav>
                       
@@ -143,27 +134,7 @@ const Header = () => {
                               تسجيل الخروج
                             </Button>
                           </div>
-                        ) : (
-                          <div className="flex flex-col gap-2">
-                            <Button 
-                              variant="outline" 
-                              className="w-full border-white/20 text-white hover:bg-white/10"
-                              onClick={() => handleNavigate('/trainee-login')}
-                            >
-                              <GraduationCap className="ml-2 h-4 w-4" />
-                              تسجيل متدرب
-                            </Button>
-                            
-                            <Button 
-                              variant="outline" 
-                              className="w-full border-white/20 text-white hover:bg-white/10"
-                              onClick={() => handleNavigate('/supervisor-login')}
-                            >
-                              <LogIn className="ml-2 h-4 w-4" />
-                              تسجيل مشرف
-                            </Button>
-                          </div>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </SheetContent>
@@ -203,7 +174,6 @@ const Header = () => {
             <nav className="hidden md:flex items-center space-x-4 space-x-reverse">
               <Link to="/" className="text-white/90 hover:text-white transition">الرئيسية</Link>
               <Link to="/projects" className="text-white/90 hover:text-white transition">المشاريع</Link>
-              <Link to="/categories" className="text-white/90 hover:text-white transition">التخصصات</Link>
             </nav>
             
             {user ? (
@@ -221,29 +191,7 @@ const Header = () => {
                   تسجيل الخروج
                 </Button>
               </div>
-            ) : (
-              <div className="hidden md:flex items-center gap-2">
-                <Button 
-                  variant="outline" 
-                  className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2 whitespace-nowrap"
-                  onClick={() => navigate('/trainee-login')}
-                >
-                  <GraduationCap className="h-4 w-4" />
-                  <span className="hidden lg:inline">تسجيل متدرب</span>
-                  <span className="lg:hidden">متدرب</span>
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  className="flex items-center border-white/20 text-white hover:bg-white/10 gap-2 whitespace-nowrap"
-                  onClick={() => navigate('/supervisor-login')}
-                >
-                  <LogIn className="h-4 w-4" />
-                  <span className="hidden lg:inline">تسجيل مشرف</span>
-                  <span className="lg:hidden">مشرف</span>
-                </Button>
-              </div>
-            )}
+            ) : null}
           </div>
         )}
       </div>
