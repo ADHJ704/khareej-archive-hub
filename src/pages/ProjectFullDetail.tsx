@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Tool } from 'lucide-react';
+import { ArrowLeft, Wrench } from 'lucide-react';
 import { useProjects } from '@/hooks/useProjects';
 import { Button } from '@/components/ui/button';
 import { Separator } from "@/components/ui/separator";

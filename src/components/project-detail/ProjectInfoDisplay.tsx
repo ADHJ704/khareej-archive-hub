@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, BookOpenCheck, Calendar, BookOpen, Tool } from 'lucide-react';
+import { User, BookOpenCheck, Calendar, BookOpen, Wrench } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Project } from '@/data/projects';
