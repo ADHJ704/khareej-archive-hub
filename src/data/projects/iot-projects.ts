@@ -42,6 +42,6 @@ export const iotProjects: Project[] = [
     supervisor: 'د. سلطان العنزي',
     categoryId: 'iot',
     pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    downloadUrl: 'https://filesamples.com/samples/document/zip/sample3.zip'
+    downloadUrl: 'https://filesamples.com/samples/archive/zip/sample3.zip'
   }
 ];
