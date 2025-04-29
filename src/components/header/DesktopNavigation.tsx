@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserRound } from 'lucide-react';
+import { UserRound, MessageSquareText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import SearchBar from '@/components/SearchBar';
 
@@ -26,10 +26,10 @@ const DesktopNavigation = ({ user, onSearch, onLogout }: DesktopNavigationProps)
         <Link to="/" className="text-white/90 hover:text-white transition">الرئيسية</Link>
         <Link to="/projects" className="text-white/90 hover:text-white transition">المشاريع</Link>
         <Link to="/categories" className="text-white/90 hover:text-white transition">التخصصات</Link>
+        <Link to="/ai-helper" className="text-white/90 hover:text-white transition">محادثة الذكاء الاصطناعي</Link>
         
         {user ? (
           <>
-            <Link to="/suggest-project" className="text-white/90 hover:text-white transition">اقتراح مشروع</Link>
             <Button 
               variant="ghost"
               className="text-white hover:bg-white/20"

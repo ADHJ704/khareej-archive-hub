@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, BookOpen, Download, File } from 'lucide-react';
+import { FileText, BookOpen, File } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Project } from '@/data/projects';
@@ -12,9 +12,8 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project, featured = false }: ProjectCardProps) => {
-  // تحقق من وجود الروابط
-  const hasPdf = !!project.pdfUrl;
-  const hasDownload = !!project.downloadUrl;
+  // تحقق من وجود محتوى المشروع
+  const hasContent = !!project.project_content || !!project.full_content;
   
   return (
     <div className={`archive-card overflow-hidden flex flex-col ${featured ? 'h-full' : ''}`}>
@@ -24,18 +23,12 @@ const ProjectCard = ({ project, featured = false }: ProjectCardProps) => {
           {project.year}
         </Badge>
         
-        {/* عرض شارات توفر الملفات بطريقة أكثر وضوحًا */}
+        {/* عرض شارات توفر المحتوى بطريقة أكثر وضوحًا */}
         <div className="absolute bottom-3 left-3 flex gap-2">
-          {hasPdf && (
+          {hasContent && (
             <Badge variant="outline" className="bg-green-100 text-green-700 border-green-500">
               <FileText className="h-3 w-3 ml-1" />
-              PDF متاح
-            </Badge>
-          )}
-          {hasDownload && (
-            <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-500">
-              <Download className="h-3 w-3 ml-1" />
-              تحميل متاح
+              المحتوى متاح
             </Badge>
           )}
         </div>

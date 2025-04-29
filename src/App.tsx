@@ -11,7 +11,6 @@ import Categories from "./pages/Categories";
 import ProjectDetail from "./pages/ProjectDetail";
 import ProjectFullDetail from "./pages/ProjectFullDetail";
 import NotFound from "./pages/NotFound";
-import SuggestProject from "./pages/SuggestProject";
 import AIHelper from "./pages/AIHelper";
 import TraineeLogin from "./pages/TraineeLogin";
 import TraineeSignup from "./pages/TraineeSignup";
@@ -32,7 +31,6 @@ const App = () => (
             <Route path="/categories" element={<Categories />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/project-details/:id" element={<ProjectFullDetail />} />
-            <Route path="/suggest-project" element={<SuggestProject />} />
             <Route path="/ai-helper" element={<AIHelper />} />
             <Route path="/trainee-login" element={<TraineeLogin />} />
             <Route path="/trainee-signup" element={<TraineeSignup />} />

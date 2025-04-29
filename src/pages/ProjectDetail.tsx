@@ -1,9 +1,11 @@
 
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
 import Header from '@/components/Header';
 import { useProjects } from '@/hooks/useProjects';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from 'lucide-react';
 
 // Import our new components
 import ProjectHeader from '@/components/project-detail/ProjectHeader';
@@ -18,8 +20,9 @@ import ProjectFooter from '@/components/project-detail/ProjectFooter';
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
-  // Use the useProjects hook to fetch all projects - include those without links for the detail view
+  // Use the useProjects hook to fetch all projects
   const { data: projects = [], isLoading, isError } = useProjects(undefined, undefined, undefined, false);
   
   // Find the current project by ID
@@ -30,7 +33,6 @@ const ProjectDetail = () => {
     if (project) {
       console.log('Project details:', {
         title: project.title,
-        downloadUrl: project.downloadUrl,
         project_content: project.project_content ? project.project_content.substring(0, 50) + '...' : 'Not available'
       });
     }
@@ -74,10 +76,13 @@ const ProjectDetail = () => {
     );
   }
   
-  // Get related projects from the same category (that have project content or download links)
+  // Get related projects from the same category
   const relatedProjects = projects
-    .filter(p => p.categoryId === project.categoryId && p.id !== project.id && (!!p.project_content || !!p.downloadUrl))
+    .filter(p => p.categoryId === project.categoryId && p.id !== project.id)
     .slice(0, 3);
+
+  // تحقق من وجود محتوى كامل للمشروع
+  const hasFullContent = !!project.full_content || !!project.project_content;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -91,6 +96,22 @@ const ProjectDetail = () => {
             {/* Main content */}
             <div className="lg:col-span-2">
               <ProjectInfoDisplay project={project} />
+              
+              {/* عرض رابط الانتقال للمحتوى الكامل إذا كان متوفراً */}
+              {hasFullContent && (
+                <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-8">
+                  <h2 className="text-xl font-semibold mb-4">محتوى المشروع</h2>
+                  <p className="mb-4 text-gray-700 dark:text-gray-300">
+                    يمكنك استعراض المحتوى الكامل للمشروع من خلال الضغط على الزر أدناه
+                  </p>
+                  <Button 
+                    className="bg-archive-secondary hover:bg-archive-secondary/80"
+                    onClick={() => navigate(`/project-details/${project.id}`)}
+                  >
+                    عرض المحتوى الكامل للمشروع
+                  </Button>
+                </div>
+              )}
               
               {/* Related projects */}
               <RelatedProjects projects={relatedProjects} />

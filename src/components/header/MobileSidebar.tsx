@@ -1,112 +1,97 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Book } from 'lucide-react';
-import { SheetContent } from "@/components/ui/sheet";
-import SearchBar from '@/components/SearchBar';
+import { BookOpen, Home, FileText, LogOut, UserRound, Compass, MessageSquareText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface MobileSidebarProps {
   user: any;
-  onSearch: (query: string) => void;
   onLogout: () => void;
   onClose: () => void;
+  onSearch: (query: string) => void;
 }
 
-const MobileSidebar = ({ user, onSearch, onLogout, onClose }: MobileSidebarProps) => {
+const MobileSidebar = ({ user, onLogout, onClose, onSearch }: MobileSidebarProps) => {
+  const handleLinkClick = () => {
+    onClose();
+  };
+  
+  const handleLogout = () => {
+    onLogout();
+    onClose();
+  };
+  
   return (
-    <SheetContent side="right" className="bg-archive-primary text-white p-0">
-      <div className="flex flex-col h-full">
-        <div className="p-4 border-b border-white/10">
-          <div className="flex items-center mb-6">
-            <Book className="h-8 w-8 ml-2" />
-            <span className="font-heading text-xl font-bold">أرشيف المشاريع</span>
-          </div>
-          <SearchBar 
-            onSearch={(q) => {
-              onSearch(q);
-              onClose();
-            }} 
-            variant="minimal"
-            placeholder="البحث عن مشروع..." 
-          />
-        </div>
+    <SheetContent side="right" className="w-64 sm:w-80">
+      <SheetHeader>
+        <SheetTitle className="text-right">القائمة</SheetTitle>
+      </SheetHeader>
+      
+      <div className="flex flex-col mt-6">
+        <Link 
+          to="/" 
+          onClick={handleLinkClick}
+          className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
+        >
+          <Home className="ml-2 h-5 w-5" />
+          <span>الرئيسية</span>
+        </Link>
         
-        <nav className="flex-grow p-4">
-          <ul className="space-y-4">
-            <li>
-              <Link 
-                to="/" 
-                className="block py-2 hover:bg-white/10 px-2 rounded transition"
-                onClick={onClose}
-              >
-                الرئيسية
-              </Link>
-            </li>
-            <li>
-              <Link 
-                to="/projects" 
-                className="block py-2 hover:bg-white/10 px-2 rounded transition"
-                onClick={onClose}
-              >
-                المشاريع
-              </Link>
-            </li>
-            <li>
-              <Link 
-                to="/categories" 
-                className="block py-2 hover:bg-white/10 px-2 rounded transition"
-                onClick={onClose}
-              >
-                التخصصات
-              </Link>
-            </li>
-            {user ? (
-              <>
-                <li>
-                  <Link 
-                    to="/suggest-project" 
-                    className="block py-2 hover:bg-white/10 px-2 rounded transition"
-                    onClick={onClose}
-                  >
-                    اقتراح مشروع
-                  </Link>
-                </li>
-                <li>
-                  <button 
-                    className="block py-2 hover:bg-white/10 px-2 rounded transition w-full text-right"
-                    onClick={() => {
-                      onLogout();
-                      onClose();
-                    }}
-                  >
-                    تسجيل الخروج
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link 
-                    to="/trainee-login" 
-                    className="block py-2 bg-archive-secondary hover:bg-archive-secondary/80 px-2 rounded transition text-center font-medium"
-                    onClick={onClose}
-                  >
-                    تسجيل دخول متدرب
-                  </Link>
-                </li>
-                <li className="mt-2">
-                  <Link 
-                    to="/supervisor-login" 
-                    className="block py-2 bg-archive-secondary hover:bg-archive-secondary/80 px-2 rounded transition text-center font-medium"
-                    onClick={onClose}
-                  >
-                    تسجيل دخول مشرف
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
-        </nav>
+        <Link 
+          to="/projects" 
+          onClick={handleLinkClick}
+          className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
+        >
+          <FileText className="ml-2 h-5 w-5" />
+          <span>المشاريع</span>
+        </Link>
+        
+        <Link 
+          to="/categories" 
+          onClick={handleLinkClick}
+          className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
+        >
+          <Compass className="ml-2 h-5 w-5" />
+          <span>التخصصات</span>
+        </Link>
+        
+        <Link 
+          to="/ai-helper" 
+          onClick={handleLinkClick}
+          className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
+        >
+          <MessageSquareText className="ml-2 h-5 w-5" />
+          <span>محادثة الذكاء الاصطناعي</span>
+        </Link>
+        
+        <div className="border-t my-4"></div>
+        
+        {user ? (
+          <Button
+            variant="destructive"
+            className="mt-2"
+            onClick={handleLogout}
+          >
+            <LogOut className="ml-2 h-4 w-4" />
+            تسجيل الخروج
+          </Button>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <Link to="/trainee-login" onClick={handleLinkClick}>
+              <Button className="w-full bg-archive-secondary hover:bg-archive-secondary/80">
+                <UserRound className="ml-2 h-4 w-4" />
+                تسجيل دخول متدرب
+              </Button>
+            </Link>
+            <Link to="/supervisor-login" onClick={handleLinkClick}>
+              <Button className="w-full bg-archive-secondary hover:bg-archive-secondary/80">
+                <UserRound className="ml-2 h-4 w-4" />
+                تسجيل دخول مشرف
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </SheetContent>
   );

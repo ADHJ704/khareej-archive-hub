@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { BookOpen, File, UserRound, Compass } from 'lucide-react';
+import { BookOpen, File, Compass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
 import FeaturedProjects from '@/components/FeaturedProjects';
@@ -77,8 +77,6 @@ const Index = () => {
                   استعراض التخصصات
                 </Button>
               </div>
-              
-              {/* تم إزالة قسم تسجيل الدخول المكرر من هنا */}
             </div>
           </div>
           
@@ -107,19 +105,6 @@ const Index = () => {
         
         {/* Featured projects section */}
         <FeaturedProjects projects={recentProjects} />
-        
-        {/* CTA section - Without buttons */}
-        <section className="py-16 bg-archive-primary text-white">
-          <div className="container-custom text-center">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-4">
-              ابدأ رحلة البحث الآن
-            </h2>
-            <p className="text-lg mb-8 max-w-2xl mx-auto text-white/90">
-              استفد من مكتبة المشاريع الرقمية واستلهم أفكاراً لمشروع تخرجك
-            </p>
-            {/* تم إزالة الأزرار المكررة من هنا */}
-          </div>
-        </section>
       </main>
       
       <footer className="bg-archive-dark text-white py-8">

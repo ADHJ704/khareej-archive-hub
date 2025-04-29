@@ -110,11 +110,17 @@ const ProjectFullDetail = () => {
             <Separator className="my-4" />
             
             <div className="prose prose-lg dark:prose-invert max-w-none">
-              {fullContent.split('\n\n').map((paragraph, index) => (
-                <p key={index} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {paragraph}
+              {fullContent ? (
+                fullContent.split('\n\n').map((paragraph, index) => (
+                  <p key={index} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))
+              ) : (
+                <p className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+                  محتوى المشروع غير متوفر بالتفصيل حالياً.
                 </p>
-              ))}
+              )}
             </div>
           </div>
           
