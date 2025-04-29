@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Download, BookOpen, ArrowRight, Calendar, User, BookOpenCheck } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +20,17 @@ const ProjectDetail = () => {
   
   // Find the current project by ID
   const project = projects.find(p => p.id === id);
+
+  // Log project details for debugging
+  useEffect(() => {
+    if (project) {
+      console.log('Project details:', {
+        title: project.title,
+        pdfUrl: project.pdfUrl,
+        downloadUrl: project.downloadUrl
+      });
+    }
+  }, [project]);
   
   // Show loading state
   if (isLoading) {
@@ -99,6 +109,12 @@ const ProjectDetail = () => {
     
     // فتح الرابط في نافذة جديدة أو بدء التحميل
     window.open(project.downloadUrl, '_blank');
+    
+    // إضافة رسالة تأكيد بدء التحميل
+    toast({
+      title: "بدء التحميل",
+      description: "تم بدء تحميل المشروع",
+    });
   };
 
   const handleViewPdfClick = () => {
@@ -113,7 +129,17 @@ const ProjectDetail = () => {
     
     // فتح ملف PDF في نافذة جديدة
     window.open(project.pdfUrl, '_blank');
+    
+    // إضافة رسالة تأكيد فتح الملف
+    toast({
+      title: "فتح ملف PDF",
+      description: "تم فتح ملف PDF في نافذة جديدة",
+    });
   };
+
+  // تنسيق خاص للأزرار لتوضيح حالة الروابط المتوفرة وغير المتوفرة
+  const isDownloadAvailable = !!project.downloadUrl;
+  const isPdfAvailable = !!project.pdfUrl;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -240,23 +266,36 @@ const ProjectDetail = () => {
                 
                 <div className="space-y-4">
                   <Button 
-                    className="w-full bg-archive-primary hover:bg-archive-dark"
-                    disabled={!project.downloadUrl}
+                    className={`w-full ${isDownloadAvailable ? 'bg-archive-primary hover:bg-archive-dark' : 'bg-gray-400'}`}
+                    disabled={!isDownloadAvailable}
                     onClick={handleDownloadClick}
                   >
                     <Download className="h-4 w-4 ml-2" />
-                    تنزيل المشروع
+                    {isDownloadAvailable ? 'تنزيل المشروع' : 'التحميل غير متاح'}
                   </Button>
                   
                   <Button 
-                    variant="outline" 
-                    className="w-full"
-                    disabled={!project.pdfUrl}
+                    variant={isPdfAvailable ? "outline" : "secondary"} 
+                    className={`w-full ${isPdfAvailable ? '' : 'opacity-70'}`}
+                    disabled={!isPdfAvailable}
                     onClick={handleViewPdfClick}
                   >
                     <BookOpen className="h-4 w-4 ml-2" />
-                    عرض PDF
+                    {isPdfAvailable ? 'عرض PDF' : 'PDF غير متاح'}
                   </Button>
+                  
+                  {/* عرض حالة الروابط للتشخيص */}
+                  <div className="mt-4 text-sm text-gray-500 text-center">
+                    <p>حالة الروابط:</p>
+                    <ul className="mt-2">
+                      <li className={isPdfAvailable ? 'text-green-600' : 'text-red-600'}>
+                        PDF: {isPdfAvailable ? 'متاح ✓' : 'غير متاح ✗'}
+                      </li>
+                      <li className={isDownloadAvailable ? 'text-green-600' : 'text-red-600'}>
+                        التحميل: {isDownloadAvailable ? 'متاح ✓' : 'غير متاح ✗'}
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>

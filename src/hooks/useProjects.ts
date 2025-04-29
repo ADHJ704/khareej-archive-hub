@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Project } from '@/data/projects';
-import { additionalProjects } from '@/data/projects/index'; // Import directly from the source
+import { additionalProjects, testProject } from '@/data/projects'; // استيراد مشروع الاختبار
 import { projects as demoProjects } from '@/data/projects';
 
 export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string) => {
@@ -35,7 +35,9 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
 
         // إذا وجدت بيانات من Supabase، استخدمها
         if (data && data.length > 0) {
-          return data.map(item => ({
+          console.log('Data from Supabase:', data);
+          
+          const mappedData = data.map(item => ({
             id: item.id,
             title: item.title,
             author: item.author,
@@ -49,9 +51,15 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             downloadUrl: item.download_url,
             pdfUrl: item.pdf_url
           })) as Project[];
+          
+          console.log('Mapped data:', mappedData);
+          return mappedData;
         } else {
           // إذا لم يتم العثور على بيانات، استخدم البيانات الافتراضية المحلية
           let combinedProjects = [...demoProjects, ...additionalProjects];
+          
+          // أضف مشروع الاختبار دائمًا
+          combinedProjects = [testProject, ...combinedProjects];
           
           if (categoryId) {
             combinedProjects = combinedProjects.filter(
@@ -70,7 +78,13 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             );
           }
           
-          console.log('Search results:', searchQuery, combinedProjects.length);
+          if (departmentFilter) {
+            combinedProjects = combinedProjects.filter(
+              project => project.department === departmentFilter
+            );
+          }
+          
+          console.log('Using local data with test project. Total projects:', combinedProjects.length);
           return combinedProjects;
         }
       } catch (error) {
@@ -78,6 +92,9 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         
         // في حالة الخطأ، استخدم البيانات المحلية
         let combinedProjects = [...demoProjects, ...additionalProjects];
+        
+        // أضف مشروع الاختبار دائمًا في حالة الخطأ أيضًا
+        combinedProjects = [testProject, ...combinedProjects];
         
         if (categoryId) {
           combinedProjects = combinedProjects.filter(
@@ -94,7 +111,6 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
               project.author.toLowerCase().includes(lowercaseQuery) ||
               project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
           );
-          console.log('Error search results:', searchQuery, combinedProjects.length);
         }
         
         if (departmentFilter) {
@@ -103,6 +119,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           );
         }
         
+        console.log('Error occurred, using local data with test project. Total projects:', combinedProjects.length);
         return combinedProjects;
       }
     }

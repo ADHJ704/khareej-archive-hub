@@ -12,6 +12,10 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project, featured = false }: ProjectCardProps) => {
+  // تحقق من وجود الروابط
+  const hasPdf = !!project.pdfUrl;
+  const hasDownload = !!project.downloadUrl;
+  
   return (
     <div className={`archive-card overflow-hidden flex flex-col ${featured ? 'h-full' : ''}`}>
       <div className={`relative ${featured ? 'h-48' : 'h-40'} bg-gradient-to-b from-archive-primary to-archive-secondary flex items-center justify-center`}>
@@ -20,16 +24,16 @@ const ProjectCard = ({ project, featured = false }: ProjectCardProps) => {
           {project.year}
         </Badge>
         
-        {/* إضافة مؤشرات للملفات المتاحة */}
+        {/* إضافة مؤشرات للملفات المتاحة مع تحسين العرض */}
         <div className="absolute bottom-3 left-3 flex gap-2">
-          {project.pdfUrl && (
-            <Badge variant="outline" className="bg-white text-archive-primary">
+          {hasPdf && (
+            <Badge variant="outline" className="bg-white text-archive-primary border-archive-primary">
               <FileText className="h-3 w-3 ml-1" />
               PDF
             </Badge>
           )}
-          {project.downloadUrl && (
-            <Badge variant="outline" className="bg-white text-archive-primary">
+          {hasDownload && (
+            <Badge variant="outline" className="bg-white text-archive-primary border-archive-primary">
               <Download className="h-3 w-3 ml-1" />
               للتحميل
             </Badge>

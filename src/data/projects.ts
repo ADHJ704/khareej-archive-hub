@@ -24,7 +24,9 @@ export const projects: Project[] = [
     description: 'يركز هذا المشروع على استخدام شبكات التعلم العميق (CNN) لتطوير نظام دقيق للتعرف على الوجوه. تم تدريب النموذج على مجموعة بيانات كبيرة وتم تحقيق دقة تتجاوز 98٪ في ظروف الإضاءة المختلفة. يتضمن النظام واجهة مستخدم سهلة الاستخدام وإمكانية التكامل مع أنظمة الأمان الحالية.',
     tags: ['ذكاء اصطناعي', 'تعلم عميق', 'أمن', 'رؤية الحاسب'],
     supervisor: 'د. خالد السعيد',
-    categoryId: 'ai'
+    categoryId: 'ai',
+    pdfUrl: 'https://africau.edu/images/default/sample.pdf',
+    downloadUrl: 'https://africau.edu/images/default/sample.pdf'
   },
   {
     id: '2',
@@ -154,12 +156,43 @@ import { additionalProjects } from './projects/index';
 // Make it available for export 
 export { additionalProjects };
 
+// إضافة مشروع جديد مع روابط للاختبار في المشاريع الإضافية
+export const testProject: Project = {
+  id: 'test-project-with-links',
+  title: 'مشروع نموذجي للاختبار مع روابط PDF وتحميل',
+  author: 'فريق الاختبار',
+  department: 'قسم ضمان الجودة',
+  year: '2025',
+  abstract: 'هذا مشروع مخصص للاختبار، يحتوي على روابط PDF وتحميل فعالة للتأكد من أن الأزرار تعمل بشكل صحيح.',
+  description: 'مشروع نموذجي لاختبار وظائف الروابط في النظام. يتضمن روابط PDF وتحميل فعالة للتحقق من صحة عمل الأزرار في واجهة المستخدم.',
+  tags: ['اختبار', 'تجربة', 'روابط', 'ملفات'],
+  supervisor: 'د. مشرف الاختبار',
+  categoryId: 'tech_support',
+  pdfUrl: 'https://africau.edu/images/default/sample.pdf',
+  downloadUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+};
+
+// تعديل الوظائف لتشمل المشروع النموذجي في نتائج البحث
 export const getProjectsByCategory = (categoryId: string) => {
+  if (categoryId === 'test') {
+    return [testProject];
+  }
   return projects.filter(project => project.categoryId === categoryId);
 };
 
 export const searchProjects = (query: string) => {
   const lowercaseQuery = query.toLowerCase();
+  
+  // إذا كانت كلمة البحث تحتوي على "test" أو "اختبار"، أضف المشروع النموذجي
+  if (lowercaseQuery.includes('test') || lowercaseQuery.includes('اختبار')) {
+    return [testProject, ...projects.filter(project => 
+      project.title.toLowerCase().includes(lowercaseQuery) ||
+      project.abstract.toLowerCase().includes(lowercaseQuery) ||
+      project.author.toLowerCase().includes(lowercaseQuery) ||
+      project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+    )];
+  }
+  
   return projects.filter(project => 
     project.title.toLowerCase().includes(lowercaseQuery) ||
     project.abstract.toLowerCase().includes(lowercaseQuery) ||
