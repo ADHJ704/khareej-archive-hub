@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
@@ -8,11 +9,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 // استيراد المكونات الجديدة
 import Logo from '@/components/header/Logo';
+import MobileButtons from '@/components/header/MobileButtons';
 import MobileSearch from '@/components/header/MobileSearch';
 import MobileSidebar from '@/components/header/MobileSidebar';
 import DesktopNavigation from '@/components/header/DesktopNavigation';
-import { Menu, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -37,6 +37,10 @@ const Header = () => {
     navigate('/');
   };
 
+  const handleOpenSidebar = () => {
+    setIsOpen(true);
+  };
+
   return (
     <header className="bg-archive-primary text-white py-4 shadow-md sticky top-0 z-50">
       <div className="container-custom flex flex-col md:flex-row items-center justify-between">
@@ -44,35 +48,19 @@ const Header = () => {
           <Logo />
           
           {!showMobileSearch && (
-            <div className="flex items-center md:hidden gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowMobileSearch(true)}
-                className="text-white hover:bg-white/10"
-              >
-                <Search className="h-5 w-5" />
-              </Button>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <MobileButtons
+                onSearchClick={() => setShowMobileSearch(true)}
+                onMenuClick={handleOpenSidebar}
+              />
               
-              <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                <SheetTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className="text-white hover:bg-white/10"
-                  >
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                
-                <MobileSidebar 
-                  user={user}
-                  onSearch={handleSearch}
-                  onLogout={handleLogout}
-                  onClose={() => setIsOpen(false)}
-                />
-              </Sheet>
-            </div>
+              <MobileSidebar 
+                user={user}
+                onSearch={handleSearch}
+                onLogout={handleLogout}
+                onClose={() => setIsOpen(false)}
+              />
+            </Sheet>
           )}
         </div>
         
