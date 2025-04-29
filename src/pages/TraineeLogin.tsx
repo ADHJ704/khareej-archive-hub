@@ -24,7 +24,6 @@ const TraineeLogin = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [verificationNeeded, setVerificationNeeded] = useState(false);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -34,46 +33,8 @@ const TraineeLogin = () => {
     },
   });
 
-  const handleResendVerification = async () => {
-    const email = form.getValues('email');
-    if (!email) {
-      toast({
-        title: 'خطأ في إرسال التحقق',
-        description: 'يرجى إدخال البريد الإلكتروني أولاً',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email,
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: 'تم إرسال رابط التحقق',
-        description: 'يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'خطأ في إرسال التحقق',
-        description: error?.message || 'حدث خطأ أثناء محاولة إرسال رابط التحقق',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const onSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
-    setVerificationNeeded(false);
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -82,11 +43,6 @@ const TraineeLogin = () => {
       });
 
       if (error) {
-        // Check if the error is related to email verification
-        if (error.message.includes('Email not confirmed')) {
-          setVerificationNeeded(true);
-          throw new Error('يجب تأكيد البريد الإلكتروني قبل تسجيل الدخول');
-        }
         throw error;
       }
 
@@ -196,22 +152,6 @@ const TraineeLogin = () => {
                       </FormItem>
                     )}
                   />
-
-                  {verificationNeeded && (
-                    <div className="pt-2">
-                      <p className="text-sm text-center text-amber-600 mb-2">
-                        يجب تأكيد بريدك الإلكتروني قبل تسجيل الدخول
-                      </p>
-                      <Button
-                        type="button"
-                        onClick={handleResendVerification}
-                        className="w-full bg-amber-500 hover:bg-amber-600"
-                        disabled={isLoading}
-                      >
-                        إعادة إرسال رابط التأكيد
-                      </Button>
-                    </div>
-                  )}
 
                   <div className="pt-2">
                     <Button
