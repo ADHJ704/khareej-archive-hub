@@ -122,9 +122,10 @@ type ProjectRow = {
   project_content?: string | null;
 };
 
-export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string, showOnlyWithContent: boolean = true) => {
+// Remove showOnlyWithContent parameter and set it to always return all projects
+export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string) => {
   return useQuery({
-    queryKey: ['projects', categoryId, searchQuery, departmentFilter, showOnlyWithContent],
+    queryKey: ['projects', categoryId, searchQuery, departmentFilter],
     queryFn: async () => {
       try {
         let query = supabase
@@ -179,13 +180,9 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             } as Project;
           });
           
-          // Filter projects that have content if required
-          const filteredProjects = showOnlyWithContent 
-            ? mappedData.filter(project => !!project.project_content || !!project.full_content)
-            : mappedData;
-          
-          console.log('Mapped data with project content:', filteredProjects);
-          return filteredProjects;
+          // Return all projects without filtering
+          console.log('Mapped data with project content:', mappedData);
+          return mappedData;
         } else {
           // Use local data with project content
           let localProjects = [...demoProjects, ...additionalProjects];
@@ -256,14 +253,9 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             );
           }
           
-          // Filter projects with content if required
-          const filteredProjects = showOnlyWithContent
-            ? localProjects.filter(project => 
-                !!project.project_content || !!project.full_content)
-            : localProjects;
-          
-          console.log('Using local data with project content. Total projects:', filteredProjects.length);
-          return filteredProjects;
+          // Return all projects without filtering for content
+          console.log('Using local data with project content. Total projects:', localProjects.length);
+          return localProjects;
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -302,14 +294,9 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           );
         }
         
-        // Filter projects with content if required
-        const filteredProjects = showOnlyWithContent
-          ? localProjects.filter(project => 
-              !!project.project_content || !!project.full_content)
-          : localProjects;
-        
-        console.log('Error occurred, using local data with project content. Total projects:', filteredProjects.length);
-        return filteredProjects;
+        // Return all projects without filtering for content
+        console.log('Error occurred, using local data with project content. Total projects:', localProjects.length);
+        return localProjects;
       }
     }
   });
