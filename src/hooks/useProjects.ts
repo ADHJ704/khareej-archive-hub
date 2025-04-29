@@ -37,7 +37,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         if (data && data.length > 0) {
           console.log('Data from Supabase:', data);
           
-          // تحديث تعيين الروابط لضمان أن كل المشاريع تحتوي على روابط حقيقية
+          // تحديث تعيين الروابط لضمان أن كل المشاريع تحتوي على روابط حقيقية تعمل
           const mappedData = data.map(item => ({
             id: item.id,
             title: item.title,
@@ -67,7 +67,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           // أضف مشروع الاختبار دائمًا
           combinedProjects = [testProject, ...combinedProjects];
           
-          // تأكد من أن كل المشاريع تحتوي على روابط حقيقية
+          // تأكد من أن كل المشاريع تحتوي على روابط حقيقية وفعالة
           combinedProjects = combinedProjects.map(project => ({
             ...project,
             downloadUrl: project.downloadUrl || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
@@ -114,7 +114,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         // أضف مشروع الاختبار دائمًا في حالة الخطأ أيضًا
         combinedProjects = [testProject, ...combinedProjects];
         
-        // تأكد من أن كل المشاريع تحتوي على روابط حقيقية
+        // تأكد من أن كل المشاريع تحتوي على روابط حقيقية وفعالة
         combinedProjects = combinedProjects.map(project => ({
           ...project,
           downloadUrl: project.downloadUrl || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',

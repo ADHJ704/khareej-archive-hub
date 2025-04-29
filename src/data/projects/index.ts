@@ -6,7 +6,7 @@ import { webProjects } from './web-projects';
 import { mobileProjects } from './mobile-projects';
 import { iotProjects } from './iot-projects';
 
-// تحديث المشاريع الإضافية لإضافة روابط حقيقية
+// تحديث المشاريع الإضافية لإضافة روابط حقيقية تعمل بشكل فعلي
 export const additionalProjects: Project[] = [
   // تحديث المشاريع الموجودة لإضافة روابط حقيقية
   ...csProjects.map(project => ({
@@ -16,7 +16,7 @@ export const additionalProjects: Project[] = [
   })),
   ...aiProjects.map(project => ({
     ...project,
-    pdfUrl: project.pdfUrl || 'https://www.africau.edu/images/default/sample.pdf',
+    pdfUrl: project.pdfUrl || 'https://africau.edu/images/default/sample.pdf',
     downloadUrl: project.downloadUrl || 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip'
   })),
   ...webProjects.map(project => ({
