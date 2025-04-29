@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Projects from "./pages/Projects";
+import Categories from "./pages/Categories";
 import ProjectDetail from "./pages/ProjectDetail";
 import ProjectFullDetail from "./pages/ProjectFullDetail";
 import NotFound from "./pages/NotFound";
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/categories" element={<Categories />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/project-details/:id" element={<ProjectFullDetail />} />
             <Route path="/suggest-project" element={<SuggestProject />} />
