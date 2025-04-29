@@ -51,6 +51,25 @@ ${project.description}
 يتضمن هذا المشروع عدة فصول تشرح بالتفصيل منهجية البحث، والنتائج التي تم التوصل إليها، والتوصيات المستقبلية للباحثين في هذا المجال.`;
 }
 
+// Define a type for the database row structure
+type ProjectRow = {
+  id: string;
+  title: string;
+  author: string;
+  department: string;
+  year: string;
+  abstract: string | null;
+  description: string | null;
+  tags: string[] | null;
+  supervisor: string;
+  category_id: string;
+  download_url: string | null;
+  pdf_url: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  project_content?: string | null; // Make project_content optional
+};
+
 export const useProjects = (categoryId?: string, searchQuery?: string, departmentFilter?: string, showOnlyWithContent: boolean = true) => {
   return useQuery({
     queryKey: ['projects', categoryId, searchQuery, departmentFilter, showOnlyWithContent],
@@ -84,7 +103,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           console.log('Data from Supabase:', data);
           
           // Map database field names to our model field names and add content
-          const mappedData = data.map(item => {
+          const mappedData = data.map((item: ProjectRow) => {
             // First create a partial project with guaranteed fields
             const projectBase = {
               id: item.id,
@@ -103,7 +122,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             return {
               ...projectBase,
               project_content: item.project_content || generateProjectContent(projectBase as Project),
-              downloadUrl: isValidUrl(item.download_url) ? item.download_url : getVerifiedDownloadUrl()
+              downloadUrl: isValidUrl(item.download_url || '') ? item.download_url : getVerifiedDownloadUrl()
             } as Project;
           });
           
