@@ -11,9 +11,9 @@ interface FeaturedProjectsProps {
 }
 
 const FeaturedProjects = ({ projects }: FeaturedProjectsProps) => {
-  // فلترة المشاريع للتأكد من أنها تحتوي على روابط PDF أو تحميل
+  // فلترة المشاريع للتأكد من أنها تحتوي على روابط PDF وتحميل
   const filteredProjects = projects.filter(project => 
-    !!project.pdfUrl || !!project.downloadUrl
+    !!project.pdfUrl && !!project.downloadUrl
   );
   
   // Take only up to 3 projects for the featured section

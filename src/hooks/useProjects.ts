@@ -49,13 +49,13 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             tags: item.tags || [],
             supervisor: item.supervisor,
             categoryId: item.category_id,
-            downloadUrl: item.download_url || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            pdfUrl: item.pdf_url || 'https://africau.edu/images/default/sample.pdf'
+            downloadUrl: item.download_url || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
+            pdfUrl: item.pdf_url || 'https://www.africau.edu/images/default/sample.pdf'
           })) as Project[];
           
           // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
           const filteredProjects = showOnlyWithLinks 
-            ? mappedData.filter(project => !!project.pdfUrl || !!project.downloadUrl)
+            ? mappedData.filter(project => !!project.pdfUrl && !!project.downloadUrl)
             : mappedData;
           
           console.log('Mapped data:', filteredProjects);
@@ -70,8 +70,8 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           // تأكد من أن كل المشاريع تحتوي على روابط حقيقية
           combinedProjects = combinedProjects.map(project => ({
             ...project,
-            downloadUrl: project.downloadUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            pdfUrl: project.pdfUrl || 'https://africau.edu/images/default/sample.pdf'
+            downloadUrl: project.downloadUrl || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
+            pdfUrl: project.pdfUrl || 'https://www.africau.edu/images/default/sample.pdf'
           }));
           
           if (categoryId) {
@@ -99,7 +99,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           
           // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
           const filteredProjects = showOnlyWithLinks
-            ? combinedProjects.filter(project => !!project.pdfUrl || !!project.downloadUrl)
+            ? combinedProjects.filter(project => !!project.pdfUrl && !!project.downloadUrl)
             : combinedProjects;
           
           console.log('Using local data with test project. Total projects:', filteredProjects.length);
@@ -117,8 +117,8 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         // تأكد من أن كل المشاريع تحتوي على روابط حقيقية
         combinedProjects = combinedProjects.map(project => ({
           ...project,
-          downloadUrl: project.downloadUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-          pdfUrl: project.pdfUrl || 'https://africau.edu/images/default/sample.pdf'
+          downloadUrl: project.downloadUrl || 'https://file-examples.com/storage/fe5947fd2362fc197a3c2df/2017/04/file_example_ZIP_1MB.zip',
+          pdfUrl: project.pdfUrl || 'https://www.africau.edu/images/default/sample.pdf'
         }));
         
         if (categoryId) {
@@ -146,7 +146,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         
         // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
         const filteredProjects = showOnlyWithLinks
-          ? combinedProjects.filter(project => !!project.pdfUrl || !!project.downloadUrl)
+          ? combinedProjects.filter(project => !!project.pdfUrl && !!project.downloadUrl)
           : combinedProjects;
         
         console.log('Error occurred, using local data with test project. Total projects:', filteredProjects.length);
