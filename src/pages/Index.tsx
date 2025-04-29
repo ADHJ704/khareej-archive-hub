@@ -78,6 +78,7 @@ const Index = () => {
                 </Button>
               </div>
               
+              {/* Display login section only if user is not logged in */}
               {!user && (
                 <div className="mt-10 bg-white/10 backdrop-blur-sm rounded-lg p-6">
                   <h2 className="text-xl font-bold mb-4">تسجيل الدخول للوصول إلى كامل المميزات</h2>
@@ -130,7 +131,7 @@ const Index = () => {
         {/* Featured projects section */}
         <FeaturedProjects projects={recentProjects} />
         
-        {/* CTA section */}
+        {/* CTA section - Without login buttons */}
         <section className="py-16 bg-archive-primary text-white">
           <div className="container-custom text-center">
             <h2 className="text-2xl md:text-3xl font-heading font-bold mb-4">
