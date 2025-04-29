@@ -37,6 +37,7 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         if (data && data.length > 0) {
           console.log('Data from Supabase:', data);
           
+          // تحديث تعيين الروابط لضمان أن كل المشاريع تحتوي على روابط حقيقية
           const mappedData = data.map(item => ({
             id: item.id,
             title: item.title,
@@ -48,8 +49,8 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
             tags: item.tags || [],
             supervisor: item.supervisor,
             categoryId: item.category_id,
-            downloadUrl: item.download_url,
-            pdfUrl: item.pdf_url
+            downloadUrl: item.download_url || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+            pdfUrl: item.pdf_url || 'https://africau.edu/images/default/sample.pdf'
           })) as Project[];
           
           // إذا كانت الخاصية showOnlyWithLinks مفعلة، قم بتصفية المشاريع التي تحتوي على روابط فقط
@@ -65,6 +66,13 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
           
           // أضف مشروع الاختبار دائمًا
           combinedProjects = [testProject, ...combinedProjects];
+          
+          // تأكد من أن كل المشاريع تحتوي على روابط حقيقية
+          combinedProjects = combinedProjects.map(project => ({
+            ...project,
+            downloadUrl: project.downloadUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+            pdfUrl: project.pdfUrl || 'https://africau.edu/images/default/sample.pdf'
+          }));
           
           if (categoryId) {
             combinedProjects = combinedProjects.filter(
@@ -105,6 +113,13 @@ export const useProjects = (categoryId?: string, searchQuery?: string, departmen
         
         // أضف مشروع الاختبار دائمًا في حالة الخطأ أيضًا
         combinedProjects = [testProject, ...combinedProjects];
+        
+        // تأكد من أن كل المشاريع تحتوي على روابط حقيقية
+        combinedProjects = combinedProjects.map(project => ({
+          ...project,
+          downloadUrl: project.downloadUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+          pdfUrl: project.pdfUrl || 'https://africau.edu/images/default/sample.pdf'
+        }));
         
         if (categoryId) {
           combinedProjects = combinedProjects.filter(

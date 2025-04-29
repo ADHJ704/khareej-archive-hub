@@ -26,7 +26,7 @@ export const projects: Project[] = [
     supervisor: 'د. خالد السعيد',
     categoryId: 'ai',
     pdfUrl: 'https://africau.edu/images/default/sample.pdf',
-    downloadUrl: 'https://africau.edu/images/default/sample.pdf'
+    downloadUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
   },
   {
     id: '2',
@@ -38,7 +38,9 @@ export const projects: Project[] = [
     description: 'قامت الطالبة بتطوير تطبيق ويب شامل لإدارة المواعيد الطبية باستخدام تقنيات React في الواجهة الأمامية وFirebase كقاعدة بيانات. يتيح النظام للمرضى حجز المواعيد ومتابعتها، ويسمح للأطباء بإدارة جداولهم وتنظيم المواعيد. تم إضافة ميزات مثل الإشعارات التلقائية والدفع الإلكتروني.',
     tags: ['تطوير ويب', 'React', 'Firebase', 'الرعاية الصحية'],
     supervisor: 'د. نورة الشهري',
-    categoryId: 'web'
+    categoryId: 'web',
+    pdfUrl: 'https://africau.edu/images/default/sample.pdf',
+    downloadUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
   },
   {
     id: '3',
@@ -72,7 +74,7 @@ export const projects: Project[] = [
     year: '2022',
     abstract: 'تطبيق جوال يستخدم تقنيات الذكاء الاصطناعي للمساعدة في الكشف المبكر عن الأمراض الجلدية من خلال تحليل الصور.',
     description: 'قام الطالب بتطوير تطبيق للهواتف الذكية يستخدم نماذج التعلم العميق للكشف عن الأمراض الجلدية من خلال تحليل صور الجلد. تم تدريب النموذج على آلاف الصور لأمراض جلدية مختلفة وحقق دقة تصل إلى 91٪. يوفر التطبيق معلومات أولية عن المرض المحتمل ويوصي بمراجعة الطبيب المختص.',
-    tags: ['ذكاء اصطناعي', 'تطبيقات جوال', 'صحة', 'رؤية الحاسب'],
+    tags: ['ذكاء اصطناعي', 'تطبيقات جوال', 'صحة', 'رؤية الحاس��'],
     supervisor: 'د. فاطمة العتيبي',
     categoryId: 'mobile'
   },
