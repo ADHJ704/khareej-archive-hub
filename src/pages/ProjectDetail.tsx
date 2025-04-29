@@ -86,6 +86,35 @@ const ProjectDetail = () => {
     .filter(p => p.categoryId === project.categoryId && p.id !== project.id)
     .slice(0, 3);
 
+  // معالجي الأحداث للأزرار
+  const handleDownloadClick = () => {
+    if (!project.downloadUrl) {
+      toast({
+        title: "الرابط غير متوفر",
+        description: "عذراً، رابط تحميل المشروع غير متوفر حالياً",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // فتح الرابط في نافذة جديدة أو بدء التحميل
+    window.open(project.downloadUrl, '_blank');
+  };
+
+  const handleViewPdfClick = () => {
+    if (!project.pdfUrl) {
+      toast({
+        title: "ملف PDF غير متوفر",
+        description: "عذراً، ملف PDF للمشروع غير متوفر حالياً",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // فتح ملف PDF في نافذة جديدة
+    window.open(project.pdfUrl, '_blank');
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -213,7 +242,7 @@ const ProjectDetail = () => {
                   <Button 
                     className="w-full bg-archive-primary hover:bg-archive-dark"
                     disabled={!project.downloadUrl}
-                    onClick={() => project.downloadUrl ? window.open(project.downloadUrl, '_blank') : null}
+                    onClick={handleDownloadClick}
                   >
                     <Download className="h-4 w-4 ml-2" />
                     تنزيل المشروع
@@ -223,7 +252,7 @@ const ProjectDetail = () => {
                     variant="outline" 
                     className="w-full"
                     disabled={!project.pdfUrl}
-                    onClick={() => project.pdfUrl ? window.open(project.pdfUrl, '_blank') : null}
+                    onClick={handleViewPdfClick}
                   >
                     <BookOpen className="h-4 w-4 ml-2" />
                     عرض PDF
