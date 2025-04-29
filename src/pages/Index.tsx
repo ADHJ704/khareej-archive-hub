@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { BookOpen, File, UserRound } from 'lucide-react';
+import { BookOpen, File, UserRound, Compass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
 import FeaturedProjects from '@/components/FeaturedProjects';
@@ -68,6 +68,14 @@ const Index = () => {
                   <File className="ml-2 h-5 w-5" />
                   تصفح المشاريع
                 </Button>
+                <Button 
+                  size="lg" 
+                  className="bg-white text-archive-primary hover:bg-archive-light"
+                  onClick={() => navigate('/categories')}
+                >
+                  <Compass className="ml-2 h-5 w-5" />
+                  استعراض التخصصات
+                </Button>
               </div>
               
               {!user && (
@@ -131,14 +139,24 @@ const Index = () => {
             <p className="text-lg mb-8 max-w-2xl mx-auto text-white/90">
               استفد من مكتبة المشاريع الرقمية واستلهم أفكاراً لمشروع تخرجك
             </p>
-            <Button 
-              size="lg" 
-              className="bg-white text-archive-primary hover:bg-archive-light"
-              onClick={() => navigate('/projects')}
-            >
-              <BookOpen className="ml-2 h-5 w-5" />
-              استعرض المشاريع
-            </Button>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button 
+                size="lg" 
+                className="bg-white text-archive-primary hover:bg-archive-light"
+                onClick={() => navigate('/projects')}
+              >
+                <BookOpen className="ml-2 h-5 w-5" />
+                استعرض المشاريع
+              </Button>
+              <Button 
+                size="lg" 
+                className="bg-white text-archive-primary hover:bg-archive-light"
+                onClick={() => navigate('/categories')}
+              >
+                <Compass className="ml-2 h-5 w-5" />
+                استعرض التخصصات
+              </Button>
+            </div>
           </div>
         </section>
       </main>
