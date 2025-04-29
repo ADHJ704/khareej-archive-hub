@@ -2,19 +2,65 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Download, BookOpen, ArrowRight, Calendar, User, BookOpenCheck } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 import Header from '@/components/Header';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { projects, Project } from '@/data/projects';
+import { useProjects } from '@/hooks/useProjects';
 import { categories } from '@/data/categories';
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
+  // Use the useProjects hook to fetch all projects
+  const { data: projects = [], isLoading, isError } = useProjects();
+  
+  // Find the current project by ID
   const project = projects.find(p => p.id === id);
   
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">جاري التحميل...</h2>
+            <p className="mb-6">يرجى الانتظار قليلاً</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  
+  // Show error state
+  if (isError) {
+    toast({
+      title: "حدث خطأ",
+      description: "لم نتمكن من تحميل بيانات المشروع، يرجى المحاولة مرة أخرى.",
+      variant: "destructive",
+    });
+    
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">حدث خطأ</h2>
+            <p className="mb-6">لم نتمكن من تحميل بيانات المشروع، يرجى المحاولة مرة أخرى</p>
+            <Button onClick={() => navigate('/projects')}>
+              العودة إلى المشاريع
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  
+  // Show not found state if project doesn't exist
   if (!project) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -156,19 +202,28 @@ const ProjectDetail = () => {
                 <div className="mb-6 text-center">
                   <h3 className="font-medium mb-2">التصنيف</h3>
                   <Badge className="bg-archive-accent text-white px-3 py-1">
-                    {category?.name}
+                    {category?.name || 'غير مصنف'}
                   </Badge>
                 </div>
                 
                 <Separator className="my-6" />
                 
                 <div className="space-y-4">
-                  <Button className="w-full bg-archive-primary hover:bg-archive-dark">
+                  <Button 
+                    className="w-full bg-archive-primary hover:bg-archive-dark"
+                    disabled={!project.downloadUrl}
+                    onClick={() => project.downloadUrl ? window.open(project.downloadUrl, '_blank') : null}
+                  >
                     <Download className="h-4 w-4 ml-2" />
                     تنزيل المشروع
                   </Button>
                   
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    disabled={!project.pdfUrl}
+                    onClick={() => project.pdfUrl ? window.open(project.pdfUrl, '_blank') : null}
+                  >
                     <BookOpen className="h-4 w-4 ml-2" />
                     عرض PDF
                   </Button>
