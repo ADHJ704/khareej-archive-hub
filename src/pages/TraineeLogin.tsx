@@ -95,11 +95,11 @@ const TraineeLogin = () => {
 
       <main className="container mx-auto px-4 py-10 flex-grow flex items-center justify-center">
         <div className="w-full max-w-md">
-          <Card className="border-archive-primary/20">
+          <Card className="border-archive-secondary/20">
             <CardHeader className="pb-4">
               <div className="flex justify-center mb-4">
-                <div className="bg-archive-primary/10 p-3 rounded-full">
-                  <UserRound className="h-10 w-10 text-archive-primary" />
+                <div className="bg-archive-secondary/10 p-3 rounded-full">
+                  <UserRound className="h-10 w-10 text-archive-secondary" />
                 </div>
               </div>
               <CardTitle className="text-center text-2xl text-archive-dark dark:text-white">
@@ -156,7 +156,7 @@ const TraineeLogin = () => {
                   <div className="pt-2">
                     <Button
                       type="submit"
-                      className="w-full bg-archive-primary hover:bg-archive-dark"
+                      className="w-full bg-archive-secondary hover:bg-archive-secondary/80"
                       disabled={isLoading}
                     >
                       {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}

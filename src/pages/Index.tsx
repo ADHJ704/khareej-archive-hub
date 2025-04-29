@@ -76,7 +76,7 @@ const Index = () => {
                   <div className="flex flex-col sm:flex-row justify-center gap-4">
                     <Button 
                       size="lg" 
-                      className="bg-white text-archive-primary hover:bg-archive-light"
+                      className="bg-archive-secondary hover:bg-archive-secondary/80"
                       onClick={() => navigate('/trainee-login')}
                     >
                       <UserRound className="ml-2 h-5 w-5" />

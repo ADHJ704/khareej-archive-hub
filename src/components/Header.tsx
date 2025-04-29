@@ -133,7 +133,7 @@ const Header = () => {
                               <li>
                                 <Link 
                                   to="/trainee-login" 
-                                  className="block py-2 bg-white/20 hover:bg-white/30 px-2 rounded transition text-center font-medium"
+                                  className="block py-2 bg-archive-secondary hover:bg-archive-secondary/80 px-2 rounded transition text-center font-medium"
                                   onClick={() => setIsOpen(false)}
                                 >
                                   تسجيل دخول متدرب
@@ -206,8 +206,7 @@ const Header = () => {
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Link to="/trainee-login">
                     <Button 
-                      variant="outline" 
-                      className="border-white text-white hover:bg-white hover:text-archive-primary"
+                      className="bg-archive-secondary hover:bg-archive-secondary/80"
                     >
                       <UserRound className="ml-1 h-4 w-4" />
                       تسجيل دخول متدرب
