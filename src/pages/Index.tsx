@@ -78,30 +78,7 @@ const Index = () => {
                 </Button>
               </div>
               
-              {/* Display login section only if user is not logged in */}
-              {!user && (
-                <div className="mt-10 bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                  <h2 className="text-xl font-bold mb-4">تسجيل الدخول للوصول إلى كامل المميزات</h2>
-                  <div className="flex flex-col sm:flex-row justify-center gap-4">
-                    <Button 
-                      size="lg" 
-                      className="bg-archive-secondary hover:bg-archive-secondary/80"
-                      onClick={() => navigate('/trainee-login')}
-                    >
-                      <UserRound className="ml-2 h-5 w-5" />
-                      تسجيل دخول متدرب
-                    </Button>
-                    <Button 
-                      size="lg" 
-                      className="bg-archive-secondary hover:bg-archive-secondary/80"
-                      onClick={() => navigate('/supervisor-login')}
-                    >
-                      <UserRound className="ml-2 h-5 w-5" />
-                      تسجيل دخول مشرف
-                    </Button>
-                  </div>
-                </div>
-              )}
+              {/* تم إزالة قسم تسجيل الدخول المكرر من هنا */}
             </div>
           </div>
           
