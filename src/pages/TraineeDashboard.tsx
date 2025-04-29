@@ -104,7 +104,7 @@ const TraineeDashboard = () => {
                         onClick={handleSuggestProject}
                       >
                         <PlusCircle className="ml-2 h-5 w-5" />
-                        اقترح مشروعاً جديداً
+                        اقتراح مشروع جديد
                       </Button>
                     </CardContent>
                   </Card>
