@@ -22,8 +22,8 @@ const ProjectDetail = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Use the useProjects hook to fetch all projects
-  const { data: projects = [], isLoading, isError } = useProjects(undefined, undefined, undefined, false);
+  // Use the useProjects hook to fetch all projects - fixed to use the correct number of arguments
+  const { data: projects = [], isLoading, isError } = useProjects();
   
   // Find the current project by ID
   const project = projects.find(p => p.id === id);
