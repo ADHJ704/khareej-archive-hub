@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Header from '@/components/Header';
+import { useAuth } from '@/contexts/AuthContext';
 
 const loginFormSchema = z.object({
   email: z.string().email({ message: 'يرجى إدخال بريد إلكتروني صحيح' }),
@@ -24,6 +25,7 @@ const SupervisorLogin = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { user, isSupervisor } = useAuth();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -32,6 +34,13 @@ const SupervisorLogin = () => {
       password: '',
     },
   });
+
+  // إذا كان المستخدم مسجل دخول ومشرف، توجيهه مباشرة إلى لوحة التحكم
+  useEffect(() => {
+    if (user && isSupervisor) {
+      navigate('/supervisor/dashboard');
+    }
+  }, [user, isSupervisor, navigate]);
 
   const onSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
@@ -72,11 +81,11 @@ const SupervisorLogin = () => {
 
         toast({
           title: 'تم تسجيل الدخول بنجاح',
-          description: 'مرحباً بك في منصة أرشيف المشاريع',
+          description: 'مرحباً بك في لوحة تحكم المشرفين',
         });
         
-        // التوجيه إلى الصفحة الرئيسية
-        navigate('/');
+        // التوجيه إلى لوحة التحكم
+        navigate('/supervisor/dashboard');
       }
     } catch (error: any) {
       toast({
@@ -106,7 +115,7 @@ const SupervisorLogin = () => {
                 تسجيل دخول المشرف
               </CardTitle>
               <CardDescription className="text-center">
-                أدخل بياناتك لتسجيل الدخول إلى منصة المشرفين
+                أدخل بياناتك لتسجيل الدخول إلى لوحة تحكم المشرفين
               </CardDescription>
             </CardHeader>
 

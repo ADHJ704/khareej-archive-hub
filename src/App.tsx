@@ -15,6 +15,11 @@ import AIHelper from "./pages/AIHelper";
 import TraineeLogin from "./pages/TraineeLogin";
 import TraineeSignup from "./pages/TraineeSignup";
 import SupervisorLogin from "./pages/SupervisorLogin";
+import RequireAuth from "./components/RequireAuth";
+import RequireSupervisor from "./components/RequireSupervisor";
+import SupervisorDashboard from "./pages/supervisor/SupervisorDashboard";
+import SupervisorProjects from "./pages/supervisor/SupervisorProjects";
+import SupervisorProjectForm from "./pages/supervisor/SupervisorProjectForm";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +47,29 @@ const App = () => (
             <Route path="/trainee-login" element={<TraineeLogin />} />
             <Route path="/trainee-signup" element={<TraineeSignup />} />
             <Route path="/supervisor-login" element={<SupervisorLogin />} />
+            
+            {/* مسارات لوحة التحكم للمشرفين - محمية */}
+            <Route path="/supervisor/dashboard" element={
+              <RequireSupervisor>
+                <SupervisorDashboard />
+              </RequireSupervisor>
+            } />
+            <Route path="/supervisor/projects" element={
+              <RequireSupervisor>
+                <SupervisorProjects />
+              </RequireSupervisor>
+            } />
+            <Route path="/supervisor/projects/new" element={
+              <RequireSupervisor>
+                <SupervisorProjectForm />
+              </RequireSupervisor>
+            } />
+            <Route path="/supervisor/projects/edit/:projectId" element={
+              <RequireSupervisor>
+                <SupervisorProjectForm />
+              </RequireSupervisor>
+            } />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
