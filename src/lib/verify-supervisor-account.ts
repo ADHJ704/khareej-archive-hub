@@ -8,10 +8,8 @@ export const verifySupervisorAccount = async (
   email: string
 ): Promise<{ exists: boolean; isSupervisor: boolean; message: string }> => {
   try {
-    // التحقق من وجود المستخدم
-    const { data: userData, error: userError } = await supabase.auth.admin.listUsers({ 
-      filter: `email.eq.${email}`
-    });
+    // التحقق من وجود المستخدم باستخدام الطريقة المناسبة
+    const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
 
     if (userError) {
       console.error('خطأ في البحث عن المستخدم:', userError);
@@ -22,15 +20,16 @@ export const verifySupervisorAccount = async (
       };
     }
 
-    if (!userData?.users || userData.users.length === 0) {
+    // فلترة المستخدمين للعثور على المستخدم بناءً على البريد الإلكتروني
+    const user = userData?.users?.find(user => user.email === email);
+
+    if (!user) {
       return {
         exists: false,
         isSupervisor: false,
         message: `لم يتم العثور على حساب بالبريد الإلكتروني ${email}`
       };
     }
-
-    const user = userData.users[0];
 
     // التحقق من دور المستخدم في جدول الملفات الشخصية
     const { data: profileData, error: profileError } = await supabase
