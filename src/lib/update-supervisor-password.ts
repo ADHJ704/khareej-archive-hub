@@ -9,27 +9,15 @@ export const updateSupervisorPassword = async (
   newPassword: string
 ): Promise<{ success: boolean; message: string }> => {
   try {
-    // 1. إعادة تعيين كلمة المرور باستخدام Supabase Auth
-    const { error } = await supabase.auth.admin.updateUserById(
-      'dbd4e74f-dc17-44b1-8cc0-1d256c5382bd', // هذا هو معرف المستخدم المحدد المرتبط بالبريد الإلكتروني
-      { password: newPassword }
-    );
+    // محاولة تسجيل الدخول أولاً والحصول على معرف المستخدم
+    const { data: userData, error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password: newPassword, // نجرب باستخدام كلمة المرور الجديدة (ربما تكون موجودة بالفعل)
+    });
 
-    if (error) {
-      throw error;
-    }
-
-    return { 
-      success: true, 
-      message: 'تم تحديث كلمة مرور المشرف بنجاح.' 
-    };
-  } catch (error: any) {
-    console.error('خطأ في تحديث كلمة المرور:', error);
-    
-    // هناك خطأ في استخدام admin.updateUserById لأنه يتطلب مفتاح دور الخدمة
-    // لنجرب طريقة بديلة باستخدام إعادة تعيين كلمة المرور
-    try {
-      // استخدام resetPasswordForEmail كبديل
+    if (loginError) {
+      // إذا كان هناك خطأ في تسجيل الدخول، نحاول إرسال رابط إعادة تعيين كلمة المرور
+      console.log("إرسال رابط إعادة تعيين كلمة المرور");
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin + '/supervisor-login'
       });
@@ -42,12 +30,20 @@ export const updateSupervisorPassword = async (
         success: true, 
         message: 'تم إرسال رابط إعادة تعيين كلمة المرور إلى البريد الإلكتروني المحدد.' 
       };
-    } catch (resetError: any) {
-      console.error('خطأ في إعادة تعيين كلمة المرور:', resetError);
-      return { 
-        success: false, 
-        message: `فشل تحديث كلمة المرور: ${error.message || 'خطأ غير معروف'}` 
-      };
     }
+
+    // إذا نجح تسجيل الدخول، نعيد تسجيل الخروج حتى نعود للصفحة السابقة
+    await supabase.auth.signOut();
+
+    return { 
+      success: true, 
+      message: 'كلمة المرور صالحة ويمكن تسجيل الدخول بها.' 
+    };
+  } catch (error: any) {
+    console.error('خطأ في عملية التحقق من كلمة المرور:', error);
+    return { 
+      success: false, 
+      message: `فشل التحقق من كلمة المرور: ${error.message || 'خطأ غير معروف'}` 
+    };
   }
 };
