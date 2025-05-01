@@ -9,7 +9,9 @@ export const verifySupervisorAccount = async (
 ): Promise<{ exists: boolean; isSupervisor: boolean; message: string }> => {
   try {
     // التحقق من وجود المستخدم
-    const { data: userData, error: userError } = await supabase.auth.admin.getUserByEmail(email);
+    const { data: userData, error: userError } = await supabase.auth.admin.listUsers({ 
+      filter: `email.eq.${email}`
+    });
 
     if (userError) {
       console.error('خطأ في البحث عن المستخدم:', userError);
@@ -20,7 +22,7 @@ export const verifySupervisorAccount = async (
       };
     }
 
-    if (!userData?.user) {
+    if (!userData?.users || userData.users.length === 0) {
       return {
         exists: false,
         isSupervisor: false,
@@ -28,11 +30,13 @@ export const verifySupervisorAccount = async (
       };
     }
 
+    const user = userData.users[0];
+
     // التحقق من دور المستخدم في جدول الملفات الشخصية
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', userData.user.id)
+      .eq('id', user.id)
       .single();
 
     if (profileError) {
@@ -50,7 +54,7 @@ export const verifySupervisorAccount = async (
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ role: 'supervisor' })
-        .eq('id', userData.user.id);
+        .eq('id', user.id);
 
       if (updateError) {
         console.error('خطأ في تحديث دور المستخدم:', updateError);

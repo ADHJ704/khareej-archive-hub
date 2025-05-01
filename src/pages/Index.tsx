@@ -9,7 +9,6 @@ import { categories } from '@/data/categories';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-import { createSupervisorAccount } from "@/lib/create-supervisor";
 import { useToast } from "@/hooks/use-toast";
 import { updateSupervisorPassword } from "@/lib/update-supervisor-password";
 import { verifySupervisorAccount } from "@/lib/verify-supervisor-account";
@@ -19,11 +18,6 @@ const Index = () => {
   const { user } = useAuth();
   const [projectsCount, setProjectsCount] = useState(0);
   const [categoriesCount, setCategorizesCount] = useState(0);
-  const [isCreatingSupervisor, setIsCreatingSupervisor] = useState(false);
-  const [supervisorCreated, setSupervisorCreated] = useState(false);
-  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
-  const [isVerifyingSupervisor, setIsVerifyingSupervisor] = useState(false);
-  const [supervisorStatus, setSupervisorStatus] = useState<string | null>(null);
   const { toast } = useToast();
 
   // الحصول على أحدث المشاريع
@@ -52,86 +46,6 @@ const Index = () => {
 
     fetchCounts();
   }, []);
-
-  const handleCreateSupervisor = async () => {
-    setIsCreatingSupervisor(true);
-    
-    try {
-      const { success, message } = await createSupervisorAccount(
-        "hatme933@gmail.com",
-        "Ah0559198344"
-      );
-      
-      toast({
-        title: success ? "نجاح" : "خطأ",
-        description: message,
-        variant: success ? "default" : "destructive",
-      });
-      
-      if (success) {
-        setSupervisorCreated(true);
-      }
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء محاولة إنشاء حساب المشرف",
-        variant: "destructive",
-      });
-    } finally {
-      setIsCreatingSupervisor(false);
-    }
-  };
-
-  const handleUpdateSupervisorPassword = async () => {
-    setIsUpdatingPassword(true);
-    
-    try {
-      const { success, message } = await updateSupervisorPassword(
-        "hatme933@gmail.com",
-        "Ah0559198344"
-      );
-      
-      toast({
-        title: success ? "نجاح" : "خطأ",
-        description: message,
-        variant: success ? "default" : "destructive",
-      });
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء محاولة تحديث كلمة مرور المشرف",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUpdatingPassword(false);
-    }
-  };
-
-  const handleVerifySupervisorAccount = async () => {
-    setIsVerifyingSupervisor(true);
-    
-    try {
-      const { exists, isSupervisor, message } = await verifySupervisorAccount(
-        "hatme933@gmail.com"
-      );
-      
-      setSupervisorStatus(message);
-      
-      toast({
-        title: exists ? "نجاح" : "خطأ",
-        description: message,
-        variant: exists ? "default" : "destructive",
-      });
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء محاولة التحقق من حساب المشرف",
-        variant: "destructive",
-      });
-    } finally {
-      setIsVerifyingSupervisor(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background">
@@ -239,47 +153,6 @@ const Index = () => {
             </div>
           </div>
         </section>
-        
-        {/* زر إنشاء حساب المشرف - إعداد المسؤول المؤقت */}
-        {!supervisorCreated && (
-          <div className="mt-8 border p-4 rounded-md bg-white dark:bg-gray-800">
-            <h3 className="text-lg font-semibold mb-2 text-right">إعداد حساب المشرف</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 text-right mb-4">
-              هذا القسم مخصص لإدارة حساب المشرف في النظام. بعد إنشاء الحساب وتأكيد عمله بشكل صحيح، يرجى إزالة هذا القسم من الصفحة الرئيسية.
-            </p>
-            
-            {supervisorStatus && (
-              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md text-right">
-                <p className="text-blue-700 dark:text-blue-300">{supervisorStatus}</p>
-              </div>
-            )}
-            
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button
-                onClick={handleCreateSupervisor}
-                disabled={isCreatingSupervisor}
-                className="bg-archive-secondary hover:bg-archive-secondary/80"
-              >
-                {isCreatingSupervisor ? "جاري إنشاء الحساب..." : "إنشاء حساب المشرف"}
-              </Button>
-              <Button
-                onClick={handleUpdateSupervisorPassword}
-                disabled={isUpdatingPassword}
-                className="bg-archive-primary hover:bg-archive-primary/80"
-              >
-                {isUpdatingPassword ? "جاري تحديث كلمة المرور..." : "تحديث كلمة مرور المشرف"}
-              </Button>
-              <Button
-                onClick={handleVerifySupervisorAccount}
-                disabled={isVerifyingSupervisor}
-                variant="outline"
-                className="border-archive-primary text-archive-primary hover:bg-archive-primary/10"
-              >
-                {isVerifyingSupervisor ? "جاري التحقق..." : "التحقق من حساب المشرف"}
-              </Button>
-            </div>
-          </div>
-        )}
       </main>
       
       <footer className="bg-archive-dark text-white py-8">
