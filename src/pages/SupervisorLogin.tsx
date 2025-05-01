@@ -72,7 +72,7 @@ const SupervisorLogin = () => {
           await supabase.auth.signOut();
           toast({
             title: 'خطأ في تسجيل الدخول',
-            description: 'هذا الحساب ليس مشرفاً',
+            description: 'هذا الحساب ليس مشرفاً، وليس لديه صلاحيات الوصول إلى لوحة التحكم',
             variant: 'destructive',
           });
           setIsLoading(false);
