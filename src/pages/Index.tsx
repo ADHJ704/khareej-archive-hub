@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { createSupervisorAccount } from "@/lib/create-supervisor";
 import { useToast } from "@/hooks/use-toast";
+import { updateSupervisorPassword } from "@/lib/update-supervisor-password";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const Index = () => {
   const [categoriesCount, setCategorizesCount] = useState(0);
   const [isCreatingSupervisor, setIsCreatingSupervisor] = useState(false);
   const [supervisorCreated, setSupervisorCreated] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const { toast } = useToast();
 
   // الحصول على أحدث المشاريع
@@ -73,6 +75,31 @@ const Index = () => {
       });
     } finally {
       setIsCreatingSupervisor(false);
+    }
+  };
+
+  const handleUpdateSupervisorPassword = async () => {
+    setIsUpdatingPassword(true);
+    
+    try {
+      const { success, message } = await updateSupervisorPassword(
+        "hatme933@gmail.com",
+        "Ah0559198344"
+      );
+      
+      toast({
+        title: success ? "نجاح" : "خطأ",
+        description: message,
+        variant: success ? "default" : "destructive",
+      });
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء محاولة تحديث كلمة مرور المشرف",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -183,20 +210,29 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Add Create Supervisor button - temp admin setup */}
+        {/* زر إنشاء حساب المشرف - إعداد المسؤول المؤقت */}
         {!supervisorCreated && (
           <div className="mt-8 border p-4 rounded-md bg-white dark:bg-gray-800">
             <h3 className="text-lg font-semibold mb-2 text-right">إعداد حساب المشرف</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 text-right mb-4">
               هذا الزر مخصص لإنشاء حساب المشرف الأول في النظام. بعد إنشاء الحساب، يرجى إزالة هذا الزر من الصفحة الرئيسية.
             </p>
-            <Button
-              onClick={handleCreateSupervisor}
-              disabled={isCreatingSupervisor}
-              className="bg-archive-secondary hover:bg-archive-secondary/80"
-            >
-              {isCreatingSupervisor ? "جاري إنشاء الحساب..." : "إنشاء حساب المشرف"}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                onClick={handleCreateSupervisor}
+                disabled={isCreatingSupervisor}
+                className="bg-archive-secondary hover:bg-archive-secondary/80"
+              >
+                {isCreatingSupervisor ? "جاري إنشاء الحساب..." : "إنشاء حساب المشرف"}
+              </Button>
+              <Button
+                onClick={handleUpdateSupervisorPassword}
+                disabled={isUpdatingPassword}
+                className="bg-archive-primary hover:bg-archive-primary/80"
+              >
+                {isUpdatingPassword ? "جاري تحديث كلمة المرور..." : "تحديث كلمة مرور المشرف"}
+              </Button>
+            </div>
           </div>
         )}
       </main>
