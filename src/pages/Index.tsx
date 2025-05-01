@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { BookOpen, File, Compass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { createSupervisorAccount } from "@/lib/create-supervisor";
 import { useToast } from "@/hooks/use-toast";
 import { updateSupervisorPassword } from "@/lib/update-supervisor-password";
+import { verifySupervisorAccount } from "@/lib/verify-supervisor-account";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -20,6 +22,8 @@ const Index = () => {
   const [isCreatingSupervisor, setIsCreatingSupervisor] = useState(false);
   const [supervisorCreated, setSupervisorCreated] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [isVerifyingSupervisor, setIsVerifyingSupervisor] = useState(false);
+  const [supervisorStatus, setSupervisorStatus] = useState<string | null>(null);
   const { toast } = useToast();
 
   // الحصول على أحدث المشاريع
@@ -55,7 +59,7 @@ const Index = () => {
     try {
       const { success, message } = await createSupervisorAccount(
         "hatme933@gmail.com",
-        "Ah0559198344@"
+        "Ah0559198344"
       );
       
       toast({
@@ -100,6 +104,32 @@ const Index = () => {
       });
     } finally {
       setIsUpdatingPassword(false);
+    }
+  };
+
+  const handleVerifySupervisorAccount = async () => {
+    setIsVerifyingSupervisor(true);
+    
+    try {
+      const { exists, isSupervisor, message } = await verifySupervisorAccount(
+        "hatme933@gmail.com"
+      );
+      
+      setSupervisorStatus(message);
+      
+      toast({
+        title: exists ? "نجاح" : "خطأ",
+        description: message,
+        variant: exists ? "default" : "destructive",
+      });
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء محاولة التحقق من حساب المشرف",
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifyingSupervisor(false);
     }
   };
 
@@ -215,8 +245,15 @@ const Index = () => {
           <div className="mt-8 border p-4 rounded-md bg-white dark:bg-gray-800">
             <h3 className="text-lg font-semibold mb-2 text-right">إعداد حساب المشرف</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 text-right mb-4">
-              هذا الزر مخصص لإنشاء حساب المشرف الأول في النظام. بعد إنشاء الحساب، يرجى إزالة هذا الزر من الصفحة الرئيسية.
+              هذا القسم مخصص لإدارة حساب المشرف في النظام. بعد إنشاء الحساب وتأكيد عمله بشكل صحيح، يرجى إزالة هذا القسم من الصفحة الرئيسية.
             </p>
+            
+            {supervisorStatus && (
+              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md text-right">
+                <p className="text-blue-700 dark:text-blue-300">{supervisorStatus}</p>
+              </div>
+            )}
+            
             <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 onClick={handleCreateSupervisor}
@@ -231,6 +268,14 @@ const Index = () => {
                 className="bg-archive-primary hover:bg-archive-primary/80"
               >
                 {isUpdatingPassword ? "جاري تحديث كلمة المرور..." : "تحديث كلمة مرور المشرف"}
+              </Button>
+              <Button
+                onClick={handleVerifySupervisorAccount}
+                disabled={isVerifyingSupervisor}
+                variant="outline"
+                className="border-archive-primary text-archive-primary hover:bg-archive-primary/10"
+              >
+                {isVerifyingSupervisor ? "جاري التحقق..." : "التحقق من حساب المشرف"}
               </Button>
             </div>
           </div>
