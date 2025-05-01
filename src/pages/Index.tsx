@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BookOpen, File, Compass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -9,12 +8,17 @@ import { categories } from '@/data/categories';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import { createSupervisorAccount } from "@/lib/create-supervisor";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [projectsCount, setProjectsCount] = useState(0);
   const [categoriesCount, setCategorizesCount] = useState(0);
+  const [isCreatingSupervisor, setIsCreatingSupervisor] = useState(false);
+  const [supervisorCreated, setSupervisorCreated] = useState(false);
+  const { toast } = useToast();
 
   // الحصول على أحدث المشاريع
   const recentProjects = [...projects].sort((a, b) => 
@@ -43,11 +47,40 @@ const Index = () => {
     fetchCounts();
   }, []);
 
+  const handleCreateSupervisor = async () => {
+    setIsCreatingSupervisor(true);
+    
+    try {
+      const { success, message } = await createSupervisorAccount(
+        "hatme933@gmail.com",
+        "Ah0559198344@"
+      );
+      
+      toast({
+        title: success ? "نجاح" : "خطأ",
+        description: message,
+        variant: success ? "default" : "destructive",
+      });
+      
+      if (success) {
+        setSupervisorCreated(true);
+      }
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء محاولة إنشاء حساب المشرف",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingSupervisor(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background">
       <Header />
       
-      <main className="flex-grow">
+      <main className="container mx-auto px-4 py-10 flex-grow">
         {/* قسم الترحيب */}
         <section className="relative bg-gradient-to-r from-archive-primary to-archive-secondary py-16 md:py-24">
           <div className="container-custom relative z-10">
@@ -149,6 +182,23 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        {/* Add Create Supervisor button - temp admin setup */}
+        {!supervisorCreated && (
+          <div className="mt-8 border p-4 rounded-md bg-white dark:bg-gray-800">
+            <h3 className="text-lg font-semibold mb-2 text-right">إعداد حساب المشرف</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 text-right mb-4">
+              هذا الزر مخصص لإنشاء حساب المشرف الأول في النظام. بعد إنشاء الحساب، يرجى إزالة هذا الزر من الصفحة الرئيسية.
+            </p>
+            <Button
+              onClick={handleCreateSupervisor}
+              disabled={isCreatingSupervisor}
+              className="bg-archive-secondary hover:bg-archive-secondary/80"
+            >
+              {isCreatingSupervisor ? "جاري إنشاء الحساب..." : "إنشاء حساب المشرف"}
+            </Button>
+          </div>
+        )}
       </main>
       
       <footer className="bg-archive-dark text-white py-8">
