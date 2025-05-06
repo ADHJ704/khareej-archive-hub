@@ -49,6 +49,7 @@ const SupervisorProjects = () => {
     try {
       setIsDeleting(true);
       
+      // استخدام الـ session الحالي لضمان أن الطلب يتم مع صلاحيات المستخدم المشرف
       const { error } = await supabase
         .from('projects')
         .delete()

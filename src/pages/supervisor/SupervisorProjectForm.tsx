@@ -77,6 +77,8 @@ const SupervisorProjectForm = () => {
       if (isEditMode && projectId) {
         try {
           setLoadingProject(true);
+          
+          // التأكد من استخدام الـ session الحالي للمستخدم المشرف
           const { data, error } = await supabase
             .from('projects')
             .select('*')
