@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
+import { Loader2 } from 'lucide-react';
 
 // تعريف مخطط التحقق من صحة النموذج باستخدام Zod
 const projectSchema = z.object({
@@ -50,6 +51,8 @@ const SupervisorProjectForm = () => {
   const { toast } = useToast();
   const { projectId } = useParams(); // للحصول على معرف المشروع إذا كان التعديل
   const isEditMode = !!projectId;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingProject, setLoadingProject] = useState(isEditMode);
   
   // تهيئة النموذج باستخدام react-hook-form و zod
   const form = useForm<ProjectFormValues>({
@@ -73,6 +76,7 @@ const SupervisorProjectForm = () => {
     const fetchProject = async () => {
       if (isEditMode && projectId) {
         try {
+          setLoadingProject(true);
           const { data, error } = await supabase
             .from('projects')
             .select('*')
@@ -105,6 +109,8 @@ const SupervisorProjectForm = () => {
             description: "حدث خطأ أثناء محاولة تحميل بيانات المشروع. يرجى المحاولة مرة أخرى.",
             variant: "destructive",
           });
+        } finally {
+          setLoadingProject(false);
         }
       }
     };
@@ -114,6 +120,8 @@ const SupervisorProjectForm = () => {
   
   // معالجة تقديم النموذج
   const onSubmit = async (values: ProjectFormValues) => {
+    setIsSubmitting(true);
+    
     try {
       // تحويل سلسلة الوسوم إلى مصفوفة
       const tagsArray = values.tags ? values.tags.split(',').map(tag => tag.trim()) : [];
@@ -131,55 +139,76 @@ const SupervisorProjectForm = () => {
         category_id: values.categoryId,
       };
       
-      let error;
+      let response;
       
       if (isEditMode && projectId) {
         // تحديث المشروع الموجود
-        const { error: updateError } = await supabase
+        response = await supabase
           .from('projects')
           .update(projectData)
           .eq('id', projectId);
         
-        error = updateError;
-        
-        if (!error) {
-          toast({
-            title: "تم تحديث المشروع بنجاح",
-            description: "تم تحديث بيانات المشروع في قاعدة البيانات."
-          });
+        if (response.error) {
+          throw response.error;
         }
+        
+        toast({
+          title: "تم تحديث المشروع بنجاح",
+          description: "تم تحديث بيانات المشروع في قاعدة البيانات."
+        });
+        
+        // الانتقال إلى صفحة عرض المشروع
+        navigate(`/projects/${projectId}`);
       } else {
         // إنشاء مشروع جديد
-        const { error: insertError } = await supabase
+        response = await supabase
           .from('projects')
-          .insert([projectData]);
+          .insert([projectData])
+          .select();
         
-        error = insertError;
+        if (response.error) {
+          throw response.error;
+        }
         
-        if (!error) {
-          toast({
-            title: "تم إضافة المشروع بنجاح",
-            description: "تم إضافة المشروع الجديد إلى قاعدة البيانات."
-          });
-          form.reset(); // إعادة تعيين النموذج بعد الإضافة
+        toast({
+          title: "تم إضافة المشروع بنجاح",
+          description: "تم إضافة المشروع الجديد إلى قاعدة البيانات."
+        });
+        
+        // إذا كان هناك مشروع تم إنشاؤه، انتقل إلى صفحة عرض المشروع
+        if (response.data && response.data.length > 0) {
+          const newProjectId = response.data[0].id;
+          navigate(`/projects/${newProjectId}`);
+        } else {
+          // إذا لم يتم الحصول على معرف المشروع، انتقل إلى قائمة المشاريع
+          navigate('/supervisor/projects');
         }
       }
-      
-      if (error) {
-        throw error;
-      }
-      
-      // العودة إلى صفحة إدارة المشاريع
-      navigate('/supervisor/projects');
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting project:", error);
       toast({
         title: "خطأ في حفظ المشروع",
-        description: "حدث خطأ أثناء محاولة حفظ المشروع. يرجى المحاولة مرة أخرى.",
+        description: `حدث خطأ أثناء محاولة حفظ المشروع: ${error.message || "خطأ غير معروف"}`,
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+  
+  if (loadingProject) {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-10 flex-grow flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-archive-primary mb-4"></div>
+            <p className="text-archive-dark dark:text-white">جاري تحميل بيانات المشروع...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background">
@@ -402,14 +431,23 @@ const SupervisorProjectForm = () => {
                     type="button"
                     variant="outline"
                     onClick={() => navigate('/supervisor/projects')}
+                    disabled={isSubmitting}
                   >
                     إلغاء
                   </Button>
                   <Button
                     type="submit"
                     className="bg-archive-primary hover:bg-archive-primary/80"
+                    disabled={isSubmitting}
                   >
-                    {isEditMode ? 'حفظ التغييرات' : 'إضافة المشروع'}
+                    {isSubmitting ? (
+                      <span className="flex items-center">
+                        <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+                        {isEditMode ? 'جار حفظ التغييرات...' : 'جار إضافة المشروع...'}
+                      </span>
+                    ) : (
+                      isEditMode ? 'حفظ التغييرات' : 'إضافة المشروع'
+                    )}
                   </Button>
                 </div>
               </form>

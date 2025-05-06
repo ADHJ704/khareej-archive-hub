@@ -26,8 +26,9 @@ const SupervisorProjects = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
-  // استخدام نفس خطاف المشاريع الموجود
+  // استخدام نفس خطاف المشاريع الموجود مع إضافة refetch لتحديث القائمة
   const { data: projects, isLoading, error, refetch } = useProjects(undefined, searchQuery);
   
   if (error) {
@@ -46,6 +47,8 @@ const SupervisorProjects = () => {
     if (!projectToDelete) return;
     
     try {
+      setIsDeleting(true);
+      
       const { error } = await supabase
         .from('projects')
         .delete()
@@ -62,16 +65,17 @@ const SupervisorProjects = () => {
       
       // إعادة تحميل قائمة المشاريع
       refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting project:", error);
       toast({
         title: "خطأ في حذف المشروع",
-        description: "حدث خطأ أثناء محاولة حذف المشروع. يرجى المحاولة مرة أخرى.",
+        description: `حدث خطأ أثناء محاولة حذف المشروع: ${error.message || "خطأ غير معروف"}`,
         variant: "destructive",
       });
     } finally {
       setProjectToDelete(null);
       setIsDeleteDialogOpen(false);
+      setIsDeleting(false);
     }
   };
   
@@ -180,8 +184,14 @@ const SupervisorProjects = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row-reverse sm:justify-end">
-            <AlertDialogCancel className="ml-2">إلغاء</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-700">حذف</AlertDialogAction>
+            <AlertDialogCancel className="ml-2" disabled={isDeleting}>إلغاء</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete} 
+              className="bg-red-500 hover:bg-red-700"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "جار الحذف..." : "حذف"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

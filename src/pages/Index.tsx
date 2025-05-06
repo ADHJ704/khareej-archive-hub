@@ -4,47 +4,59 @@ import { BookOpen, File, Compass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
 import FeaturedProjects from '@/components/FeaturedProjects';
-import { projects } from '@/data/projects';
 import { categories } from '@/data/categories';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from "@/hooks/use-toast";
-import { updateSupervisorPassword } from "@/lib/update-supervisor-password";
-import { verifySupervisorAccount } from "@/lib/verify-supervisor-account";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [projectsCount, setProjectsCount] = useState(0);
-  const [categoriesCount, setCategorizesCount] = useState(0);
+  const [categoriesCount, setCategoriesCount] = useState(categories.length);
+  const [recentProjects, setRecentProjects] = useState([]);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
   const { toast } = useToast();
 
-  // الحصول على أحدث المشاريع
-  const recentProjects = [...projects].sort((a, b) => 
-    parseInt(b.year) - parseInt(a.year)
-  ).slice(0, 3);
-
-  // جلب الإحصائيات الفعلية من قاعدة البيانات
+  // جلب الإحصائيات والمشاريع الحديثة من قاعدة البيانات
   useEffect(() => {
-    const fetchCounts = async () => {
-      // الحصول على عدد المشاريع
-      const { count: projectCount, error: projectError } = await supabase
-        .from('projects')
-        .select('*', { count: 'exact', head: true });
+    const fetchData = async () => {
+      setIsLoadingProjects(true);
+      try {
+        // الحصول على عدد المشاريع
+        const { count: projectCount, error: projectError } = await supabase
+          .from('projects')
+          .select('*', { count: 'exact', head: true });
 
-      if (!projectError && projectCount !== null) {
-        setProjectsCount(projectCount);
-      } else {
-        console.error('Error fetching project count:', projectError);
-        setProjectsCount(projects.length); // استخدام البيانات المحلية كبديل
+        if (!projectError && projectCount !== null) {
+          setProjectsCount(projectCount);
+        } else {
+          console.error('Error fetching project count:', projectError);
+        }
+
+        // الحصول على أحدث المشاريع
+        const { data: latestProjects, error: projectsError } = await supabase
+          .from('projects')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        if (!projectsError && latestProjects) {
+          setRecentProjects(latestProjects);
+        } else {
+          console.error('Error fetching recent projects:', projectsError);
+          // استخدام المشاريع الافتراضية كبديل
+          setRecentProjects([]);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoadingProjects(false);
       }
-
-      // الحصول على عدد التخصصات
-      setCategorizesCount(categories.length);
     };
 
-    fetchCounts();
+    fetchData();
   }, []);
 
   return (
@@ -108,7 +120,13 @@ const Index = () => {
         </section>
         
         {/* قسم المشاريع المميزة */}
-        <FeaturedProjects projects={recentProjects} />
+        {isLoadingProjects ? (
+          <div className="py-12 flex justify-center items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-archive-primary"></div>
+          </div>
+        ) : (
+          <FeaturedProjects projects={recentProjects} />
+        )}
 
         {/* قسم عن المنصة */}
         <section className="py-12 bg-slate-50 dark:bg-slate-900">
