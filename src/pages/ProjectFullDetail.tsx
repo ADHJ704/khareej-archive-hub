@@ -111,11 +111,9 @@ const ProjectFullDetail = () => {
             
             <div className="prose prose-lg dark:prose-invert max-w-none">
               {fullContent ? (
-                fullContent.split('\n\n').map((paragraph, index) => (
-                  <p key={index} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))
+                <div className="whitespace-pre-line text-gray-700 dark:text-gray-300 leading-relaxed">
+                  {fullContent}
+                </div>
               ) : (
                 <p className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
                   محتوى المشروع غير متوفر بالتفصيل حالياً.
@@ -135,12 +133,12 @@ const ProjectFullDetail = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-xl font-semibold mb-3">فكرة المشروع</h3>
-                <p className="text-gray-700 dark:text-gray-300">{project.abstract || "غير متوفر"}</p>
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{project.abstract || "غير متوفر"}</p>
               </div>
               
               <div>
                 <h3 className="text-xl font-semibold mb-3">أهداف المشروع</h3>
-                <p className="text-gray-700 dark:text-gray-300">{project.description || "غير متوفر"}</p>
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{project.description || "غير متوفر"}</p>
               </div>
               
               <div>
