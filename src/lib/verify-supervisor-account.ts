@@ -21,7 +21,11 @@ export const verifySupervisorAccount = async (
     }
 
     // فلترة المستخدمين للعثور على المستخدم بناءً على البريد الإلكتروني
-    const user = userData?.users?.find(user => user.email === email);
+    // استخدام type assertion لتجنب خطأ TypeScript
+    const user = userData?.users?.find(user => {
+      // التأكد من وجود خاصية email قبل المقارنة
+      return typeof user === 'object' && user !== null && 'email' in user && user.email === email;
+    });
 
     if (!user) {
       return {
