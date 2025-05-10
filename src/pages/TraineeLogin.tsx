@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { UserRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Header from '@/components/Header';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const loginFormSchema = z.object({
   email: z.string().email({ message: 'يرجى إدخال بريد إلكتروني صحيح' }),
@@ -24,6 +27,17 @@ const TraineeLogin = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const authRequired = searchParams.get('authRequired') === 'true';
+  const redirectTo = searchParams.get('redirect') || '/';
+  const { user } = useAuth();
+  
+  // إذا كان المستخدم مسجل الدخول، توجيهه إلى الصفحة المقصودة
+  useEffect(() => {
+    if (user) {
+      navigate(redirectTo !== '/' ? decodeURIComponent(redirectTo) : '/');
+    }
+  }, [user, navigate, redirectTo]);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -75,8 +89,8 @@ const TraineeLogin = () => {
           description: 'مرحباً بك في منصة أرشيف المشاريع',
         });
         
-        // التوجيه إلى الصفحة الرئيسية
-        navigate('/');
+        // التوجيه إلى الصفحة التي حاول المستخدم الوصول إليها
+        navigate(redirectTo !== '/' ? decodeURIComponent(redirectTo) : '/');
       }
     } catch (error: any) {
       toast({
@@ -111,6 +125,16 @@ const TraineeLogin = () => {
             </CardHeader>
 
             <CardContent>
+              {authRequired && (
+                <Alert variant="warning" className="mb-6">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>يرجى تسجيل الدخول</AlertTitle>
+                  <AlertDescription>
+                    يجب عليك تسجيل الدخول أو إنشاء حساب للوصول إلى هذه الصفحة
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField
@@ -167,7 +191,7 @@ const TraineeLogin = () => {
 
               <div className="text-center mt-4 text-sm">
                 <span>ما عندك حساب؟</span>{" "}
-                <Link to="/trainee-signup" className="text-archive-secondary hover:underline font-medium">
+                <Link to={`/trainee-signup${redirectTo !== '/' ? `?redirect=${redirectTo}` : ''}`} className="text-archive-secondary hover:underline font-medium">
                   سجّل الآن
                 </Link>
               </div>

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BookOpen, File, Compass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -60,10 +59,10 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-10 flex-grow">
+      <main className="flex-grow">
         {/* قسم الترحيب */}
         <section className="relative bg-gradient-to-r from-archive-primary to-archive-secondary py-16 md:py-24">
           <div className="container-custom relative z-10">
@@ -129,17 +128,15 @@ const Index = () => {
         )}
 
         {/* قسم عن المنصة */}
-        <section className="py-12 bg-slate-50 dark:bg-slate-900">
+        <section className="py-16 bg-white dark:bg-slate-900">
           <div className="container-custom">
-            <div className="text-center max-w-3xl mx-auto mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-archive-primary mb-4">
-                عن منصة أرشيف المشاريع
-              </h2>
-              <p className="text-lg text-archive-dark/80 dark:text-white/80">
-                منصة متكاملة لمساعدة المتدربين والمشرفين في الوصول إلى مشاريع التخرج السابقة والاستفادة منها في إعداد أبحاثهم ومشاريعهم الخاصة.
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-heading font-bold text-archive-dark dark:text-white mb-4">استعرض مشاريع التخرج</h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                تصفح مجموعة متنوعة من مشاريع التخرج في مختلف التخصصات. يرجى تسجيل الدخول للوصول إلى كامل المحتوى.
               </p>
             </div>
-
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-white dark:bg-card p-6 rounded-lg text-center shadow-sm">
                 <div className="bg-archive-muted/50 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">

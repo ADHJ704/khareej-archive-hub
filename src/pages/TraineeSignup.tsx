@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +27,9 @@ const TraineeSignup = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
+  
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
@@ -37,6 +38,10 @@ const TraineeSignup = () => {
       confirmPassword: '',
     },
   });
+
+  const navigateAfterSignup = () => {
+    navigate(redirectTo !== '/' ? decodeURIComponent(redirectTo) : '/');
+  };
 
   const onSubmit = async (values: SignupFormValues) => {
     setIsLoading(true);
@@ -72,7 +77,7 @@ const TraineeSignup = () => {
         });
         
         // التوجيه إلى الصفحة الرئيسية بعد التسجيل الناجح
-        navigate('/');
+        navigateAfterSignup();
       }
     } catch (error: any) {
       if (error.message.includes('already registered')) {

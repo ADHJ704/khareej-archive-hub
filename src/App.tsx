@@ -39,11 +39,35 @@ const App = () => (
           <Sonner />
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/project/:id" element={<ProjectDetail />} />
-            <Route path="/project-details/:id" element={<ProjectFullDetail />} />
-            <Route path="/ai-helper" element={<AIHelper />} />
+            
+            {/* مسارات محمية تتطلب تسجيل الدخول */}
+            <Route path="/projects" element={
+              <RequireAuth>
+                <Projects />
+              </RequireAuth>
+            } />
+            <Route path="/categories" element={
+              <RequireAuth>
+                <Categories />
+              </RequireAuth>
+            } />
+            <Route path="/project/:id" element={
+              <RequireAuth>
+                <ProjectDetail />
+              </RequireAuth>
+            } />
+            <Route path="/project-details/:id" element={
+              <RequireAuth>
+                <ProjectFullDetail />
+              </RequireAuth>
+            } />
+            <Route path="/ai-helper" element={
+              <RequireAuth>
+                <AIHelper />
+              </RequireAuth>
+            } />
+            
+            {/* مسارات تسجيل الدخول */}
             <Route path="/trainee-login" element={<TraineeLogin />} />
             <Route path="/trainee-signup" element={<TraineeSignup />} />
             <Route path="/supervisor-login" element={<SupervisorLogin />} />
