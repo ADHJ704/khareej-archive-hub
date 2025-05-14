@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -75,11 +74,10 @@ const Projects = () => {
     navigate('/projects');
   };
 
-  // تعديل معالج حوار الاقتراحات للتأكد من تمرير قيمة منطقية فقط
-  const handleSuggestionDialogChange = (value: unknown) => {
-    // استخدام Boolean لتحويل القيمة إلى منطقية بشكل صريح
-    // هذا يضمن أن القيمة ستكون من نوع boolean فقط
-    setShowSuggestionDialog(Boolean(value));
+  // تعديل معالج حوار الاقتراحات للتعامل مع جميع أنواع البيانات
+  const handleSuggestionDialogChange = (value: boolean) => {
+    // نتأكد أن القيمة ستكون منطقية فقط (boolean)
+    setShowSuggestionDialog(value);
   };
 
   const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
@@ -103,7 +101,7 @@ const Projects = () => {
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
                 departmentFilter={departmentFilter}
-                onDepartmentChange={setDepartmentFilter}
+                onDepartmentFilter={setDepartmentFilter}
                 categories={categories}
                 hasActiveFilters={hasActiveFilters}
                 onClearFilters={clearFilters}
