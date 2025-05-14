@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -74,10 +75,9 @@ const Projects = () => {
     navigate('/projects');
   };
 
-  // Updated function to properly handle the type conversion
-  const handleSuggestionDialogChange = (value: unknown) => {
-    // Convert any type to boolean explicitly
-    setShowSuggestionDialog(Boolean(value));
+  // Fixed function to ensure boolean type
+  const handleSuggestionDialogChange = (open: boolean) => {
+    setShowSuggestionDialog(open);
   };
 
   const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
