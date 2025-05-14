@@ -96,7 +96,7 @@ const ProjectSuggestionDialog = ({ open, onOpenChange }: ProjectSuggestionDialog
   };
   
   return (
-    <Dialog open={open} onOpenChange={(value) => onOpenChange(Boolean(value))}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>اقتراح مشروع جديد</DialogTitle>
