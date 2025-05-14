@@ -10,7 +10,7 @@ interface RequireSupervisorProps {
 export const RequireSupervisor: React.FC<RequireSupervisorProps> = ({ children }) => {
   const { user, loading, isSupervisor } = useAuth();
 
-  // أثناء التحقق من حالة المصادقة، لا تظهر شيئًا
+  // أثناء التحقق من حالة المصادقة، نعرض شاشة التحميل
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -29,7 +29,7 @@ export const RequireSupervisor: React.FC<RequireSupervisorProps> = ({ children }
     return <Navigate to="/" />;
   }
 
-  // إذا كان المستخدم مشرفًا، عرض المحتوى
+  // إذا كان المستخدم مشرفًا، عرض المحتوى المطلوب
   return <>{children}</>;
 };
 

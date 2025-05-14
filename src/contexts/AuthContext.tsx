@@ -35,12 +35,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("Auth state changed:", event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
         
         // إعادة ضبط الأدوار عند تغيير حالة المستخدم
         if (!session?.user) {
           setIsTrainee(false);
           setIsSupervisor(false);
+          setLoading(false);
         } else {
           // التحقق من دور المستخدم إذا كان متصلاً
           checkUserRole(session.user.id);
@@ -62,7 +62,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Initial session check:", session?.user?.email || "No session");
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
       
       // التحقق من دور المستخدم عند التحميل الأولي
       if (session?.user) {
@@ -77,6 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsTrainee(true);
         }
       }
+      setLoading(false);
     });
 
     // تنظيف المستمع عند إزالة المكون

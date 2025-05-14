@@ -9,9 +9,12 @@ import ProjectsTable from '@/components/projects/ProjectsTable';
 import DeleteProjectDialog from '@/components/projects/DeleteProjectDialog';
 import ManageProjectsHeader from '@/components/projects/ManageProjectsHeader';
 import { formatDate } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const ManageProjects = () => {
   const { toast } = useToast();
+  const { user, loading, isSupervisor } = useAuth();
   
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,9 +23,44 @@ const ManageProjects = () => {
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // التحقق من صلاحيات المشرف
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-archive-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/supervisor-login" />;
+  }
+
+  if (!isSupervisor) {
+    return <Navigate to="/" />;
+  }
+
   // جلب المشاريع
   useEffect(() => {
     fetchProjects();
+
+    // إعداد الاستماع للتغييرات في الوقت الفعلي
+    const channel = supabase
+      .channel('projects-changes')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'projects' 
+      }, (payload) => {
+        console.log('Realtime change:', payload);
+        fetchProjects(); // تحديث القائمة
+      })
+      .subscribe();
+
+    // إلغاء الاشتراك عند مغادرة الصفحة
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchProjects = async () => {

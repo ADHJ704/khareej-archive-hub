@@ -90,6 +90,9 @@ const AddProject = () => {
         tags: '',
         category_id: 'general',
       });
+      
+      // بعد الإضافة بنجاح، الانتقال إلى صفحة إدارة المشاريع
+      navigate('/supervisor/manage-projects');
 
     } catch (err) {
       console.error("Unexpected error:", err);

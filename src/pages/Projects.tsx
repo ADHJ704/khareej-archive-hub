@@ -117,7 +117,7 @@ const Projects = () => {
       
       <ProjectSuggestionDialog 
         open={showSuggestionDialog} 
-        onOpenChange={setShowSuggestionDialog} 
+        onOpenChange={(value: boolean) => setShowSuggestionDialog(value)} 
       />
       
       <footer className="bg-archive-dark text-white py-6">
