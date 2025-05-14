@@ -1,50 +1,18 @@
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Bot } from 'lucide-react';
 import Header from '@/components/Header';
-import ProjectGrid from '@/components/ProjectGrid';
-import CategoryFilter from '@/components/CategoryFilter';
 import SearchBar from '@/components/SearchBar';
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogAction,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { categories } from '@/data/categories';
 import { useProjects } from '@/hooks/useProjects';
 import { useToast } from '@/hooks/use-toast';
-import { Textarea } from "@/components/ui/textarea";
-import { supabase } from '@/integrations/supabase/client';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Loader2 } from "lucide-react";
-import { useRepeatedActionConfirmation } from '@/lib/repeated-action-helper';
+
+// Import refactored components
+import ProjectsHeader from '@/components/projects/ProjectsHeader';
+import ProjectFilters from '@/components/projects/ProjectFilters';
+import ProjectResults from '@/components/projects/ProjectResults';
+import ProjectSuggestionDialog from '@/components/projects/ProjectSuggestionDialog';
 
 const Projects = () => {
   const location = useLocation();
@@ -53,19 +21,12 @@ const Projects = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestionDialog, setShowSuggestionDialog] = useState(false);
-  const [suggestionMessage, setSuggestionMessage] = useState('');
-  const [suggestedProject, setSuggestedProject] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
-  const [suggestionError, setSuggestionError] = useState<string | null>(null);
-  const { needsConfirmation, trackAction, resetAction } = useRepeatedActionConfirmation(2);
-  // Removed showOnlyWithLinks state variable
 
   const { data: projects, isLoading: projectsLoading, error } = useProjects(
     selectedCategories[0],
     searchQuery,
     departmentFilter === 'all' ? '' : departmentFilter
-    // Removed showOnlyWithLinks parameter
   );
 
   React.useEffect(() => {
@@ -114,97 +75,7 @@ const Projects = () => {
     navigate('/projects');
   };
 
-  const handleAISuggestion = async () => {
-    if (!trackAction()) {
-      return;
-    }
-
-    setSuggestionError(null);
-    
-    if (!departmentFilter) {
-      toast({
-        title: "اختر التخصص",
-        description: "يرجى اختيار التخصص قبل طلب الاقتراح",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('project-suggestion', {
-        body: JSON.stringify({ 
-          message: suggestionMessage, 
-          department: departmentFilter 
-        })
-      });
-
-      if (error) {
-        console.error('Supabase function error:', error);
-        setSuggestionError("خطأ في الاتصال بالخدمة. يرجى المحاولة لاحقًا.");
-        throw error;
-      }
-
-      if (data?.error) {
-        console.error('API returned error:', data.error);
-        setSuggestionError(data.error);
-        throw new Error(data.error);
-      }
-
-      if (data?.suggestion) {
-        setSuggestedProject(data.suggestion);
-        toast({
-          title: "اقتراح مشروع",
-          description: "تم توليد اقتراح مشروع بنجاح",
-        });
-      } else {
-        throw new Error("لم يتم استلام اقتراح من الخدمة");
-      }
-    } catch (error) {
-      console.error('Error getting AI suggestion:', error);
-      if (error instanceof Error) {
-        toast({
-          title: "خطأ",
-          description: error.message || "حدث خطأ أثناء توليد الاقتراح",
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: "خطأ",
-          description: "حدث خطأ غير معروف أثناء توليد الاقتراح",
-          variant: "destructive"
-        });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const departments = [
-    "علوم الحاسب",
-    "نظم المعلومات",
-    "هندسة الحاسب",
-    "الذكاء الاصطناعي",
-    "أمن المعلومات",
-    "شبكات الحاسب",
-    "تطبيقات الجوال",
-    "تطوير الويب",
-    "دعم فني حاسب آلي",
-    "تقنية شبكات",
-    "برمجة تطبيقات",
-    "إنترنت الأشياء",
-    "إدارة تقنية"
-  ];
-
-  const closeDialog = () => {
-    setShowSuggestionDialog(false);
-    setSuggestionError(null);
-    setSuggestedProject('');
-    setSuggestionMessage('');
-    setDepartmentFilter('all');
-  };
-
-  // Removed toggleShowOnlyWithLinks function
+  const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -212,23 +83,7 @@ const Projects = () => {
       
       <main className="flex-grow bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container-custom">
-          <div className="mb-8 flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-heading font-bold text-archive-primary mb-4">
-                مشاريع التخرج
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                استعرض مجموعة متنوعة من مشاريع التخرج المميزة في مختلف التخصصات
-              </p>
-            </div>
-            <Button
-              onClick={() => setShowSuggestionDialog(true)}
-              className="bg-archive-primary hover:bg-archive-dark"
-            >
-              <Bot className="h-4 w-4 ml-2" />
-              اقتراح مشروع
-            </Button>
-          </div>
+          <ProjectsHeader onRequestSuggestion={() => setShowSuggestionDialog(true)} />
           
           <div className="mb-8 flex flex-col md:flex-row gap-4">
             <div className="w-full md:w-1/3 lg:w-1/4">
@@ -237,184 +92,33 @@ const Projects = () => {
                 className="mb-4" 
               />
               
-              <div className="p-4 bg-white dark:bg-card rounded-lg shadow-sm">
-                <h3 className="font-medium text-lg mb-4">تصفية النتائج</h3>
-                
-                <div className="mb-6">
-                  <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                    التصنيفات الرئيسية
-                  </h4>
-                  <CategoryFilter 
-                    categories={categories} 
-                    selectedCategories={selectedCategories}
-                    onCategoryChange={handleCategoryChange}
-                  />
-                </div>
-                
-                <div className="mb-6">
-                  <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                    التخصص
-                  </h4>
-                  <Select
-                    value={departmentFilter}
-                    onValueChange={(value) => setDepartmentFilter(value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="اختر التخصص" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">الكل</SelectItem>
-                      {departments.map((dept) => (
-                        <SelectItem key={dept} value={dept}>
-                          {dept}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {/* Removed "Show only with links" toggle and related text */}
-                
-                {(selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all') && (
-                  <Button 
-                    variant="outline" 
-                    className="w-full" 
-                    onClick={clearFilters}
-                  >
-                    مسح التصفية
-                  </Button>
-                )}
-              </div>
+              <ProjectFilters 
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+                departmentFilter={departmentFilter}
+                onDepartmentChange={setDepartmentFilter}
+                categories={categories}
+                hasActiveFilters={hasActiveFilters}
+                onClearFilters={clearFilters}
+              />
             </div>
             
             <div className="w-full md:w-2/3 lg:w-3/4">
-              <div className="bg-white dark:bg-card p-4 rounded-lg shadow-sm mb-6">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium">
-                      {projects?.length || 0} مشروع
-                      {searchQuery && 
-                        <span className="text-gray-600 dark:text-gray-400 mr-2">
-                          لنتائج البحث: "{searchQuery}"
-                        </span>
-                      }
-                      {departmentFilter !== 'all' && 
-                        <span className="text-gray-600 dark:text-gray-400 mr-2">
-                          في تخصص: "{departmentFilter}"
-                        </span>
-                      }
-                      {/* Removed "Complete Projects Only" text */}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-              
-              <ProjectGrid 
-                projects={projects || []} 
+              <ProjectResults 
+                projects={projects} 
                 loading={projectsLoading} 
+                searchQuery={searchQuery}
+                departmentFilter={departmentFilter}
               />
             </div>
           </div>
         </div>
       </main>
       
-      <Dialog open={showSuggestionDialog} onOpenChange={closeDialog}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>اقتراح مشروع تخرج</DialogTitle>
-            <DialogDescription>
-              أخبرنا عن اهتماماتك وتخصصك، وسنقترح عليك مشروعًا مناسبًا
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            {suggestionError && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>خطأ</AlertTitle>
-                <AlertDescription>{suggestionError}</AlertDescription>
-              </Alert>
-            )}
-            
-            <Select
-              value={departmentFilter}
-              onValueChange={(value) => setDepartmentFilter(value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="اختر التخصص" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                <ScrollArea className="h-[180px] w-full">
-                  <SelectGroup>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </ScrollArea>
-              </SelectContent>
-            </Select>
-            
-            <Textarea 
-              placeholder="اكتب بعض التفاصيل عن اهتماماتك أو المجال الذي ترغب في العمل فيه (اختياري)"
-              value={suggestionMessage}
-              onChange={(e) => setSuggestionMessage(e.target.value)}
-              className="w-full min-h-[100px]"
-            />
-            
-            <Button 
-              onClick={handleAISuggestion}
-              className="w-full bg-archive-primary hover:bg-archive-dark"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  جاري التوليد...
-                </span>
-              ) : 'اقتراح مشروع'}
-            </Button>
-            
-            {suggestedProject && (
-              <div className="mt-4">
-                <h3 className="font-bold mb-2">المشروع المقترح:</h3>
-                <ScrollArea className="h-[200px] w-full rounded-md border p-4 bg-gray-100">
-                  <p className="whitespace-pre-line">{suggestedProject}</p>
-                </ScrollArea>
-              </div>
-            )}
-          </div>
-          
-          <DialogFooter>
-            <Button 
-              variant="outline"
-              onClick={closeDialog}
-            >
-              إغلاق
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {needsConfirmation && (
-        <AlertDialog open={true} onOpenChange={resetAction}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
-              <AlertDialogDescription>
-                لقد حاولت توليد اقتراح مشروع مرتين متتاليتين. هل تريد المتابعة؟
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>إلغاء</AlertDialogCancel>
-              <AlertDialogAction onClick={handleAISuggestion}>
-                نعم، المتابعة
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <ProjectSuggestionDialog 
+        open={showSuggestionDialog} 
+        onOpenChange={setShowSuggestionDialog} 
+      />
       
       <footer className="bg-archive-dark text-white py-6">
         <div className="container-custom text-center">
@@ -426,4 +130,3 @@ const Projects = () => {
 };
 
 export default Projects;
-
