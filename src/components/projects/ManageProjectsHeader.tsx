@@ -1,10 +1,16 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ManageProjectsHeaderProps {
   projectCount: number;
@@ -34,20 +40,41 @@ const ManageProjectsHeader = ({
         </div>
         
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            onClick={() => navigate(-1)}
-            className="w-full sm:w-auto"
-          >
-            العودة
-          </Button>
-          <Button
-            variant="default"
-            onClick={() => navigate('/supervisor/add-project')}
-            className="bg-archive-primary hover:bg-archive-primary/90 w-full sm:w-auto"
-          >
-            إضافة مشروع جديد
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(-1)}
+                  className="w-full sm:w-auto"
+                >
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                  العودة
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>العودة للصفحة السابقة</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="default"
+                  onClick={() => navigate('/supervisor/add-project')}
+                  className="bg-archive-primary hover:bg-archive-primary/90 w-full sm:w-auto"
+                >
+                  <Plus className="h-4 w-4 ml-1" />
+                  إضافة مشروع جديد
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>إضافة مشروع جديد للأرشيف</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       

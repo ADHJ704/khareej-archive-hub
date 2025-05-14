@@ -8,6 +8,7 @@ import { Project } from '@/components/projects/ProjectsTable';
 import ProjectsTable from '@/components/projects/ProjectsTable';
 import DeleteProjectDialog from '@/components/projects/DeleteProjectDialog';
 import ManageProjectsHeader from '@/components/projects/ManageProjectsHeader';
+import { formatDate } from '@/lib/utils';
 
 const ManageProjects = () => {
   const { toast } = useToast();
@@ -90,12 +91,6 @@ const ManageProjects = () => {
       setIsDeleting(false);
       setProjectToDelete(null);
     }
-  };
-
-  // تنسيق التاريخ
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('ar-SA');
   };
 
   return (
