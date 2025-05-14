@@ -38,10 +38,6 @@ const DeleteProjectDialog = ({ isOpen, setIsOpen, projectId, onSuccess }: Delete
       
       if (error) throw error;
       
-      toast({
-        title: "تم حذف المشروع بنجاح",
-      });
-      
       onSuccess();
     } catch (error: any) {
       console.error('Error deleting project:', error);

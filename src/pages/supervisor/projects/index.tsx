@@ -32,6 +32,10 @@ const SupervisorProjects = () => {
   
   const handleDeleteSuccess = () => {
     refetch();
+    toast({
+      title: "تم حذف المشروع بنجاح",
+      description: "تم حذف المشروع من قاعدة البيانات.",
+    });
   };
   
   return (

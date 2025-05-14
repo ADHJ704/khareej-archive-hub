@@ -77,6 +77,14 @@ const MobileSidebar = ({ user, onLogout, onClose, onSearch }: MobileSidebarProps
             </CollapsibleTrigger>
             <CollapsibleContent className="pr-8">
               <Link 
+                to="/supervisor/dashboard" 
+                onClick={handleLinkClick}
+                className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
+              >
+                <Settings className="ml-2 h-5 w-5" />
+                <span>لوحة التحكم</span>
+              </Link>
+              <Link 
                 to="/supervisor/projects/new" 
                 onClick={handleLinkClick}
                 className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
@@ -90,7 +98,7 @@ const MobileSidebar = ({ user, onLogout, onClose, onSearch }: MobileSidebarProps
                 className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
               >
                 <FileText className="ml-2 h-5 w-5" />
-                <span>عرض / حذف المشاريع</span>
+                <span>إدارة المشاريع</span>
               </Link>
             </CollapsibleContent>
           </Collapsible>

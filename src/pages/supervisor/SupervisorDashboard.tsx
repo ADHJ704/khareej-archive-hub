@@ -25,25 +25,7 @@ const SupervisorDashboard = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="border-archive-secondary/20">
-            <CardHeader>
-              <CardTitle className="text-right">إدارة المشاريع</CardTitle>
-              <CardDescription className="text-right">
-                إضافة، تعديل أو حذف المشاريع في الأرشيف
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-end">
-              <Button 
-                className="bg-archive-secondary hover:bg-archive-secondary/80"
-                onClick={() => navigate('/supervisor/projects')}
-              >
-                <FileText className="ml-2 h-5 w-5" />
-                إدارة المشاريع
-              </Button>
-            </CardContent>
-          </Card>
-          
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="border-archive-secondary/20">
             <CardHeader>
               <CardTitle className="text-right">إضافة مشروع جديد</CardTitle>
@@ -58,6 +40,24 @@ const SupervisorDashboard = () => {
               >
                 <Plus className="ml-2 h-5 w-5" />
                 إضافة مشروع جديد
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-archive-secondary/20">
+            <CardHeader>
+              <CardTitle className="text-right">إدارة المشاريع</CardTitle>
+              <CardDescription className="text-right">
+                عرض، تعديل أو حذف المشاريع في الأرشيف
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-end">
+              <Button 
+                className="bg-archive-secondary hover:bg-archive-secondary/80"
+                onClick={() => navigate('/supervisor/projects')}
+              >
+                <FileText className="ml-2 h-5 w-5" />
+                إدارة المشاريع
               </Button>
             </CardContent>
           </Card>
