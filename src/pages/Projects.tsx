@@ -75,6 +75,7 @@ const Projects = () => {
     navigate('/projects');
   };
 
+  // إضافة معالج لتغيير حالة مربع الحوار مع التحقق من أن القيمة هي boolean
   const handleSuggestionDialogChange = (open: boolean) => {
     setShowSuggestionDialog(open);
   };

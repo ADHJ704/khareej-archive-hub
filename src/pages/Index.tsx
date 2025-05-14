@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState } from 'react';
-import { BookOpen, File, Compass } from 'lucide-react';
+import { BookOpen, File, Compass, Lock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from '@/components/Header';
 import FeaturedProjects from '@/components/FeaturedProjects';
@@ -34,18 +35,22 @@ const Index = () => {
           console.error('Error fetching project count:', projectError);
         }
 
-        // الحصول على أحدث المشاريع
-        const { data: latestProjects, error: projectsError } = await supabase
-          .from('projects')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(3);
+        // إذا كان المستخدم مسجل الدخول، نقوم بجلب أحدث المشاريع
+        if (user) {
+          const { data: latestProjects, error: projectsError } = await supabase
+            .from('projects')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(3);
 
-        if (!projectsError && latestProjects) {
-          setRecentProjects(latestProjects);
+          if (!projectsError && latestProjects) {
+            setRecentProjects(latestProjects);
+          } else {
+            console.error('Error fetching recent projects:', projectsError);
+            setRecentProjects([]);
+          }
         } else {
-          console.error('Error fetching recent projects:', projectsError);
-          // استخدام المشاريع الافتراضية كبديل
+          // إذا لم يكن المستخدم مسجل الدخول، نضع مصفوفة فارغة
           setRecentProjects([]);
         }
       } catch (error) {
@@ -56,7 +61,16 @@ const Index = () => {
     };
 
     fetchData();
-  }, []);
+  }, [user]);
+  
+  // التوجيه إلى صفحة تسجيل الدخول للمتدربين
+  const handleProjectsClick = () => {
+    if (user) {
+      navigate('/projects');
+    } else {
+      navigate('/trainee-login', { state: { redirectTo: '/projects' } });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -78,10 +92,10 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   className="bg-white text-archive-primary hover:bg-archive-light"
-                  onClick={() => navigate('/projects')}
+                  onClick={handleProjectsClick}
                 >
                   <File className="ml-2 h-5 w-5" />
-                  تصفح المشاريع
+                  {user ? "تصفح المشاريع" : "تسجيل الدخول لعرض المشاريع"}
                 </Button>
                 <Button 
                   size="lg" 
@@ -118,13 +132,44 @@ const Index = () => {
           </div>
         </section>
         
-        {/* قسم المشاريع المميزة */}
-        {isLoadingProjects ? (
-          <div className="py-12 flex justify-center items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-archive-primary"></div>
-          </div>
+        {/* قسم المشاريع المميزة - فقط للمستخدمين المسجلين */}
+        {user ? (
+          isLoadingProjects ? (
+            <div className="py-12 flex justify-center items-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-archive-primary"></div>
+            </div>
+          ) : (
+            <FeaturedProjects projects={recentProjects} />
+          )
         ) : (
-          <FeaturedProjects projects={recentProjects} />
+          <section className="py-10 bg-archive-muted">
+            <div className="container-custom">
+              <div className="bg-white dark:bg-card p-8 rounded-lg shadow text-center">
+                <Lock className="h-16 w-16 mx-auto mb-4 text-archive-primary opacity-80" />
+                <h2 className="text-2xl font-bold mb-4">المشاريع متاحة فقط للمستخدمين المسجلين</h2>
+                <p className="mb-6 text-gray-600 dark:text-gray-400">
+                  يرجى تسجيل الدخول أو إنشاء حساب جديد للوصول إلى جميع مشاريع الأرشيف
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <Button 
+                    size="lg" 
+                    onClick={() => navigate('/trainee-login')}
+                    className="bg-archive-primary hover:bg-archive-secondary"
+                  >
+                    تسجيل الدخول
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    onClick={() => navigate('/trainee-signup')}
+                    className="border-archive-primary text-archive-primary hover:bg-archive-primary hover:text-white"
+                  >
+                    إنشاء حساب جديد
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
         )}
 
         {/* قسم عن المنصة */}

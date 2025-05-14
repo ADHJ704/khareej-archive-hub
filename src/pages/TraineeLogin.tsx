@@ -1,207 +1,200 @@
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { UserRound } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { AlertCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import Header from '@/components/Header';
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
-const loginFormSchema = z.object({
-  email: z.string().email({ message: 'يرجى إدخال بريد إلكتروني صحيح' }),
-  password: z.string().min(6, { message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' }),
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// Define form schema
+const formSchema = z.object({
+  email: z.string().email({ message: "يرجى إدخال بريد إلكتروني صحيح" }),
+  password: z.string().min(6, { message: "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل" }),
 });
 
-type LoginFormValues = z.infer<typeof loginFormSchema>;
-
 const TraineeLogin = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const authRequired = searchParams.get('authRequired') === 'true';
-  const redirectTo = searchParams.get('redirect') || '/';
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
   const { user } = useAuth();
   
-  // إذا كان المستخدم مسجل الدخول، توجيهه إلى الصفحة المقصودة
+  // التحقق من وجود معلمات في الرابط
+  const searchParams = new URLSearchParams(location.search);
+  const redirectPath = searchParams.get('redirect') || '/';
+  const authRequired = searchParams.get('authRequired') === 'true';
+  
+  // الحصول على مسار إعادة التوجيه من state إذا كان موجودًا
+  const locationState = location.state as { redirectTo?: string };
+  const finalRedirectPath = locationState?.redirectTo || redirectPath;
+
+  // إذا كان المستخدم مسجل الدخول بالفعل، توجيهه للصفحة المقصودة
   useEffect(() => {
     if (user) {
-      navigate(redirectTo !== '/' ? decodeURIComponent(redirectTo) : '/');
+      navigate(finalRedirectPath);
     }
-  }, [user, navigate, redirectTo]);
-  
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
+  }, [user, navigate, finalRedirectPath]);
+
+  // إعداد نموذج الاستمارة
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
-  const onSubmit = async (values: LoginFormValues) => {
+  // معالجة تقديم النموذج
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-
+    setLoginError(null);
+    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
-
+      
       if (error) {
-        throw error;
+        setLoginError(error.message);
+        return;
       }
-
-      if (data?.user) {
-        // التحقق مما إذا كان المستخدم متدرب
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
-        if (profileError) {
-          throw profileError;
-        }
-
-        if (profileData.role !== 'trainee') {
-          // تسجيل الخروج إذا لم يكن متدرب
-          await supabase.auth.signOut();
-          toast({
-            title: 'خطأ في تسجيل الدخول',
-            description: 'هذا الحساب ليس متدرباً',
-            variant: 'destructive',
-          });
-          setIsLoading(false);
-          return;
-        }
-
+      
+      if (data && data.user) {
         toast({
-          title: 'تم تسجيل الدخول بنجاح',
-          description: 'مرحباً بك في منصة أرشيف المشاريع',
+          title: "تم تسجيل الدخول بنجاح",
+          description: "مرحبًا بك في منصة أرشيف المشاريع",
         });
         
-        // التوجيه إلى الصفحة التي حاول المستخدم الوصول إليها
-        navigate(redirectTo !== '/' ? decodeURIComponent(redirectTo) : '/');
+        // التوجيه إلى المسار المطلوب
+        navigate(finalRedirectPath);
       }
-    } catch (error: any) {
-      toast({
-        title: 'خطأ في تسجيل الدخول',
-        description: error?.message || 'حدث خطأ أثناء محاولة تسجيل الدخول',
-        variant: 'destructive',
-      });
+    } catch (error) {
+      console.error('Error during login:', error);
+      setLoginError('حدث خطأ أثناء تسجيل الدخول، يرجى المحاولة مرة أخرى');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background">
-      <Header />
-
-      <main className="container mx-auto px-4 py-10 flex-grow flex items-center justify-center">
-        <div className="w-full max-w-md">
-          <Card className="border-archive-secondary/20">
-            <CardHeader className="pb-4">
-              <div className="flex justify-center mb-4">
-                <div className="bg-archive-secondary/10 p-3 rounded-full">
-                  <UserRound className="h-10 w-10 text-archive-secondary" />
-                </div>
-              </div>
-              <CardTitle className="text-center text-2xl text-archive-dark dark:text-white">
-                تسجيل دخول المتدرب
-              </CardTitle>
-              <CardDescription className="text-center">
-                أدخل بياناتك لتسجيل الدخول إلى منصة المتدربين
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              {authRequired && (
-                <Alert 
-                  variant="default" 
-                  className="mb-6 border-amber-500 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700"
-                >
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  <AlertTitle className="text-amber-800 dark:text-amber-400">يرجى تسجيل الدخول</AlertTitle>
-                  <AlertDescription className="text-amber-700 dark:text-amber-300">
-                    يجب عليك تسجيل الدخول أو إنشاء حساب للوصول إلى هذه الصفحة
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-right block">البريد الإلكتروني</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل بريدك الإلكتروني"
-                            className="text-right"
-                            dir="rtl"
-                            type="email"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-right" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-right block">كلمة المرور</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل كلمة المرور"
-                            className="text-right"
-                            dir="rtl"
-                            type="password"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-right" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="pt-2">
-                    <Button
-                      type="submit"
-                      className="w-full bg-archive-secondary hover:bg-archive-secondary/80"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-
-              <div className="text-center mt-4 text-sm">
-                <span>ما عندك حساب؟</span>{" "}
-                <Link to={`/trainee-signup${redirectTo !== '/' ? `?redirect=${redirectTo}` : ''}`} className="text-archive-secondary hover:underline font-medium">
-                  سجّل الآن
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="max-w-md w-full p-8 bg-white dark:bg-card rounded-lg shadow-lg">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-archive-primary mb-2">تسجيل دخول المتدربين</h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            أدخل بياناتك للوصول إلى منصة أرشيف المشاريع
+          </p>
         </div>
-      </main>
+        
+        {/* تنبيه إذا كان المستخدم يحاول الوصول لصفحة محمية */}
+        {authRequired && (
+          <Alert className="mb-6 border-amber-500 bg-amber-50 dark:bg-amber-900/20">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>يلزم تسجيل الدخول</AlertTitle>
+            <AlertDescription>
+              يجب تسجيل الدخول أولاً للوصول إلى محتوى المشاريع.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {/* عرض خطأ المصادقة إذا وجد */}
+        {loginError && (
+          <Alert className="mb-6 border-destructive bg-destructive/10">
+            <AlertCircle className="h-4 w-4 text-destructive" />
+            <AlertTitle className="text-destructive">خطأ في تسجيل الدخول</AlertTitle>
+            <AlertDescription>
+              {loginError === "Invalid login credentials" ? "بيانات الدخول غير صحيحة" : loginError}
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>البريد الإلكتروني</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="أدخل بريدك الإلكتروني" 
+                      type="email" 
+                      autoComplete="email"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>كلمة المرور</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="أدخل كلمة المرور" 
+                      type="password" 
+                      autoComplete="current-password"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <Button 
+              type="submit"
+              className="w-full bg-archive-primary hover:bg-archive-secondary" 
+              disabled={isLoading}
+            >
+              {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+            </Button>
+          </form>
+        </Form>
+        
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            لا تملك حساباً؟{" "}
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-archive-primary"
+              onClick={() => navigate('/trainee-signup', { state: { redirectTo: finalRedirectPath } })}
+            >
+              سجل الآن
+            </Button>
+          </p>
+          
+          <Button 
+            variant="link" 
+            className="text-gray-500 dark:text-gray-400 mt-2 text-sm"
+            onClick={() => navigate('/')}
+          >
+            العودة للصفحة الرئيسية
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

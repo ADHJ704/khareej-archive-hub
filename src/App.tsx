@@ -33,9 +33,6 @@ function App() {
             <Routes>
               {/* الصفحات العامة */}
               <Route path="/" element={<Index />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/project/:id" element={<ProjectDetail />} />
-              <Route path="/project/:id/full" element={<ProjectFullDetail />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/ai-helper" element={<AIHelper />} />
 
@@ -43,6 +40,32 @@ function App() {
               <Route path="/supervisor-login" element={<SupervisorLogin />} />
               <Route path="/trainee-login" element={<TraineeLogin />} />
               <Route path="/trainee-signup" element={<TraineeSignup />} />
+
+              {/* صفحات المشاريع المحمية بتسجيل الدخول */}
+              <Route 
+                path="/projects" 
+                element={
+                  <RequireAuth>
+                    <Projects />
+                  </RequireAuth>
+                } 
+              />
+              <Route 
+                path="/project/:id" 
+                element={
+                  <RequireAuth>
+                    <ProjectDetail />
+                  </RequireAuth>
+                } 
+              />
+              <Route 
+                path="/project/:id/full" 
+                element={
+                  <RequireAuth>
+                    <ProjectFullDetail />
+                  </RequireAuth>
+                } 
+              />
 
               {/* صفحات المستخدم المسجل */}
               <Route 
