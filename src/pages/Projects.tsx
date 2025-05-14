@@ -75,7 +75,7 @@ const Projects = () => {
     navigate('/projects');
   };
 
-  // تم تعديل الدالة للتحويل الصريح إلى نوع boolean فقط
+  // تم تعديل الدالة للتحويل الصريح إلى نوع boolean
   const handleSuggestionDialogChange = (open: boolean): void => {
     setShowSuggestionDialog(open);
   };
@@ -101,7 +101,7 @@ const Projects = () => {
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
                 departmentFilter={departmentFilter}
-                onDepartmentFilter={setDepartmentFilter}
+                onDepartmentChange={setDepartmentFilter}
                 categories={categories}
                 hasActiveFilters={hasActiveFilters}
                 onClearFilters={clearFilters}
