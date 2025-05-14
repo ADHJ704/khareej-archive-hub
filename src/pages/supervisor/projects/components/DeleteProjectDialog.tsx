@@ -1,8 +1,6 @@
 
 import React, { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
-import {
+import { 
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -11,7 +9,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 interface DeleteProjectDialogProps {
   isOpen: boolean;
@@ -27,53 +28,61 @@ const DeleteProjectDialog = ({ isOpen, setIsOpen, projectId, onSuccess }: Delete
   const handleDelete = async () => {
     if (!projectId) return;
     
+    setIsDeleting(true);
+    
     try {
-      setIsDeleting(true);
-      
       const { error } = await supabase
         .from('projects')
         .delete()
         .eq('id', projectId);
       
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       
       toast({
         title: "تم حذف المشروع بنجاح",
-        description: "تم حذف المشروع من قاعدة البيانات."
       });
       
       onSuccess();
     } catch (error: any) {
-      console.error("Error deleting project:", error);
+      console.error('Error deleting project:', error);
       toast({
-        title: "خطأ في حذف المشروع",
-        description: `حدث خطأ أثناء محاولة حذف المشروع: ${error.message || "خطأ غير معروف"}`,
+        title: "فشل في حذف المشروع",
+        description: error.message || "حدث خطأ أثناء محاولة حذف المشروع",
         variant: "destructive",
       });
     } finally {
       setIsDeleting(false);
+      setIsOpen(false);
     }
   };
   
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent className="text-right">
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
-          <AlertDialogDescription>
-            سيتم حذف هذا المشروع نهائيًا من قاعدة البيانات ولن تتمكن من استرجاعه.
+          <AlertDialogTitle className="text-right">هل أنت متأكد من رغبتك في حذف هذا المشروع؟</AlertDialogTitle>
+          <AlertDialogDescription className="text-right">
+            لا يمكن التراجع عن هذا الإجراء. سيتم حذف المشروع نهائيًا من قاعدة البيانات.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="flex-row-reverse sm:justify-end">
-          <AlertDialogCancel className="ml-2" disabled={isDeleting}>إلغاء</AlertDialogCancel>
-          <AlertDialogAction 
-            onClick={handleDelete} 
-            className="bg-red-500 hover:bg-red-700"
+        <AlertDialogFooter className="flex-row-reverse space-x-reverse space-x-2">
+          <AlertDialogCancel disabled={isDeleting} className="mt-0">إلغاء</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={(e) => {
+              e.preventDefault();
+              handleDelete();
+            }}
             disabled={isDeleting}
+            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
-            {isDeleting ? "جار الحذف..." : "حذف"}
+            {isDeleting ? (
+              <>
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                جاري الحذف...
+              </>
+            ) : (
+              'تأكيد الحذف'
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

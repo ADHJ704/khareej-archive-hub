@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import ProjectSearch from './ProjectSearch';
@@ -11,28 +11,30 @@ interface ProjectsHeaderProps {
 }
 
 const ProjectsHeader = ({ searchQuery, setSearchQuery }: ProjectsHeaderProps) => {
-  const navigate = useNavigate();
-  
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-      <h1 className="text-3xl font-bold text-archive-dark dark:text-white text-right mb-4 md:mb-0">
-        إدارة المشاريع
-      </h1>
-      
-      <div className="flex w-full md:w-auto space-x-4 space-x-reverse">
-        <Button 
-          className="bg-archive-primary hover:bg-archive-primary/80"
-          onClick={() => navigate('/supervisor/projects/new')}
-        >
-          <Plus className="ml-2 h-5 w-5" />
-          إضافة مشروع جديد
-        </Button>
+    <div className="mb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-archive-dark dark:text-white text-right mb-2">
+            إدارة المشاريع
+          </h1>
+          <p className="text-muted-foreground text-right">
+            قم بعرض، تعديل، أو حذف المشاريع من الأرشيف
+          </p>
+        </div>
         
-        <ProjectSearch 
-          value={searchQuery} 
-          onChange={setSearchQuery} 
-        />
+        <Link to="/supervisor/projects/new" className="mt-4 md:mt-0">
+          <Button className="w-full md:w-auto bg-archive-primary hover:bg-archive-primary/80">
+            <Plus className="ml-2 h-5 w-5" />
+            إضافة مشروع جديد
+          </Button>
+        </Link>
       </div>
+      
+      <ProjectSearch
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
     </div>
   );
 };

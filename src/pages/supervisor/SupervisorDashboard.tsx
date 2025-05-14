@@ -61,8 +61,6 @@ const SupervisorDashboard = () => {
               </Button>
             </CardContent>
           </Card>
-          
-          {/* يمكن إضافة المزيد من الخيارات في المستقبل هنا */}
         </div>
       </main>
     </div>
