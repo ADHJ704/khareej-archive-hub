@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserRound } from 'lucide-react';
@@ -27,18 +26,10 @@ const SupervisorLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, isSupervisor } = useAuth();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-
-  // إذا كان المستخدم مسجل دخول ومشرف، توجيهه مباشرة إلى الصفحة الرئيسية بدلاً من لوحة التحكم
+  // إذا كان المستخدم مسجل دخول ومشرف، توجيهه مباشرة إلى لوحة تحكم المشرف
   useEffect(() => {
     if (user && isSupervisor) {
-      navigate('/');
+      navigate('/supervisor/manage-projects');
     }
   }, [user, isSupervisor, navigate]);
 
@@ -84,8 +75,8 @@ const SupervisorLogin = () => {
           description: 'مرحباً بك في نظام أرشيف المشاريع',
         });
         
-        // التوجيه إلى الصفحة الرئيسية بدلاً من لوحة التحكم
-        navigate('/');
+        // التوجيه إلى صفحة إدارة المشاريع
+        navigate('/supervisor/manage-projects');
       }
     } catch (error: any) {
       toast({
