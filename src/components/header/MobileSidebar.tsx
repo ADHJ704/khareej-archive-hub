@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Home, FileText, LogOut, UserRound, Compass, MessageSquareText } from 'lucide-react';
+import { BookOpen, Home, FileText, LogOut, UserRound, Compass, MessageSquareText, Plus, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface MobileSidebarProps {
   user: any;
@@ -21,6 +22,8 @@ const MobileSidebar = ({ user, onLogout, onClose, onSearch }: MobileSidebarProps
     onLogout();
     onClose();
   };
+
+  const isSupervisor = user?.user_metadata?.role === 'supervisor';
   
   return (
     <SheetContent side="right" className="w-64 sm:w-80">
@@ -64,6 +67,33 @@ const MobileSidebar = ({ user, onLogout, onClose, onSearch }: MobileSidebarProps
           <MessageSquareText className="ml-2 h-5 w-5" />
           <span>محادثة الذكاء الاصطناعي</span>
         </Link>
+        
+        {isSupervisor && (
+          <Collapsible className="w-full">
+            <CollapsibleTrigger className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1 w-full text-right">
+              <Settings className="ml-2 h-5 w-5" />
+              <span>أدوات المشرف</span>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pr-8">
+              <Link 
+                to="/supervisor/projects/new" 
+                onClick={handleLinkClick}
+                className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
+              >
+                <Plus className="ml-2 h-5 w-5" />
+                <span>إضافة مشروع جديد</span>
+              </Link>
+              <Link 
+                to="/supervisor/projects" 
+                onClick={handleLinkClick}
+                className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1"
+              >
+                <FileText className="ml-2 h-5 w-5" />
+                <span>عرض / حذف المشاريع</span>
+              </Link>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
         
         <div className="border-t my-4"></div>
         

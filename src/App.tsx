@@ -17,7 +17,6 @@ import TraineeSignup from "./pages/TraineeSignup";
 import SupervisorLogin from "./pages/SupervisorLogin";
 import RequireAuth from "./components/RequireAuth";
 import RequireSupervisor from "./components/RequireSupervisor";
-import SupervisorDashboard from "./pages/supervisor/SupervisorDashboard";
 import SupervisorProjects from "./pages/supervisor/SupervisorProjects";
 import SupervisorProjectForm from "./pages/supervisor/SupervisorProjectForm";
 
@@ -73,11 +72,6 @@ const App = () => (
             <Route path="/supervisor-login" element={<SupervisorLogin />} />
             
             {/* مسارات لوحة التحكم للمشرفين - محمية */}
-            <Route path="/supervisor/dashboard" element={
-              <RequireSupervisor>
-                <SupervisorDashboard />
-              </RequireSupervisor>
-            } />
             <Route path="/supervisor/projects" element={
               <RequireSupervisor>
                 <SupervisorProjects />
