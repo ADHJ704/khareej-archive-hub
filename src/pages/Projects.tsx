@@ -75,6 +75,10 @@ const Projects = () => {
     navigate('/projects');
   };
 
+  const handleSuggestionDialogChange = (open: boolean) => {
+    setShowSuggestionDialog(open);
+  };
+
   const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
 
   return (
@@ -117,7 +121,7 @@ const Projects = () => {
       
       <ProjectSuggestionDialog 
         open={showSuggestionDialog} 
-        onOpenChange={setShowSuggestionDialog}
+        onOpenChange={handleSuggestionDialogChange}
       />
       
       <footer className="bg-archive-dark text-white py-6">
