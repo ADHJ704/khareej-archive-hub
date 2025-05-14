@@ -74,10 +74,10 @@ const Projects = () => {
     navigate('/projects');
   };
 
-  // تعديل معالج حوار الاقتراحات للتعامل مع جميع أنواع البيانات
-  const handleSuggestionDialogChange = (value: boolean) => {
-    // نتأكد أن القيمة ستكون منطقية فقط (boolean)
-    setShowSuggestionDialog(value);
+  // Updated function to properly handle the type conversion
+  const handleSuggestionDialogChange = (value: unknown) => {
+    // Convert any type to boolean explicitly
+    setShowSuggestionDialog(Boolean(value));
   };
 
   const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
