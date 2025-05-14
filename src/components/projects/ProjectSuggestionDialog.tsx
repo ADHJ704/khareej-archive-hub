@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ProjectSuggestionDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean | string) => void;
+  onOpenChange: (open: boolean) => void;
 }
 
 const ProjectSuggestionDialog = ({ open, onOpenChange }: ProjectSuggestionDialogProps) => {

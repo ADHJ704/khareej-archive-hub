@@ -75,10 +75,9 @@ const Projects = () => {
     navigate('/projects');
   };
 
-  // تم تعديل الدالة للتأكد من أن القيمة المُرجعة هي دائماً boolean
-  const handleSuggestionDialogChange = (open: boolean | string): void => {
-    // التحويل الصريح للقيمة إلى boolean بغض النظر عن نوعها
-    setShowSuggestionDialog(Boolean(open));
+  // تم تعديل الدالة للتحويل الصريح إلى نوع boolean فقط
+  const handleSuggestionDialogChange = (open: boolean): void => {
+    setShowSuggestionDialog(open);
   };
 
   const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
