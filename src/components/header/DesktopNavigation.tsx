@@ -36,19 +36,6 @@ const DesktopNavigation = ({ user, onSearch, onLogout }: DesktopNavigationProps)
         <Link to="/categories" className="text-white/90 hover:text-white transition">التخصصات</Link>
         <Link to="/ai-helper" className="text-white/90 hover:text-white transition">محادثة الذكاء الاصطناعي</Link>
         
-        {isSupervisor && (
-          <>
-            <Link to="/supervisor/projects/new" className="text-white/90 hover:text-white transition flex items-center">
-              <Plus className="ml-1 h-4 w-4" />
-              إضافة مشروع
-            </Link>
-            <Link to="/supervisor/projects" className="text-white/90 hover:text-white transition flex items-center">
-              <Trash2 className="ml-1 h-4 w-4" />
-              حذف المشاريع
-            </Link>
-          </>
-        )}
-        
         {user ? (
           <>
             {isSupervisor && (

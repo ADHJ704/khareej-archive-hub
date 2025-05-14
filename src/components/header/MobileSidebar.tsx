@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserRound, Home, BookOpen, Tag, MessageSquare, Settings, FileText, Plus, Trash2, LogOut } from 'lucide-react';
+import { UserRound, Home, BookOpen, Tag, MessageSquare, Settings, LogOut } from 'lucide-react';
 import {
   SheetContent,
   SheetHeader,
@@ -77,28 +77,6 @@ const MobileSidebar = ({ user, onLogout, onClose }: MobileSidebarProps) => {
             <MessageSquare className="ml-2 h-5 w-5" />
             <span>محادثة الذكاء الاصطناعي</span>
           </Link>
-
-          {isSupervisor && (
-            <>
-              <Link 
-                to="/supervisor/projects/new"
-                onClick={handleLinkClick}
-                className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1 text-archive-primary"
-              >
-                <Plus className="ml-2 h-5 w-5" />
-                <span>إضافة مشروع</span>
-              </Link>
-              
-              <Link 
-                to="/supervisor/projects"
-                onClick={handleLinkClick}
-                className="flex items-center py-3 px-4 hover:bg-muted rounded-lg mb-1 text-archive-primary"
-              >
-                <Trash2 className="ml-2 h-5 w-5" />
-                <span>حذف المشاريع</span>
-              </Link>
-            </>
-          )}
           
           {user ? (
             <>

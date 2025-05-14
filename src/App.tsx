@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,8 +18,6 @@ import SupervisorLogin from "./pages/SupervisorLogin";
 import RequireAuth from "./components/RequireAuth";
 import RequireSupervisor from "./components/RequireSupervisor";
 import SupervisorDashboard from './pages/supervisor/SupervisorDashboard';
-import SupervisorProjects from './pages/supervisor/projects';
-import SupervisorProjectForm from './pages/supervisor/project-form';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,30 +77,6 @@ function App() {
                 element={
                   <RequireSupervisor>
                     <SupervisorDashboard />
-                  </RequireSupervisor>
-                } 
-              />
-              <Route 
-                path="/supervisor/projects" 
-                element={
-                  <RequireSupervisor>
-                    <SupervisorProjects />
-                  </RequireSupervisor>
-                } 
-              />
-              <Route 
-                path="/supervisor/projects/new" 
-                element={
-                  <RequireSupervisor>
-                    <SupervisorProjectForm />
-                  </RequireSupervisor>
-                } 
-              />
-              <Route 
-                path="/supervisor/projects/edit/:projectId" 
-                element={
-                  <RequireSupervisor>
-                    <SupervisorProjectForm />
                   </RequireSupervisor>
                 } 
               />
