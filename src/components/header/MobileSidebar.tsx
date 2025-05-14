@@ -23,7 +23,8 @@ const MobileSidebar = ({ user, onLogout, onClose, onSearch }: MobileSidebarProps
     onClose();
   };
 
-  const isSupervisor = user?.user_metadata?.role === 'supervisor';
+  // وصول أكثر أمانًا لدور المستخدم، مع التحقق من كلا مكاني حفظ الدور
+  const isSupervisor = user?.user_metadata?.role === 'supervisor' || user?.app_metadata?.role === 'supervisor';
   
   return (
     <SheetContent side="right" className="w-64 sm:w-80">

@@ -44,6 +44,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           // التحقق من دور المستخدم إذا كان متصلاً
           checkUserRole(session.user.id);
+          
+          // التحقق أيضًا من البيانات الوصفية للمستخدم (التي قد تحتوي على الدور)
+          if (session.user.user_metadata?.role === 'supervisor' || 
+              session.user.app_metadata?.role === 'supervisor') {
+            setIsSupervisor(true);
+          } else if (session.user.user_metadata?.role === 'trainee' || 
+                    session.user.app_metadata?.role === 'trainee') {
+            setIsTrainee(true);
+          }
         }
       }
     );
@@ -58,6 +67,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // التحقق من دور المستخدم عند التحميل الأولي
       if (session?.user) {
         checkUserRole(session.user.id);
+        
+        // التحقق من البيانات الوصفية للمستخدم
+        if (session.user.user_metadata?.role === 'supervisor' || 
+            session.user.app_metadata?.role === 'supervisor') {
+          setIsSupervisor(true);
+        } else if (session.user.user_metadata?.role === 'trainee' || 
+                  session.user.app_metadata?.role === 'trainee') {
+          setIsTrainee(true);
+        }
       }
     });
 

@@ -18,7 +18,7 @@ interface DesktopNavigationProps {
 }
 
 const DesktopNavigation = ({ user, onSearch, onLogout }: DesktopNavigationProps) => {
-  const isSupervisor = user?.user_metadata?.role === 'supervisor';
+  const isSupervisor = user?.user_metadata?.role === 'supervisor' || user?.app_metadata?.role === 'supervisor';
 
   return (
     <div className="flex items-center space-x-4 space-x-reverse w-full md:w-auto">

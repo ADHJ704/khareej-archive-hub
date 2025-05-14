@@ -35,10 +35,10 @@ const SupervisorLogin = () => {
     },
   });
 
-  // إذا كان المستخدم مسجل دخول ومشرف، توجيهه مباشرة إلى لوحة التحكم
+  // إذا كان المستخدم مسجل دخول ومشرف، توجيهه مباشرة إلى الصفحة الرئيسية بدلاً من لوحة التحكم
   useEffect(() => {
     if (user && isSupervisor) {
-      navigate('/supervisor/dashboard');
+      navigate('/');
     }
   }, [user, isSupervisor, navigate]);
 
@@ -81,11 +81,11 @@ const SupervisorLogin = () => {
 
         toast({
           title: 'تم تسجيل الدخول بنجاح',
-          description: 'مرحباً بك في لوحة تحكم المشرفين',
+          description: 'مرحباً بك في نظام أرشيف المشاريع',
         });
         
-        // التوجيه إلى لوحة التحكم
-        navigate('/supervisor/dashboard');
+        // التوجيه إلى الصفحة الرئيسية بدلاً من لوحة التحكم
+        navigate('/');
       }
     } catch (error: any) {
       toast({
@@ -115,7 +115,7 @@ const SupervisorLogin = () => {
                 تسجيل دخول المشرف
               </CardTitle>
               <CardDescription className="text-center">
-                أدخل بياناتك لتسجيل الدخول إلى لوحة تحكم المشرفين
+                أدخل بياناتك لتسجيل الدخول إلى نظام إدارة أرشيف المشاريع
               </CardDescription>
             </CardHeader>
 
