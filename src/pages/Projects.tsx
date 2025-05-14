@@ -76,9 +76,10 @@ const Projects = () => {
   };
 
   // تعديل معالج حوار الاقتراحات للتأكد من تمرير قيمة منطقية فقط
-  const handleSuggestionDialogChange = (value: unknown): void => {
-    // استخدام !! لتحويل أي قيمة إلى boolean بشكل صريح
-    setShowSuggestionDialog(!!value);
+  const handleSuggestionDialogChange = (value: unknown) => {
+    // استخدام Boolean لتحويل القيمة إلى منطقية بشكل صريح
+    // هذا يضمن أن القيمة ستكون من نوع boolean فقط
+    setShowSuggestionDialog(Boolean(value));
   };
 
   const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
