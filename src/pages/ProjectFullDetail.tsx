@@ -17,13 +17,13 @@ const ProjectFullDetail = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Use the useProjects hook to fetch the project - fixed to use the correct number of arguments
+  // استخدام الـ hook لجلب المشروع
   const { data: projects = [], isLoading, isError } = useProjects();
   
-  // Find the current project by ID
+  // البحث عن المشروع الحالي حسب المعرف
   const project = projects.find(p => p.id === id);
 
-  // Show loading state
+  // عرض حالة التحميل
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -33,7 +33,7 @@ const ProjectFullDetail = () => {
     );
   }
   
-  // Show error state
+  // عرض حالة الخطأ
   if (isError) {
     toast({
       title: "حدث خطأ",
@@ -50,7 +50,7 @@ const ProjectFullDetail = () => {
     );
   }
   
-  // Show not found state if project doesn't exist
+  // عرض حالة عدم العثور على المشروع
   if (!project) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -61,7 +61,7 @@ const ProjectFullDetail = () => {
     );
   }
   
-  // Format the full content or use project_content as fallback
+  // تنسيق المحتوى الكامل أو استخدام محتوى المشروع كبديل
   const fullContent = project.full_content || project.project_content || '';
 
   return (
@@ -70,7 +70,7 @@ const ProjectFullDetail = () => {
       
       <main className="flex-grow bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container-custom">
-          {/* Back button */}
+          {/* زر العودة */}
           <div className="mb-6">
             <Button 
               variant="outline" 
@@ -82,7 +82,7 @@ const ProjectFullDetail = () => {
             </Button>
           </div>
           
-          {/* Project title */}
+          {/* عنوان المشروع */}
           <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-6">
             <h1 className="text-3xl md:text-4xl font-heading font-bold text-archive-primary mb-6 text-center">
               {project.title}
@@ -101,7 +101,7 @@ const ProjectFullDetail = () => {
             </div>
           </div>
           
-          {/* Full content */}
+          {/* المحتوى الكامل */}
           <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-6">
             <h2 className="text-2xl font-heading font-bold text-archive-primary mb-4">
               التفاصيل الكاملة للمشروع
@@ -122,7 +122,7 @@ const ProjectFullDetail = () => {
             </div>
           </div>
           
-          {/* Project sections */}
+          {/* أقسام المشروع */}
           <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-6">
             <h2 className="text-2xl font-heading font-bold text-archive-primary mb-4">
               أقسام المشروع

@@ -1,43 +1,37 @@
 
-import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useToast } from "@/hooks/use-toast";
-import Header from '@/components/Header';
+import React from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Book, Download, FileText } from 'lucide-react';
 import { useProjects } from '@/hooks/useProjects';
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from 'lucide-react';
-
-// Import our new components
-import ProjectHeader from '@/components/project-detail/ProjectHeader';
-import ProjectInfoDisplay from '@/components/project-detail/ProjectInfoDisplay';
-import ProjectSidebar from '@/components/project-detail/ProjectSidebar';
-import RelatedProjects from '@/components/project-detail/RelatedProjects';
+import { Button } from '@/components/ui/button';
+import Header from '@/components/Header';
 import ProjectDetailSkeleton from '@/components/project-detail/ProjectDetailSkeleton';
 import ProjectDetailErrorState from '@/components/project-detail/ProjectDetailErrorState';
 import ProjectDetailNotFound from '@/components/project-detail/ProjectDetailNotFound';
+import ProjectSidebar from '@/components/project-detail/ProjectSidebar';
+import ProjectInfoDisplay from '@/components/project-detail/ProjectInfoDisplay';
+import ProjectHeader from '@/components/project-detail/ProjectHeader';
 import ProjectFooter from '@/components/project-detail/ProjectFooter';
+import RelatedProjects from '@/components/project-detail/RelatedProjects';
+import { useToast } from "@/hooks/use-toast";
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
-  const navigate = useNavigate();
   
-  // Use the useProjects hook to fetch all projects - fixed to use the correct number of arguments
+  // Fetch the project
   const { data: projects = [], isLoading, isError } = useProjects();
   
   // Find the current project by ID
   const project = projects.find(p => p.id === id);
-
-  // Log project details for debugging
-  useEffect(() => {
-    if (project) {
-      console.log('Project details:', {
-        title: project.title,
-        project_content: project.project_content ? project.project_content.substring(0, 50) + '...' : 'Not available'
-      });
-    }
-  }, [project]);
   
+  // Find related projects (same category, excluding current)
+  const relatedProjects = project 
+    ? projects
+        .filter(p => p.categoryId === project.categoryId && p.id !== project.id)
+        .slice(0, 3)
+    : [];
+    
   // Show loading state
   if (isLoading) {
     return (
@@ -76,13 +70,8 @@ const ProjectDetail = () => {
     );
   }
   
-  // Get related projects from the same category
-  const relatedProjects = projects
-    .filter(p => p.categoryId === project.categoryId && p.id !== project.id)
-    .slice(0, 3);
-
-  // تحقق من وجود محتوى كامل للمشروع
-  const hasFullContent = !!project.full_content || !!project.project_content;
+  // Check if project has content
+  const hasContent = !!project.project_content || !!project.full_content;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -92,36 +81,50 @@ const ProjectDetail = () => {
         <div className="container-custom">
           <ProjectHeader project={project} />
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-2">
               <ProjectInfoDisplay project={project} />
               
-              {/* عرض رابط الانتقال للمحتوى الكامل إذا كان متوفراً */}
-              {hasFullContent && (
-                <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 mb-8">
-                  <h2 className="text-xl font-semibold mb-4">محتوى المشروع</h2>
-                  <p className="mb-4 text-gray-700 dark:text-gray-300">
-                    يمكنك استعراض المحتوى الكامل للمشروع من خلال الضغط على الزر أدناه
-                  </p>
-                  <Button 
-                    className="bg-archive-secondary hover:bg-archive-secondary/80"
-                    onClick={() => navigate(`/project-details/${project.id}`)}
-                  >
-                    عرض المحتوى الكامل للمشروع
-                  </Button>
+              {/* Display actions only if content exists */}
+              {hasContent && (
+                <div className="bg-white dark:bg-card rounded-lg shadow-sm p-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
+                  <Link to={`/project/${project.id}/full`} className="w-full sm:w-auto">
+                    <Button 
+                      size="lg" 
+                      className="w-full bg-archive-primary hover:bg-archive-secondary"
+                    >
+                      <Book className="ml-2 h-5 w-5" />
+                      عرض المحتوى الكامل
+                    </Button>
+                  </Link>
+                  
+                  {project.downloadUrl && (
+                    <a 
+                      href={project.downloadUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full sm:w-auto"
+                    >
+                      <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="w-full border-archive-secondary text-archive-secondary hover:bg-archive-secondary hover:text-white"
+                      >
+                        <Download className="ml-2 h-5 w-5" />
+                        تنزيل المشروع
+                      </Button>
+                    </a>
+                  )}
                 </div>
               )}
-              
-              {/* Related projects */}
-              <RelatedProjects projects={relatedProjects} />
             </div>
             
-            {/* Sidebar */}
             <div className="lg:col-span-1">
               <ProjectSidebar project={project} />
             </div>
           </div>
+          
+          <RelatedProjects projects={relatedProjects} />
         </div>
       </main>
       
