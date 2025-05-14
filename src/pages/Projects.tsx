@@ -75,9 +75,10 @@ const Projects = () => {
     navigate('/projects');
   };
 
-  // Fixed function to ensure boolean type
-  const handleSuggestionDialogChange = (open: boolean) => {
-    setShowSuggestionDialog(open);
+  // تم تعديل الدالة للتأكد من أن القيمة المُرجعة هي دائماً boolean
+  const handleSuggestionDialogChange = (open: boolean | string): void => {
+    // التحويل الصريح للقيمة إلى boolean بغض النظر عن نوعها
+    setShowSuggestionDialog(Boolean(open));
   };
 
   const hasActiveFilters = selectedCategories.length > 0 || searchQuery || departmentFilter !== 'all';
