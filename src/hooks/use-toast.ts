@@ -1,20 +1,29 @@
 
-import * as React from "react"
+// This file re-exports the toast functionality from the UI components
 import { 
+  ToastProvider,
+  ToastViewport, 
+  ToastClose,
   Toast,
-  ToastClose, 
-  ToastDescription, 
-  ToastProvider, 
-  ToastTitle, 
-  ToastViewport 
+  ToastTitle,
+  ToastDescription,
 } from "@/components/ui/toast"
-import { useToast as useToastPrimitive } from "@/components/ui/use-toast"
 
-export const ToastProvider = ToastProvider
-export const ToastViewport = ToastViewport
-export const ToastClose = ToastClose
-export const Toast = Toast
-export const ToastTitle = ToastTitle
-export const ToastDescription = ToastDescription
+import { 
+  useToast as useToastOriginal, 
+  toast 
+} from "@/components/ui/use-toast"
 
-export { useToastPrimitive as useToast, toast }
+// Re-export the toast UI components
+export { 
+  ToastProvider,
+  ToastViewport, 
+  ToastClose,
+  Toast,
+  ToastTitle,
+  ToastDescription
+}
+
+// Re-export the toast hook and function
+export const useToast = useToastOriginal
+export { toast }
