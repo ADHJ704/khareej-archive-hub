@@ -18,6 +18,8 @@ import SupervisorLogin from "./pages/SupervisorLogin";
 import RequireAuth from "./components/RequireAuth";
 import RequireSupervisor from "./components/RequireSupervisor";
 import SupervisorDashboard from './pages/supervisor/SupervisorDashboard';
+import AddProject from './pages/supervisor/AddProject';
+import ManageProjects from './pages/supervisor/ManageProjects';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -77,6 +79,24 @@ function App() {
                 element={
                   <RequireSupervisor>
                     <SupervisorDashboard />
+                  </RequireSupervisor>
+                } 
+              />
+              
+              {/* إضافة المسارات الجديدة للمشرفين - حماية باستخدام RequireSupervisor */}
+              <Route 
+                path="/supervisor/add-project" 
+                element={
+                  <RequireSupervisor>
+                    <AddProject />
+                  </RequireSupervisor>
+                } 
+              />
+              <Route 
+                path="/supervisor/manage-projects" 
+                element={
+                  <RequireSupervisor>
+                    <ManageProjects />
                   </RequireSupervisor>
                 } 
               />
