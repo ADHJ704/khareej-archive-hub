@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserRound, MessageSquareText, FileText, Plus, Settings } from 'lucide-react';
+import { UserRound, MessageSquareText, FileText, Plus, Settings, Trash2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import SearchBar from '@/components/SearchBar';
 import { 
@@ -36,6 +36,19 @@ const DesktopNavigation = ({ user, onSearch, onLogout }: DesktopNavigationProps)
         <Link to="/categories" className="text-white/90 hover:text-white transition">التخصصات</Link>
         <Link to="/ai-helper" className="text-white/90 hover:text-white transition">محادثة الذكاء الاصطناعي</Link>
         
+        {isSupervisor && (
+          <>
+            <Link to="/supervisor/projects/new" className="text-white/90 hover:text-white transition flex items-center">
+              <Plus className="ml-1 h-4 w-4" />
+              إضافة مشروع
+            </Link>
+            <Link to="/supervisor/projects" className="text-white/90 hover:text-white transition flex items-center">
+              <Trash2 className="ml-1 h-4 w-4" />
+              حذف المشاريع
+            </Link>
+          </>
+        )}
+        
         {user ? (
           <>
             {isSupervisor && (
@@ -51,15 +64,9 @@ const DesktopNavigation = ({ user, onSearch, onLogout }: DesktopNavigationProps)
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 bg-white border border-gray-200 shadow-lg rounded-md" align="end">
                   <DropdownMenuItem asChild>
-                    <Link to="/supervisor/projects/new" className="flex items-center cursor-pointer">
-                      <Plus className="ml-2 h-4 w-4" />
-                      إضافة مشروع جديد
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/supervisor/projects" className="flex items-center cursor-pointer">
-                      <FileText className="ml-2 h-4 w-4" />
-                      عرض / حذف المشاريع
+                    <Link to="/supervisor/dashboard" className="flex items-center cursor-pointer">
+                      <Settings className="ml-2 h-4 w-4" />
+                      لوحة التحكم
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
 import ProjectSearch from './ProjectSearch';
 
 interface ProjectsHeaderProps {
@@ -11,30 +11,29 @@ interface ProjectsHeaderProps {
 }
 
 const ProjectsHeader = ({ searchQuery, setSearchQuery }: ProjectsHeaderProps) => {
+  const navigate = useNavigate();
+  
   return (
-    <div className="mb-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-archive-dark dark:text-white text-right mb-2">
-            إدارة المشاريع
-          </h1>
-          <p className="text-muted-foreground text-right">
-            قم بعرض، تعديل، أو حذف المشاريع من الأرشيف
-          </p>
-        </div>
-        
-        <Link to="/supervisor/projects/new" className="mt-4 md:mt-0">
-          <Button className="w-full md:w-auto bg-archive-primary hover:bg-archive-primary/80">
-            <Plus className="ml-2 h-5 w-5" />
-            إضافة مشروع جديد
-          </Button>
-        </Link>
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div>
+        <h1 className="text-2xl font-bold mb-1 text-archive-dark dark:text-white">حذف المشاريع</h1>
+        <p className="text-muted-foreground">قم بإدارة المشاريع في قاعدة البيانات</p>
       </div>
       
-      <ProjectSearch
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+      <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        <ProjectSearch 
+          searchQuery={searchQuery} 
+          setSearchQuery={setSearchQuery} 
+        />
+        
+        <Button 
+          onClick={() => navigate('/supervisor/projects/new')}
+          className="bg-archive-primary hover:bg-archive-primary/90"
+        >
+          <Plus className="ml-2 h-4 w-4" />
+          إضافة مشروع
+        </Button>
+      </div>
     </div>
   );
 };
